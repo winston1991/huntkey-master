@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="tab_no_selected">#6600ff</color>
+    <color name="tab_selected">#D81B60</color>
+    <color name="home_item_no_selected">#99f299</color>
+    <color name="home_item_selected">#6600ff</color>
+</resources>
