@@ -15,6 +15,7 @@ import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.adapter.HomePageRecyclerViewAdapter;
 import com.jake.huntkey.core.app.Consts;
+import com.jake.huntkey.core.delegates.EChartsDelegate.EChartsAndroidDelegate;
 import com.jake.huntkey.core.entity.HomePageEntity;
 import com.jake.huntkey.core.ui.GridDividerItemDecoration;
 import com.joanzapata.iconify.widget.IconTextView;
@@ -70,7 +71,15 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         IconTextView iconTextView = view.findViewById(R.id.item_icon);
         TextView textView = view.findViewById(R.id.item_name);
-        ((SupportFragment)getParentFragment()).start(DebugPagerFragment.newInstance(position+""));
+        if (position == 0) {
+            ((SupportFragment)getParentFragment()).start(EChartsAndroidDelegate.newInstance());
+
+        }else
+        {
+            ((SupportFragment)getParentFragment()).start(DebugPagerFragment.newInstance(position+""));
+
+        }
+
 
     }
 }

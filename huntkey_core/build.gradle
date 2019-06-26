@@ -52,10 +52,15 @@ dependencies {
     api 'com.android.support:design:28.0.0'
 
     //强大的RecyclerAdapter框架
-    api  'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.45-androidx'
+    api 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.45-androidx'
 
 
     api 'com.github.orhanobut:logger:+'
     api 'com.blankj:utilcode:+'
+
+    implementation 'com.github.xuexiangjys.AgentWeb:agentweb-core:1.0.0'
+
+    //ECharts图表库
+    implementation 'com.github.abel533:ECharts:3.0.0.2'
 
 }

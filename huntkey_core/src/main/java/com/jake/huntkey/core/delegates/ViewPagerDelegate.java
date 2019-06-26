@@ -15,16 +15,16 @@ import com.jake.huntkey.core.adapter.ViewPagerFragmentAdapter;
 
 import butterknife.BindView;
 
-public class ViewPagerFragment extends CheckPermissionDelegate {
+public class ViewPagerDelegate extends CheckPermissionDelegate {
 
     @BindView(R2.id.view_pager)
     ViewPager viewPager;
     @BindView(R2.id.navigation)
     BottomNavigationView navigation;
 
-    public static ViewPagerFragment newInstance() {
+    public static ViewPagerDelegate newInstance() {
         Bundle args = new Bundle();
-        ViewPagerFragment fragment = new ViewPagerFragment();
+        ViewPagerDelegate fragment = new ViewPagerDelegate();
         fragment.setArguments(args);
         return fragment;
     }

@@ -1,11 +1,8 @@
 package com.jake.huntkey.core.delegates;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.jake.huntkey.core.R;
@@ -35,8 +32,8 @@ public class MainDelegate extends MainBackPressDelegate  {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (findChildFragment(ViewPagerFragment.class) == null) {
-            loadRootFragment(R.id.fl_container, ViewPagerFragment.newInstance());
+        if (findChildFragment(ViewPagerDelegate.class) == null) {
+            loadRootFragment(R.id.fl_container, ViewPagerDelegate.newInstance());
         }
     }
 
