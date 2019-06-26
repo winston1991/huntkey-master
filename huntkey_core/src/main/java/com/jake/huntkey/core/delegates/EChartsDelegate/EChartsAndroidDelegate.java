@@ -1,20 +1,3 @@
-/*
- * Copyright (C) 2019 xuexiangjys(xuexiangjys@163.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
 package com.jake.huntkey.core.delegates.EChartsDelegate;
 
 import android.os.Bundle;
@@ -24,17 +7,27 @@ import android.widget.FrameLayout;
 
 import com.github.abel533.echarts.Legend;
 import com.github.abel533.echarts.Title;
+import com.github.abel533.echarts.Toolbox;
+import com.github.abel533.echarts.Tooltip;
 import com.github.abel533.echarts.axis.CategoryAxis;
 import com.github.abel533.echarts.axis.ValueAxis;
 import com.github.abel533.echarts.code.Trigger;
+import com.github.abel533.echarts.data.Data;
 import com.github.abel533.echarts.data.PieData;
+import com.github.abel533.echarts.feature.Feature;
+import com.github.abel533.echarts.feature.Mark;
+import com.github.abel533.echarts.feature.Restore;
 import com.github.abel533.echarts.json.GsonOption;
 import com.github.abel533.echarts.series.Bar;
+import com.github.abel533.echarts.series.Gauge;
 import com.github.abel533.echarts.series.Line;
 import com.github.abel533.echarts.series.Pie;
+import com.github.abel533.echarts.series.Series;
+import com.github.abel533.echarts.series.gauge.Detail;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.delegates.MainDelegate;
+import com.xuexiang.xui.widget.tabbar.TabControlView;
 
 import butterknife.BindView;
 
@@ -48,6 +41,9 @@ public class EChartsAndroidDelegate extends BaseWebViewDelegate {
 
 
     public static EChartsAndroidDelegate newInstance() {
+
+
+
         Bundle args = new Bundle();
         EChartsAndroidDelegate fragment = new EChartsAndroidDelegate();
         fragment.setArguments(args);
@@ -55,6 +51,7 @@ public class EChartsAndroidDelegate extends BaseWebViewDelegate {
     }
 
     protected void initViews() {
+
         //目前Echarts-Java只支持3.x
         mAgentWeb = WebViewCreater.createAgentWeb(this, flContainer, "file:///android_asset/chart/src/template.html");
 
@@ -66,6 +63,7 @@ public class EChartsAndroidDelegate extends BaseWebViewDelegate {
     private void initPieChart() {
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart", mChartInterface.makePieChartOptions());
     }
+
     private void initBarChart() {
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart2", mChartInterface.makeBarChartOptions());
     }
@@ -73,7 +71,6 @@ public class EChartsAndroidDelegate extends BaseWebViewDelegate {
     private void initLineChart() {
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart3", mChartInterface.makeLineChartOptions());
     }
-
 
 
     @Override
@@ -124,6 +121,7 @@ public class EChartsAndroidDelegate extends BaseWebViewDelegate {
             return option.toString();
         }
 
+
         @JavascriptInterface
         public String makeLineChartOptions() {
             GsonOption option = new GsonOption();
@@ -149,6 +147,18 @@ public class EChartsAndroidDelegate extends BaseWebViewDelegate {
             return option.toString();
         }
 
+        @JavascriptInterface
+        public String makeGaugeChartOptions() {
+            GsonOption option = new GsonOption();
+            option.setTitle(new Title().text("仪表盘"));
+            option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
+            Gauge gauge = new Gauge();
+            gauge.name("业务指标");
+            gauge.detail(new Detail().formatter("{value}%"));
+            gauge.data(new Data().setValue(50).setName("完成率"));
+            option.series(gauge);
+            return option.toString();
+        }
 
     }
 
