@@ -10,9 +10,7 @@ import androidx.annotation.Nullable;
 
 import com.jake.huntkey.core.R;
 
-public class MainDelegate extends CheckPermissionDelegate {
-
-
+public class MainDelegate extends MainBackPressDelegate  {
 
     public static MainDelegate newInstance() {
         Bundle args = new Bundle();
@@ -45,5 +43,10 @@ public class MainDelegate extends CheckPermissionDelegate {
     @Override
     public void onLazyInitView(@Nullable Bundle savedInstanceState) {
         super.onLazyInitView(savedInstanceState);
+    }
+
+    @Override
+    public boolean onBackPressedSupport() {
+        return super.onBackPressedSupport();
     }
 }

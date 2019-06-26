@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import me.yokeyword.fragmentation.SupportFragment;
 
 public class HomePageDelegate extends CheckPermissionDelegate implements BaseQuickAdapter.OnItemClickListener {
 
@@ -67,10 +68,9 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                ToastUtils.showShort(mHomePageRecyclerViewAdapter.getData().get(position).text);
         IconTextView iconTextView = view.findViewById(R.id.item_icon);
         TextView textView = view.findViewById(R.id.item_name);
-        getSupportDelegate().start(DebugPagerFragment.newInstance(position+""));
+        ((SupportFragment)getParentFragment()).start(DebugPagerFragment.newInstance(position+""));
 
     }
 }
