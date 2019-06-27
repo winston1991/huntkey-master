@@ -22,6 +22,7 @@ import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.widget.FrameLayout;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.github.abel533.echarts.Legend;
 import com.github.abel533.echarts.Title;
 import com.github.abel533.echarts.axis.CategoryAxis;
@@ -66,6 +67,7 @@ public class EChartsAndroidDelegate extends BaseWebViewDelegate {
     private void initPieChart() {
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart", mChartInterface.makePieChartOptions());
     }
+
     private void initBarChart() {
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart2", mChartInterface.makeBarChartOptions());
     }
@@ -73,7 +75,6 @@ public class EChartsAndroidDelegate extends BaseWebViewDelegate {
     private void initLineChart() {
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart3", mChartInterface.makeLineChartOptions());
     }
-
 
 
     @Override
@@ -116,12 +117,39 @@ public class EChartsAndroidDelegate extends BaseWebViewDelegate {
             option.setLegend(new Legend().data("销量"));
             option.xAxis(new CategoryAxis().data("衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"));
             option.yAxis();
-
             Bar bar = new Bar("销量");
             bar.data(5, 20, 36, 10, 10, 20);
             option.series(bar);
-
+            ToastUtils.showShort(option.toString());
             return option.toString();
+        }
+
+        @JavascriptInterface
+        public String makeGaugeChartOptions() {
+
+            String options = "{\n" +
+                    "    tooltip : {\n" +
+                    "        formatter: \"{a} <br/>{b} : {c}%\"\n" +
+                    "    },\n" +
+                    "    toolbox: {\n" +
+                    "        show : true,\n" +
+                    "        feature : {\n" +
+                    "            mark : {show: true},\n" +
+                    "            restore : {show: true},\n" +
+                    "            saveAsImage : {show: true}\n" +
+                    "        }\n" +
+                    "    },\n" +
+                    "    series : [\n" +
+                    "        {\n" +
+                    "            name:'业务指标',\n" +
+                    "            type:'gauge',\n" +
+                    "            detail : {formatter:'{value}%'},\n" +
+                    "            data:[{value: 50, name: '完成率'}]\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}";
+//            ToastUtils.showShort(options);
+            return options;
         }
 
         @JavascriptInterface
