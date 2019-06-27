@@ -1,4 +1,4 @@
-package com.jake.huntkey.core.delegates;
+package com.jake.huntkey.core.delegates.basedelegate;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -24,6 +24,8 @@ public abstract class BaseDelegate extends SupportFragment {
     private Unbinder mUnbinder = null;
 
     public abstract Object setLayout();
+
+
 
     @Nullable
     @Override
@@ -54,6 +56,7 @@ public abstract class BaseDelegate extends SupportFragment {
     public final BaseActivity getBaseActivity() {
         return (BaseActivity) _mActivity;
     }
+
 
     @Override
     public void onDestroyView() {

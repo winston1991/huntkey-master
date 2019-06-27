@@ -4,4 +4,8 @@
     <color name="tab_selected">#D81B60</color>
     <color name="home_item_no_selected">#99f299</color>
     <color name="home_item_selected">#6600ff</color>
+    <color name="colorPrimary">#6600ff</color>
+    <color name="colorPrimaryDark">#6600ff</color>
+    <color name="colorAccent">#D81B60</color>
+
 </resources>

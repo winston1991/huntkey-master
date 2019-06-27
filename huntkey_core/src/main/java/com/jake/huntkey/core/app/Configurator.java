@@ -1,12 +1,16 @@
 package com.jake.huntkey.core.app;
 
 import android.app.Activity;
+import android.app.Application;
 import android.os.Handler;
+
 import com.blankj.utilcode.util.Utils;
 import com.joanzapata.iconify.IconFontDescriptor;
 import com.joanzapata.iconify.Iconify;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
+import com.xuexiang.xui.XUI;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -44,6 +48,7 @@ public final class Configurator {
         LATTE_CONFIGS.put(ConfigKeys.CONFIG_READY, true);
         //初始化Android通用工具集合
         Utils.init(HkEngine.getApplicationContext());
+        XUI.init((Application) HkEngine.getApplicationContext());
     }
 
     public final Configurator withApiHost(String host) {

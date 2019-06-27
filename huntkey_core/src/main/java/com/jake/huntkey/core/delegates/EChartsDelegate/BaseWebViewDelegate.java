@@ -17,15 +17,12 @@
 
 package com.jake.huntkey.core.delegates.EChartsDelegate;
 
-import android.view.KeyEvent;
-
-import com.jake.huntkey.core.delegates.BaseDelegate;
+import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
+import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
 import com.just.agentweb.core.AgentWeb;
 
-import me.yokeyword.fragmentation.SupportFragment;
 
-
-public abstract class BaseWebViewDelegate extends BaseDelegate {
+public abstract class BaseWebViewDelegate extends CheckPermissionDelegate {
 
     protected AgentWeb mAgentWeb;
 
@@ -46,7 +43,6 @@ public abstract class BaseWebViewDelegate extends BaseDelegate {
 //    public boolean onKeyDown(int keyCode, KeyEvent event) {
 //        return mAgentWeb.handleKeyEvent(keyCode, event);
 //    }
-
 
 
     @Override

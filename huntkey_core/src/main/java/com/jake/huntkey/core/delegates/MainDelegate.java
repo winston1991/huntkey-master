@@ -6,13 +6,12 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.jake.huntkey.core.R;
+import com.jake.huntkey.core.delegates.basedelegate.MainBackPressDelegate;
 
-public class MainDelegate extends MainBackPressDelegate  {
+public class MainDelegate extends MainBackPressDelegate {
 
     public static MainDelegate newInstance() {
-        Bundle args = new Bundle();
         MainDelegate fragment = new MainDelegate();
-        fragment.setArguments(args);
         return fragment;
     }
 

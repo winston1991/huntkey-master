@@ -3,20 +3,17 @@ package com.jake.huntkey.core.delegates.EChartsDelegate;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.JavascriptInterface;
-import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.abel533.echarts.Legend;
 import com.github.abel533.echarts.Title;
-import com.github.abel533.echarts.Toolbox;
 import com.github.abel533.echarts.Tooltip;
 import com.github.abel533.echarts.axis.CategoryAxis;
 import com.github.abel533.echarts.axis.ValueAxis;
 import com.github.abel533.echarts.code.Trigger;
 import com.github.abel533.echarts.data.Data;
 import com.github.abel533.echarts.data.PieData;
-
 import com.github.abel533.echarts.json.GsonOption;
 import com.github.abel533.echarts.series.Bar;
 import com.github.abel533.echarts.series.Gauge;
@@ -26,102 +23,66 @@ import com.github.abel533.echarts.series.gauge.Detail;
 import com.google.android.material.tabs.TabLayout;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
-import com.jake.huntkey.core.delegates.DebugPagerFragment;
-import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
-
 
 import butterknife.BindView;
-import me.yokeyword.fragmentation.SupportFragment;
 
-public class EChartsAndroidDelegate extends BaseBackDelegate {
-    public static final int FIRST = 0;
-    public static final int SECOND = 1;
-    public static final int THIRD = 2;
-    public static final int FOURTH = 3;
-
-    private SupportFragment[] mFragments = new SupportFragment[4];
-
+public class EChartZhiTongLvDelegate extends BaseWebViewDelegate {
 
     private static final String ARG_TITLE = "arg_type";
     @BindView(R2.id.fl_container)
     public FrameLayout flContainer;
-    @BindView(R2.id.id_tablayout)
-    TabLayout tabLayout;
+
 
     private ChartInterface mChartInterface;
 
-    private int mCurrentFragmentPostion;
 
-    public static EChartsAndroidDelegate newInstance(String title) {
+    public static EChartZhiTongLvDelegate newInstance(String title) {
 
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
-        EChartsAndroidDelegate fragment = new EChartsAndroidDelegate();
+        EChartZhiTongLvDelegate fragment = new EChartZhiTongLvDelegate();
         fragment.setArguments(args);
         return fragment;
     }
 
     protected void initViews(View rootview) {
 
-        super.initView(rootview);
+        //super.initView(rootview);
+        //目前Echarts-Java只支持3.x
+        mAgentWeb = WebViewCreater.createAgentWeb(this, flContainer, "file:///android_asset/chart/src/template.html");
+
+        //注入接口,供JS调用
+        mAgentWeb.getJsInterfaceHolder().addJavaObject("Android", mChartInterface = new ChartInterface());
+
         Bundle bundle = getArguments();
         if (bundle != null) {
             String mTitle = bundle.getString(ARG_TITLE);
-            super.mToolbar.setTitle(mTitle);
-        }
-        SupportFragment firstFragment = findFragment(EChartZhiTongLvDelegate.class);
-        mCurrentFragmentPostion = FIRST;
-        if (firstFragment == null) {
-            mFragments[FIRST] = EChartZhiTongLvDelegate.newInstance("");
-            mFragments[SECOND] = DebugPagerFragment.newInstance("1");
-            mFragments[THIRD] = DebugPagerFragment.newInstance("2");
-            mFragments[FOURTH] = DebugPagerFragment.newInstance("3");
-            loadMultipleRootFragment(R.id.fl_container, FIRST,
-                    mFragments[FIRST],
-                    mFragments[SECOND],
-                    mFragments[THIRD],
-                    mFragments[FOURTH]);
-        } else {
-            // 这里库已经做了Fragment恢复,所有不需要额外的处理了, 不会出现重叠问题这里我们需要拿到mFragments的引用
-            mFragments[FIRST] = firstFragment;
-            mFragments[SECOND] = findFragment(DebugPagerFragment.class);
-            mFragments[THIRD] = findFragment(DebugPagerFragment.class);
-            mFragments[FOURTH] = findFragment(DebugPagerFragment.class);
+            //super.mToolbar.setTitle(mTitle);
         }
     }
 
+    private void initPieChart() {
+        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart", mChartInterface.makePieChartOptions());
+    }
+
+    private void initBarChart() {
+        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart2", mChartInterface.makeBarChartOptions());
+    }
+
+    private void initLineChart() {
+        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart3", mChartInterface.makeLineChartOptions());
+    }
+
+
     @Override
     public Object setLayout() {
-        return R.layout.echarts_delegate_layout;
+        return R.layout.echarts_zhitonglv_delegate_layout;
     }
 
 
     @Override
     protected void onBindView(Bundle savedInstanceState, View rootView) {
         initViews(rootView);
-        tabLayout.addTab(tabLayout.newTab().setText("直通率"));
-        tabLayout.addTab(tabLayout.newTab().setText("达成率"));
-        tabLayout.addTab(tabLayout.newTab().setText("嫁动率"));
-        tabLayout.addTab(tabLayout.newTab().setText("出勤率"));
-        tabLayout.addTab(tabLayout.newTab().setText("WIP统计"));
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-                if (tab.getPosition() != mCurrentFragmentPostion) {
-                    showHideFragment(mFragments[tab.getPosition()], mFragments[mCurrentFragmentPostion]);
-                    mCurrentFragmentPostion = tab.getPosition();
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
     }
 
 

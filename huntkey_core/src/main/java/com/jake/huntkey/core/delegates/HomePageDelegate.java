@@ -3,19 +3,18 @@ package com.jake.huntkey.core.delegates;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.ToastUtils;
-import com.blankj.utilcode.util.Utils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.adapter.HomePageRecyclerViewAdapter;
 import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.delegates.EChartsDelegate.EChartsAndroidDelegate;
+import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
 import com.jake.huntkey.core.entity.HomePageEntity;
 import com.jake.huntkey.core.ui.GridDividerItemDecoration;
 import com.joanzapata.iconify.widget.IconTextView;
@@ -47,11 +46,18 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
 
     @Override
     protected void onBindView(Bundle savedInstanceState, View rootView) {
+        initToobar(rootView);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
-        mRecyclerView.addItemDecoration(new GridDividerItemDecoration(getContext(), 3,3,true));
+        mRecyclerView.addItemDecoration(new GridDividerItemDecoration(getContext(), 3, 3, true));
         mHomePageRecyclerViewAdapter = new HomePageRecyclerViewAdapter(R.layout.homepage_delegate_recycler_item_layout, initEntityList());
         mHomePageRecyclerViewAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mHomePageRecyclerViewAdapter);
+    }
+
+    private void initToobar(View rootView) {
+        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        toolbar.setTitle("HuntkeyIntell");
+
     }
 
     private List<HomePageEntity> initEntityList() {
@@ -72,11 +78,9 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
         IconTextView iconTextView = view.findViewById(R.id.item_icon);
         TextView textView = view.findViewById(R.id.item_name);
         if (position == 0) {
-            ((SupportFragment)getParentFragment()).start(EChartsAndroidDelegate.newInstance());
-
-        }else
-        {
-            ((SupportFragment)getParentFragment()).start(DebugPagerFragment.newInstance(position+""));
+            ((SupportFragment) getParentFragment()).start(EChartsAndroidDelegate.newInstance("图表"));
+        } else {
+            ((SupportFragment) getParentFragment()).start(DebugPagerFragment.newInstance(position + ""));
 
         }
 

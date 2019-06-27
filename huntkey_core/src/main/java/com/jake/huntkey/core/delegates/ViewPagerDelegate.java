@@ -12,6 +12,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.adapter.ViewPagerFragmentAdapter;
+import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
 
 import butterknife.BindView;
 
@@ -23,9 +24,7 @@ public class ViewPagerDelegate extends CheckPermissionDelegate {
     BottomNavigationView navigation;
 
     public static ViewPagerDelegate newInstance() {
-        Bundle args = new Bundle();
         ViewPagerDelegate fragment = new ViewPagerDelegate();
-        fragment.setArguments(args);
         return fragment;
     }
 

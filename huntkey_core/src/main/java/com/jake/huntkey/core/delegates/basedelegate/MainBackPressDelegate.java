@@ -1,10 +1,10 @@
-package com.jake.huntkey.core.delegates;
+package com.jake.huntkey.core.delegates.basedelegate;
 
 import android.content.Context;
 
-import androidx.core.app.ActivityCompat;
-
 import com.blankj.utilcode.util.ToastUtils;
+import com.jake.huntkey.core.delegates.MainDelegate;
+import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
 
 public abstract class MainBackPressDelegate extends CheckPermissionDelegate {
     protected OnBackToFirstListener _mBackToFirstListener;
@@ -46,7 +46,6 @@ public abstract class MainBackPressDelegate extends CheckPermissionDelegate {
                     TOUCH_TIME = System.currentTimeMillis();
                     ToastUtils.showShort("请双击退出应用");
                 }
-
             } else {                                    // 如果不是,则回到第一个Fragment
                 _mBackToFirstListener.onBackToFirstFragment();
             }
