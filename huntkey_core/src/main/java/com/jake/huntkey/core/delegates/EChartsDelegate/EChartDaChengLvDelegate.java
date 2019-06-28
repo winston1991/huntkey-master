@@ -1,16 +1,10 @@
 package com.jake.huntkey.core.delegates.EChartsDelegate;
 
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.JavascriptInterface;
-import android.webkit.ValueCallback;
 import android.widget.Button;
 import android.widget.FrameLayout;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.abel533.echarts.Legend;
@@ -27,25 +21,26 @@ import com.github.abel533.echarts.series.Gauge;
 import com.github.abel533.echarts.series.Line;
 import com.github.abel533.echarts.series.Pie;
 import com.github.abel533.echarts.series.gauge.Detail;
-import com.google.android.material.tabs.TabLayout;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
+import com.just.agentweb.core.AgentWeb;
 
 import butterknife.BindView;
 
-public class EChartZhiTongLvDelegate extends BaseWebViewDelegate implements WebViewCreater.OnPageLoadFinishedListener {
+public class EChartDaChengLvDelegate extends BaseWebViewDelegate implements WebViewCreater.OnPageLoadFinishedListener {
 
     private static final String ARG_TITLE = "arg_type";
     @BindView(R2.id.fl_container)
     public FrameLayout flContainer;
+    @BindView(R2.id.id_button)
+    public Button button;
     private ChartInterface mChartInterface;
 
-
-    public static EChartZhiTongLvDelegate newInstance(String title) {
+    public static EChartDaChengLvDelegate newInstance(String title) {
 
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
-        EChartZhiTongLvDelegate fragment = new EChartZhiTongLvDelegate();
+        EChartDaChengLvDelegate fragment = new EChartDaChengLvDelegate();
         fragment.setArguments(args);
         return fragment;
     }
@@ -53,15 +48,31 @@ public class EChartZhiTongLvDelegate extends BaseWebViewDelegate implements WebV
     protected void initViews(View rootview) {
 
         mAgentWeb = new WebViewCreater(this).createAgentWeb(this, flContainer);
-        //注入接口,供JS调用
+//        //注入接口,供JS调用
+
         mAgentWeb.getJsInterfaceHolder().addJavaObject("Android", mChartInterface = new ChartInterface());
+
         Bundle bundle = getArguments();
         if (bundle != null) {
             String mTitle = bundle.getString(ARG_TITLE);
             //super.mToolbar.setTitle(mTitle);
         }
 
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initBarChart();
+                initGaugeChart();
+                initLineChart();
+                initPieChart();
+            }
+        });
+
+
+
     }
+
+
 
     private void initPieChart() {
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart", mChartInterface.makePieChartOptions());
@@ -81,14 +92,9 @@ public class EChartZhiTongLvDelegate extends BaseWebViewDelegate implements WebV
 
     @Override
     public Object setLayout() {
-        return R.layout.echarts_zhitonglv_delegate_layout;
+        return R.layout.echarts_dachenglv_delegate_layout;
     }
 
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
 
     @Override
     protected void onBindView(Bundle savedInstanceState, View rootView) {
@@ -112,14 +118,14 @@ public class EChartZhiTongLvDelegate extends BaseWebViewDelegate implements WebV
         public String makePieChartOptions() {
             GsonOption option = new GsonOption();
             option.tooltip().trigger(Trigger.item).formatter("{a} <br/>{b} : {c} ({d}%)");
-            option.legend().data("直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎");
+            option.legend().data("直接", "邮件", "联盟", "视频", "搜索");
 
             Pie pie = new Pie("访问来源").data(
-                    new PieData("直接访问", 335),
-                    new PieData("邮件营销", 310),
-                    new PieData("联盟广告", 274),
-                    new PieData("视频广告", 235),
-                    new PieData("搜索引擎", 400)
+                    new PieData("直接", 335),
+                    new PieData("邮件", 310),
+                    new PieData("联盟", 274),
+                    new PieData("视频", 235),
+                    new PieData("搜索", 400)
             ).center("50%", "45%").radius("50%");
             pie.label().normal().show(true).formatter("{b}{c}({d}%)");
             option.series(pie);

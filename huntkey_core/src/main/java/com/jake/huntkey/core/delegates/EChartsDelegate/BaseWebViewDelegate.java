@@ -17,9 +17,11 @@
 
 package com.jake.huntkey.core.delegates.EChartsDelegate;
 
+import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
 import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
 import com.just.agentweb.core.AgentWeb;
+
 
 
 public abstract class BaseWebViewDelegate extends CheckPermissionDelegate {
@@ -49,5 +51,9 @@ public abstract class BaseWebViewDelegate extends CheckPermissionDelegate {
     public void onDestroyView() {
         mAgentWeb.destroy();
         super.onDestroyView();
+    }
+
+    public void ClearWebCache() {
+        mAgentWeb.clearWebCache();
     }
 }

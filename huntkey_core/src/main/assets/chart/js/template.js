@@ -1,6 +1,7 @@
 function loadChartView(id, option) {
     var myChart = echarts.init(document.getElementById(id));
     myChart.setOption(option);
+  return "ok";
 }
 
 function initChart() {
