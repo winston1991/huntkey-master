@@ -4,17 +4,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.webkit.JavascriptInterface;
-import android.widget.Button;
 import android.widget.FrameLayout;
 
-import com.bin.david.form.core.SmartTable;
-import com.blankj.utilcode.util.ToastUtils;
+import com.github.abel533.echarts.DataZoom;
 import com.github.abel533.echarts.Legend;
 import com.github.abel533.echarts.Title;
 import com.github.abel533.echarts.Tooltip;
+import com.github.abel533.echarts.axis.AxisLabel;
 import com.github.abel533.echarts.axis.CategoryAxis;
 import com.github.abel533.echarts.axis.ValueAxis;
 import com.github.abel533.echarts.code.AxisType;
+import com.github.abel533.echarts.code.DataZoomType;
 import com.github.abel533.echarts.code.Trigger;
 import com.github.abel533.echarts.data.Data;
 import com.github.abel533.echarts.data.PieData;
@@ -26,28 +26,22 @@ import com.github.abel533.echarts.series.Pie;
 import com.github.abel533.echarts.series.gauge.Detail;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
-import com.jake.huntkey.core.entity.WIPEntity;
-import com.just.agentweb.core.AgentWeb;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 
-public class EChartDaChengLvDelegate extends BaseWebViewDelegate implements WebViewCreater.OnPageLoadFinishedListener {
+public class EChartSheBieJiaDongLvDelegate extends BaseWebViewDelegate implements WebViewCreater.OnPageLoadFinishedListener {
 
     private static final String ARG_TITLE = "arg_type";
     @BindView(R2.id.fl_container)
     public FrameLayout flContainer;
 
-    @BindView(R2.id.id_smart_table)
-    SmartTable<WIPEntity> smartTable;
     private ChartInterface mChartInterface;
 
-    public static EChartDaChengLvDelegate newInstance(String title) {
+    public static EChartSheBieJiaDongLvDelegate newInstance(String title) {
 
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
-        EChartDaChengLvDelegate fragment = new EChartDaChengLvDelegate();
+        EChartSheBieJiaDongLvDelegate fragment = new EChartSheBieJiaDongLvDelegate();
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,11 +58,7 @@ public class EChartDaChengLvDelegate extends BaseWebViewDelegate implements WebV
             String mTitle = bundle.getString(ARG_TITLE);
             //super.mToolbar.setTitle(mTitle);
         }
-        smartTable.getConfig().setFixedTitle(true);
-        smartTable.getConfig().setFixedCountRow(true);
-        smartTable.getConfig().setShowXSequence(false);
-        smartTable.getConfig().setShowYSequence(false);
-        smartTable.setData(getData());
+
         rootview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -83,7 +73,7 @@ public class EChartDaChengLvDelegate extends BaseWebViewDelegate implements WebV
 
 
     private void initPieChart() {
-        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1",  mChartInterface.makeGaugeChartOptions());
+        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.makeGaugeChartOptions());
     }
 
     private void initBarChart() {
@@ -95,12 +85,12 @@ public class EChartDaChengLvDelegate extends BaseWebViewDelegate implements WebV
     }
 
     private void initGaugeChart() {
-        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart4",mChartInterface.makePieChartOptions());
+        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart4", mChartInterface.makePieChartOptions());
     }
 
     @Override
     public Object setLayout() {
-        return R.layout.echarts_dachenglv_delegate_layout;
+        return R.layout.echarts_shebiejiadong_delegate_layout;
     }
 
 
@@ -139,12 +129,22 @@ public class EChartDaChengLvDelegate extends BaseWebViewDelegate implements WebV
         @JavascriptInterface
         public String makeBarChartOptions() {
             GsonOption option = new GsonOption();
+            option.setTitle(new Title().text("柱状图"));
             option.setLegend(new Legend().data("销量"));
-            option.xAxis(new CategoryAxis().data("衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"));
+            option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}"));
+            AxisLabel axisLabel = new AxisLabel();
+            axisLabel.setInterval(0);
+            axisLabel.setRotate(45);
+            option.xAxis(new CategoryAxis().data("产品外观检查", "包装扫描", "工单投入入", "插件AOI测试", "共模测试", "超声波", "条码转换", "条码绑定", "功能终测", "条码替换", "AOI测试", "高压测试", "镭雕外观检测", "功能初测", "预功能测试").axisLabel(axisLabel));
             CategoryAxis categoryAxis = new CategoryAxis();
             option.yAxis(categoryAxis.type(AxisType.value));
+            DataZoom dataZoom = new DataZoom();
+            dataZoom.setType(DataZoomType.slider);
+            dataZoom.setStart(0);
+            dataZoom.setEnd(100);
+            option.dataZoom(dataZoom);
             Bar bar = new Bar("销量");
-            bar.data(5, 20, 36, 10, 10, 20);
+            bar.data(5, 20, 36, 10, 10, 20,5, 20, 36, 10, 10, 20,2,8,10);
             option.series(bar);
             return option.toString();
         }
@@ -178,33 +178,16 @@ public class EChartDaChengLvDelegate extends BaseWebViewDelegate implements WebV
         @JavascriptInterface
         public String makeGaugeChartOptions() {
             GsonOption option = new GsonOption();
+            option.setTitle(new Title().text("仪表盘"));
             option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
             Gauge gauge = new Gauge();
             gauge.name("业务指标");
             gauge.detail(new Detail().formatter("{value}%"));
-            gauge.data(new Data().setValue(89).setName("完成率"));
+            gauge.data(new Data().setValue(90).setName("完成率"));
             option.series(gauge);
             return option.toString();
         }
 
     }
 
-
-    private ArrayList<WIPEntity> getData() {
-        ArrayList datas = new ArrayList<WIPEntity>();
-        WIPEntity wipEntity;
-        for (int i = 0; i < 120; i++) {
-            wipEntity = new WIPEntity();
-            wipEntity.setId(i++ + "");
-            wipEntity.setMakeFlowNumber("WBJ33444" + i);
-            wipEntity.setnGInfo("NGInfo");
-            wipEntity.setQuantity(i + 100 + "");
-            wipEntity.setSamplingNumber("QE2-541549856" + i);
-            wipEntity.setSamplingResult("Pass");
-
-            datas.add(wipEntity);
-        }
-
-        return datas;
-    }
 }

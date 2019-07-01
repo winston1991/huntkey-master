@@ -10,6 +10,8 @@ import com.jake.huntkey.core.delegates.basedelegate.MainBackPressDelegate;
 
 public class MainDelegate extends MainBackPressDelegate {
 
+    public  ViewPagerDelegate viewPagerDelegate;
+
     public static MainDelegate newInstance() {
         MainDelegate fragment = new MainDelegate();
         return fragment;
@@ -19,7 +21,6 @@ public class MainDelegate extends MainBackPressDelegate {
     public Object setLayout() {
         return R.layout.main_delegate_layout;
     }
-
 
 
     @Override
@@ -32,7 +33,8 @@ public class MainDelegate extends MainBackPressDelegate {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (findChildFragment(ViewPagerDelegate.class) == null) {
-            loadRootFragment(R.id.fl_container, ViewPagerDelegate.newInstance());
+            viewPagerDelegate = ViewPagerDelegate.newInstance();
+            loadRootFragment(R.id.fl_container, viewPagerDelegate);
         }
     }
 

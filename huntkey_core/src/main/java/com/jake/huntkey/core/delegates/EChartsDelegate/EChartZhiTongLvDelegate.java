@@ -13,11 +13,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.github.abel533.echarts.DataZoom;
 import com.github.abel533.echarts.Legend;
 import com.github.abel533.echarts.Title;
 import com.github.abel533.echarts.Tooltip;
+import com.github.abel533.echarts.axis.AxisLabel;
 import com.github.abel533.echarts.axis.CategoryAxis;
 import com.github.abel533.echarts.axis.ValueAxis;
+import com.github.abel533.echarts.code.AxisType;
+import com.github.abel533.echarts.code.DataZoomType;
+import com.github.abel533.echarts.code.Position;
 import com.github.abel533.echarts.code.Trigger;
 import com.github.abel533.echarts.data.Data;
 import com.github.abel533.echarts.data.PieData;
@@ -30,6 +35,9 @@ import com.github.abel533.echarts.series.gauge.Detail;
 import com.google.android.material.tabs.TabLayout;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
+import com.jake.huntkey.core.delegates.EChartsDelegate.FormatEchartsDataUtil.GetChartsOptionString;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 
@@ -64,19 +72,19 @@ public class EChartZhiTongLvDelegate extends BaseWebViewDelegate implements WebV
     }
 
     private void initPieChart() {
-        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart", mChartInterface.makePieChartOptions());
+        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.makeGaugeChartOptions());
     }
 
     private void initBarChart() {
-        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart2", mChartInterface.makeBarChartOptions());
+        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart2", mChartInterface.makeNearlySevendayBarChartOptions());
     }
 
     private void initLineChart() {
-        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart3", mChartInterface.makeLineChartOptions());
+        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart3", mChartInterface.makeTopsFiveBarChartOptions());
     }
 
     private void initGaugeChart() {
-        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart4", mChartInterface.makeGaugeChartOptions());
+        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart4", mChartInterface.makeLossRateBarChartOptions());
     }
 
     @Override
@@ -109,74 +117,73 @@ public class EChartZhiTongLvDelegate extends BaseWebViewDelegate implements WebV
      */
     public class ChartInterface {
         @JavascriptInterface
-        public String makePieChartOptions() {
+        public String makeLossRateBarChartOptions() {
             GsonOption option = new GsonOption();
-            option.tooltip().trigger(Trigger.item).formatter("{a} <br/>{b} : {c} ({d}%)");
-            option.legend().data("直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎");
-
-            Pie pie = new Pie("访问来源").data(
-                    new PieData("直接访问", 335),
-                    new PieData("邮件营销", 310),
-                    new PieData("联盟广告", 274),
-                    new PieData("视频广告", 235),
-                    new PieData("搜索引擎", 400)
-            ).center("50%", "45%").radius("50%");
-            pie.label().normal().show(true).formatter("{b}{c}({d}%)");
-            option.series(pie);
+            option.setLegend(new Legend().data("损失率Top5"));
+            option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
+            AxisLabel axisLabel = new AxisLabel();
+            axisLabel.setInterval(0);
+            axisLabel.setRotate(45);
+            option.xAxis(new CategoryAxis().data("AOI测试", "功能测试", "条码绑定", "镭雕外观检测", "功能终测").axisLabel(axisLabel));
+            CategoryAxis categoryAxis = new CategoryAxis();
+            option.yAxis(categoryAxis.type(AxisType.value));
+            Bar bar = new Bar("损失率Top5");
+            bar.data(8.9, 9.9, 9.6, 9.52, 9.12).itemStyle().normal().color("#0033ff");
+            bar.label().normal().show(true).position(Position.inside);
+            option.series(bar);
             return option.toString();
         }
 
         @JavascriptInterface
-        public String makeBarChartOptions() {
+        public String makeNearlySevendayBarChartOptions() {
             GsonOption option = new GsonOption();
-            option.setTitle(new Title().text("柱状图"));
-            option.setLegend(new Legend().data("销量"));
-            option.xAxis(new CategoryAxis().data("衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"));
-            option.yAxis();
-            Bar bar = new Bar("销量");
-            bar.data(5, 20, 36, 10, 10, 20);
+            option.setLegend(new Legend().data("近7天直通率"));
+            option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
+            AxisLabel axisLabel = new AxisLabel();
+            axisLabel.setInterval(0);
+            axisLabel.setRotate(45);
+            option.xAxis(new CategoryAxis().data("06月23", "06月24", "06月25", "06月26", "06月27", "06月28", "06月30").axisLabel(axisLabel));
+            CategoryAxis categoryAxis = new CategoryAxis();
+            option.yAxis(categoryAxis.type(AxisType.value));
+            Bar bar = new Bar("近7天直通率");
+            bar.data(89, 99, 96, 95, 91, 85, 87);
+            bar.label().normal().show(true).position(Position.inside);
             option.series(bar);
             return option.toString();
         }
 
 
         @JavascriptInterface
-        public String makeLineChartOptions() {
+        public String makeTopsFiveBarChartOptions() {
             GsonOption option = new GsonOption();
-            option.legend("高度(km)与气温(°C)变化关系");
-            option.toolbox().show(false);
-            option.calculable(true);
-            option.tooltip().trigger(Trigger.axis).formatter("Temperature : <br/>{b}km : {c}°C");
-
-            ValueAxis valueAxis = new ValueAxis();
-            valueAxis.axisLabel().formatter("{value} °C");
-            option.xAxis(valueAxis);
-
+            option.setLegend(new Legend().data("直通率Tops5"));
+            option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
+            AxisLabel axisLabel = new AxisLabel();
+            axisLabel.setInterval(0);
+            axisLabel.setRotate(45);
+            option.xAxis(new CategoryAxis().data("镭雕外观检测", "共模测试", "预功能测试", "高压测试", "功能测试").axisLabel(axisLabel));
             CategoryAxis categoryAxis = new CategoryAxis();
-            categoryAxis.axisLine().onZero(false);
-            categoryAxis.axisLabel().formatter("{value} km");
-            categoryAxis.boundaryGap(false);
-            categoryAxis.data(0, 10, 20, 30, 40, 50, 60, 70, 80);
-            option.yAxis(categoryAxis);
-
-            Line line = new Line();
-            line.smooth(true).name("高度(km)与气温(°C)变化关系").data(15, -50, -56.5, -46.5, -22.1, -2.5, -27.7, -55.7, -76.5).itemStyle().normal().lineStyle().shadowColor("rgba(0,0,0,0.4)");
-            option.series(line);
+            option.yAxis(categoryAxis.type(AxisType.value));
+            Bar bar = new Bar("直通率Tops5");
+            bar.data(89, 96, 95, 91, 85).itemStyle().normal().color("#00ff00");
+            bar.label().normal().show(true).position(Position.inside);
+            option.series(bar);
             return option.toString();
         }
 
+        //直通率仪表盘
         @JavascriptInterface
         public String makeGaugeChartOptions() {
             GsonOption option = new GsonOption();
-            option.setTitle(new Title().text("仪表盘"));
             option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
             Gauge gauge = new Gauge();
-            gauge.name("业务指标");
+            gauge.name("直通率");
             gauge.detail(new Detail().formatter("{value}%"));
-            gauge.data(new Data().setValue(50).setName("完成率"));
+            gauge.data(new Data().setValue(99).setName("直通率"));
             option.series(gauge);
             return option.toString();
         }
+
 
     }
 

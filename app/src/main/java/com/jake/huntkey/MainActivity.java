@@ -14,20 +14,20 @@ import me.yokeyword.fragmentation.SupportFragment;
 
 public class MainActivity extends BaseActivity implements MainBackPressDelegate.OnBackToFirstListener {
 
+    MainDelegate mainDelegate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity_layout);
 
-        SupportFragment mainDelegate = findFragment(MainDelegate.class);
+        mainDelegate = findFragment(MainDelegate.class);
         if (mainDelegate == null) {
             mainDelegate = MainDelegate.newInstance();
         }
         loadRootFragment(R.id.fl_container, mainDelegate);
 
     }
-
-
 
 
     @Override
@@ -42,5 +42,6 @@ public class MainActivity extends BaseActivity implements MainBackPressDelegate.
     @Override
     public void onBackToFirstFragment() {
 
+        mainDelegate.viewPagerDelegate.goToFirstPage();
     }
 }

@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
@@ -56,9 +55,9 @@ public class EChartsAndroidDelegate extends BaseBackDelegate {
         if (firstFragment == null) {
             mFragments[FIRST] = EChartZhiTongLvDelegate.newInstance("");
             mFragments[SECOND] = EChartDaChengLvDelegate.newInstance("");
-            mFragments[THIRD] = DebugPagerFragment.newInstance("2");
-            mFragments[FOURTH] = DebugPagerFragment.newInstance("3");
-            mFragments[FIVE] = DebugPagerFragment.newInstance("4");
+            mFragments[THIRD] = EChartSheBieJiaDongLvDelegate.newInstance("");
+            mFragments[FOURTH] = EChartChuQinLvDelegate.newInstance("");
+            mFragments[FIVE] = EChart_WIP_Tj_Delegate.newInstance("");
 
             loadMultipleRootFragment(R.id.fl_container, FIRST,
                     mFragments[FIRST],
@@ -69,9 +68,9 @@ public class EChartsAndroidDelegate extends BaseBackDelegate {
             // 这里库已经做了Fragment恢复,所有不需要额外的处理了, 不会出现重叠问题这里我们需要拿到mFragments的引用
             mFragments[FIRST] = firstFragment;
             mFragments[SECOND] = findFragment(EChartDaChengLvDelegate.class);
-            mFragments[THIRD] = findFragment(DebugPagerFragment.class);
-            mFragments[FOURTH] = findFragment(DebugPagerFragment.class);
-            mFragments[FIVE] = findFragment(DebugPagerFragment.class);
+            mFragments[THIRD] = findFragment(EChartSheBieJiaDongLvDelegate.class);
+            mFragments[FOURTH] = findFragment(EChartChuQinLvDelegate.class);
+            mFragments[FIVE] = findFragment(EChart_WIP_Tj_Delegate.class);
         }
     }
 
@@ -86,7 +85,7 @@ public class EChartsAndroidDelegate extends BaseBackDelegate {
         initViews(rootView);
         tabLayout.addTab(tabLayout.newTab().setText("直通率"));
         tabLayout.addTab(tabLayout.newTab().setText("达成率"));
-        tabLayout.addTab(tabLayout.newTab().setText("嫁动率"));
+        tabLayout.addTab(tabLayout.newTab().setText("稼动率"));
         tabLayout.addTab(tabLayout.newTab().setText("出勤率"));
         tabLayout.addTab(tabLayout.newTab().setText("WIP统计"));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -95,7 +94,7 @@ public class EChartsAndroidDelegate extends BaseBackDelegate {
 
                 if (tab.getPosition() != mCurrentFragmentPostion) {
                     if (tab.getPosition() == 1) {
-                       // ((EChartDaChengLvDelegate) mFragments[tab.getPosition()]).button.performClick();
+                        // ((EChartDaChengLvDelegate) mFragments[tab.getPosition()]).button.performClick();
                     }
                     showHideFragment(mFragments[tab.getPosition()], mFragments[mCurrentFragmentPostion]);
                     mCurrentFragmentPostion = tab.getPosition();

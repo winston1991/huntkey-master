@@ -39,15 +39,16 @@ public abstract class MainBackPressDelegate extends CheckPermissionDelegate {
             popChild();
         } else {
             if (this instanceof MainDelegate) {
-                if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {
-                    // 如果是 第一个Fragment 则退出app
-                    _mActivity.finish();
-                } else {
-                    TOUCH_TIME = System.currentTimeMillis();
-                    ToastUtils.showShort("请双击退出应用");
+                if (!((MainDelegate) this).viewPagerDelegate.isFirstPage()) {
+                    ((MainDelegate) this).viewPagerDelegate.goToFirstPage();
+                }else {
+                    if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {
+                        _mActivity.finish();           // 如果是 第一个Fragment 则退出app
+                    } else {
+                        TOUCH_TIME = System.currentTimeMillis();
+                        ToastUtils.showShort("请双击退出应用");
+                    }
                 }
-            } else {                                    // 如果不是,则回到第一个Fragment
-                _mBackToFirstListener.onBackToFirstFragment();
             }
         }
         return true;

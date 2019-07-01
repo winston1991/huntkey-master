@@ -15,7 +15,7 @@ import com.jake.huntkey.core.adapter.HomePageRecyclerViewAdapter;
 import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.delegates.EChartsDelegate.EChartsAndroidDelegate;
 import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
-import com.jake.huntkey.core.entity.HomePageEntity;
+import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.ui.GridDividerItemDecoration;
 import com.joanzapata.iconify.widget.IconTextView;
 
@@ -60,11 +60,11 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
 
     }
 
-    private List<HomePageEntity> initEntityList() {
-        ArrayList<HomePageEntity> entityList = new ArrayList();
-        HomePageEntity entity = null;
+    private List<HomePageItemEntity> initEntityList() {
+        ArrayList<HomePageItemEntity> entityList = new ArrayList();
+        HomePageItemEntity entity = null;
         for (int i = 0; i < Consts.items.length; i++) {
-            entity = new HomePageEntity();
+            entity = new HomePageItemEntity();
             entity.text = Consts.homeItems.get(i);
             entity.name = Consts.items[i];
             entityList.add(entity);

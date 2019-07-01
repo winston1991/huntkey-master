@@ -5,24 +5,21 @@ import androidx.annotation.Nullable;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.jake.huntkey.core.R;
-import com.jake.huntkey.core.entity.HomePageEntity;
+import com.jake.huntkey.core.entity.HomePageItemEntity;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-public class HomePageRecyclerViewAdapter extends BaseQuickAdapter<HomePageEntity, BaseViewHolder> {
+public class HomePageRecyclerViewAdapter extends BaseQuickAdapter<HomePageItemEntity, BaseViewHolder> {
 
 
-    public HomePageRecyclerViewAdapter(int layoutResId, @Nullable List<HomePageEntity> data) {
+    public HomePageRecyclerViewAdapter(int layoutResId, @Nullable List<HomePageItemEntity> data) {
         super(layoutResId, data);
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, HomePageEntity homePageEntity) {
-        helper.setText(R.id.item_icon, homePageEntity.text);
-        helper.setText(R.id.item_name, homePageEntity.name);
+    protected void convert(BaseViewHolder helper, HomePageItemEntity homePageItemEntity) {
+        helper.setText(R.id.item_icon, homePageItemEntity.text);
+        helper.setText(R.id.item_name, homePageItemEntity.name);
 
     }
 }

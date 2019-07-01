@@ -70,14 +70,24 @@ public class ViewPagerDelegate extends CheckPermissionDelegate {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
+
             @Override
             public void onPageSelected(int position) {
                 navigation.getMenu().getItem(position).setChecked(true);
             }
+
             @Override
             public void onPageScrollStateChanged(int state) {
 
             }
         });
+    }
+
+    public void goToFirstPage() {
+        viewPager.setCurrentItem(0);
+    }
+    public  boolean isFirstPage()
+    {
+        return (viewPager.getCurrentItem()==0);
     }
 }

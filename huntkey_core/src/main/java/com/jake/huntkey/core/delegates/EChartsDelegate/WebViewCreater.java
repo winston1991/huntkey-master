@@ -12,6 +12,9 @@ import android.widget.FrameLayout;
 import com.blankj.utilcode.util.ToastUtils;
 import com.just.agentweb.core.AgentWeb;
 import com.just.agentweb.core.client.WebChromeClientDelegate;
+import com.just.agentweb.core.client.WebListenerManager;
+import com.just.agentweb.core.web.AbsAgentWebSettings;
+import com.just.agentweb.core.web.IAgentWebSettings;
 
 import me.yokeyword.fragmentation.SupportFragment;
 
@@ -34,34 +37,16 @@ public class WebViewCreater {
      */
     public AgentWeb createAgentWeb(SupportFragment fragment, ViewGroup viewGroup) {
         return AgentWeb.with(fragment)
-                .setAgentWebParent(viewGroup, -1, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+                .setAgentWebParent(viewGroup, -1, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
                 .useDefaultIndicator(-1, 3)
                 .setWebViewClient(new WebViewClient() {
-
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-
-
-                        return super.shouldOverrideUrlLoading(view, request);
-                    }
-
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                        return super.shouldOverrideUrlLoading(view, url);
-                    }
-
                     @Override
                     public void onPageFinished(WebView view, String url) {
                         super.onPageFinished(view, url);
                         mOnPageLoadFinishedListener.onPageLoadFinished();
                     }
 
-
-                    @Override
-                    public void onPageCommitVisible(WebView view, String url) {
-                        super.onPageCommitVisible(view, url);
-                    }
-                })
+                }).setAgentWebWebSettings(getSettings())
                 .createAgentWeb()
                 .ready()
                 .go("file:///android_asset/chart/src/template.html");
@@ -70,6 +55,23 @@ public class WebViewCreater {
 
     public interface OnPageLoadFinishedListener {
         void onPageLoadFinished();
+    }
+
+
+    /**
+     * @return IAgentWebSettings
+     */
+    public IAgentWebSettings getSettings() {
+        return new AbsAgentWebSettings() {
+            private AgentWeb mAgentWeb;
+
+            @Override
+            protected void bindAgentWebSupport(AgentWeb agentWeb) {
+                this.mAgentWeb = agentWeb;
+            }
+
+
+        };
     }
 
 }
