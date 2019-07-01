@@ -7,6 +7,7 @@ import android.webkit.JavascriptInterface;
 import android.widget.FrameLayout;
 
 import com.bin.david.form.core.SmartTable;
+import com.bin.david.form.data.column.Column;
 import com.github.abel533.echarts.Legend;
 import com.github.abel533.echarts.Title;
 import com.github.abel533.echarts.Tooltip;
@@ -63,6 +64,7 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         smartTable1.getConfig().setShowYSequence(false);
         smartTable1.setData(getData());
 
+
         smartTable2.getConfig().setFixedTitle(true);
         smartTable2.getConfig().setShowXSequence(false);
         smartTable2.getConfig().setShowYSequence(false);
@@ -103,7 +105,7 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
     private ArrayList<StationSheetEntity> getData2() {
         ArrayList datas = new ArrayList<StationSheetEntity>();
         StationSheetEntity stationSheetEntity;
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 22; i++) {
             stationSheetEntity = new StationSheetEntity();
             stationSheetEntity.setStationSheet("WBJ332"+i);
             stationSheetEntity.setAoiTest("23");

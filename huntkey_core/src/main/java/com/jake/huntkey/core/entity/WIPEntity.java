@@ -6,7 +6,7 @@ import com.bin.david.form.annotation.SmartTable;
 @SmartTable(name = "WIP统计")
 public class WIPEntity {
 
-    @SmartColumn(id =1,name = "序号")
+    @SmartColumn(id =1,name = "序号",fixed = true)
     private String  id;
     @SmartColumn(id =2,name = "抽检批号")
     private String  samplingNumber;

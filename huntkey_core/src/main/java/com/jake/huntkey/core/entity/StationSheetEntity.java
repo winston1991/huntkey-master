@@ -14,7 +14,7 @@ public class StationSheetEntity {
         this.stationSheet = stationSheet;
     }
 
-    @SmartColumn(id = 1, name = "工单/工站表")
+    @SmartColumn(id = 1, name = "工单/工站表", fixed = true)
     private String stationSheet = "";
     @SmartColumn(id = 2, name = "AOI测试")
     private String aoiTest = "-";
