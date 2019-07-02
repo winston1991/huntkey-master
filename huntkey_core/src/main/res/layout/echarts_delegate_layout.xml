@@ -8,15 +8,74 @@
 
     <include layout="@layout/toolbar"></include>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rect_rounded_border"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="15dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="工单:"
+                android:textSize="16sp" />
+
+            <com.xuexiang.xui.widget.textview.marqueen.MarqueeView
+                android:id="@+id/id_marqueeview"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                app:mq_animDuration="2000"
+                app:mq_animIn="@anim/marquee_right_in"
+                app:mq_animOut="@anim/marquee_left_out"
+                app:mq_interval="2500" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:orientation="horizontal"
+            android:paddingLeft="15dp">
+
+            <TextView
+                android:id="@+id/id_material_number_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="料号:  P23-324657M78S6"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/id_upm_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:lines="1"
+                android:text="UPM: 23.0"
+                android:textSize="16sp" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/id_tablayout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         app:tabIndicatorColor="@color/tab_selected"
         app:tabSelectedTextColor="@color/tab_selected"
         app:tabTextAppearance="@style/tab_appearance"
-        app:tabTextColor="@color/colorPrimary">
-    </com.google.android.material.tabs.TabLayout>
+        app:tabTextColor="@color/colorPrimary"></com.google.android.material.tabs.TabLayout>
 
     <FrameLayout
         android:id="@+id/fl_container"

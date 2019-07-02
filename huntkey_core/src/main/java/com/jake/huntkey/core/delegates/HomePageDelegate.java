@@ -13,7 +13,7 @@ import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.adapter.HomePageRecyclerViewAdapter;
 import com.jake.huntkey.core.app.Consts;
-import com.jake.huntkey.core.delegates.EChartsDelegate.EChartsAndroidDelegate;
+import com.jake.huntkey.core.delegates.EChartsDelegate.EChartsBoardDelegate;
 import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.ui.GridDividerItemDecoration;
@@ -78,10 +78,13 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
         IconTextView iconTextView = view.findViewById(R.id.item_icon);
         TextView textView = view.findViewById(R.id.item_name);
         if (position == 0) {
-            ((SupportFragment) getParentFragment()).start(EChartsAndroidDelegate.newInstance("图表"));
+            ((SupportFragment) getParentFragment()).start(EChartsBoardDelegate.newInstance("看板"));
+        } else if (position == 1) {
+
+            ((SupportFragment) getParentFragment()).start(FactoryWorkshopDelegate.newInstance("河源消费"));
+
         } else {
             ((SupportFragment) getParentFragment()).start(DebugPagerFragment.newInstance(position + ""));
-
         }
 
 

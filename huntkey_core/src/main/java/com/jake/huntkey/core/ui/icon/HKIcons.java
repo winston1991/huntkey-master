@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 public enum HKIcons implements Icon {
 
-    icon_shuzikanban('\ue632'),
-    icon_RectangleCopy('\ue6e0'),
-    icon_tubiao4('\ue60b'),
-    icon_tubiao3('\ue612'),
-    icon_liucheng('\ue772');
+    icon_board('\ue604'),
+    icon_mine('\ue608'),
+    icon_prewarning('\ue72a'),
+    icon_process('\ue64c'),
+    icon_chart('\ue61e');
 
     private char character;
 

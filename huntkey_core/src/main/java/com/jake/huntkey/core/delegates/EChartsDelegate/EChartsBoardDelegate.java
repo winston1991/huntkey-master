@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 
 import com.google.android.material.tabs.TabLayout;
@@ -11,12 +12,21 @@ import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.delegates.DebugPagerFragment;
 import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
+import com.xuexiang.xui.widget.textview.marqueen.MarqueeFactory;
+import com.xuexiang.xui.widget.textview.marqueen.MarqueeView;
+import com.xuexiang.xui.widget.textview.MarqueeTextView;
+import com.xuexiang.xui.widget.textview.marqueen.SimpleNoticeMF;
 
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import me.yokeyword.fragmentation.SupportFragment;
 
-public class EChartsAndroidDelegate extends BaseBackDelegate {
+public class EChartsBoardDelegate extends BaseBackDelegate {
     public static final int FIRST = 0;
     public static final int SECOND = 1;
     public static final int THIRD = 2;
@@ -30,14 +40,21 @@ public class EChartsAndroidDelegate extends BaseBackDelegate {
     public FrameLayout flContainer;
     @BindView(R2.id.id_tablayout)
     TabLayout tabLayout;
+    @BindView(R2.id.id_marqueeview)
+    MarqueeView marqueeTextView;
+    @BindView(R2.id.id_material_number_tv)
+    TextView material_number_tv;
+    @BindView(R2.id.id_upm_tv)
+    TextView upm_tv;
+
 
     private int mCurrentFragmentPostion;
 
-    public static EChartsAndroidDelegate newInstance(String title) {
+    public static EChartsBoardDelegate newInstance(String title) {
 
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
-        EChartsAndroidDelegate fragment = new EChartsAndroidDelegate();
+        EChartsBoardDelegate fragment = new EChartsBoardDelegate();
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,6 +67,11 @@ public class EChartsAndroidDelegate extends BaseBackDelegate {
             String mTitle = bundle.getString(ARG_TITLE);
             super.mToolbar.setTitle(mTitle);
         }
+        MarqueeFactory<TextView, String> marqueeFactory = new SimpleNoticeMF(getContext());
+        String[] data = {"WBJ7941279124", "WBJ53823902", "WBJ8085340", "WBJ9829202"};
+        marqueeFactory.setData(Arrays.asList(data));
+        marqueeTextView.setMarqueeFactory(marqueeFactory);
+        marqueeTextView.startFlipping();
         SupportFragment firstFragment = findFragment(EChartZhiTongLvDelegate.class);
         mCurrentFragmentPostion = FIRST;
         if (firstFragment == null) {

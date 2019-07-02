@@ -47,8 +47,8 @@ public class DebugPagerFragment extends BaseBackDelegate {
     }
 
     protected void initView(View view) {
-        super.initView(view);
-        mToolbar.setTitle(mTitle);
+//        super.initView(view);
+//        mToolbar.setTitle(mTitle);
         TextView tvTitle = (TextView) view.findViewById(R.id.tv_title);
         tvTitle.setText(mTitle);
     }

@@ -5,15 +5,10 @@
     android:gravity="center"
     android:orientation="vertical">
 
-
-<!--
-    <include layout="@layout/toolbar"></include>
--->
-
-    <TextView
-        android:id="@+id/tv_title"
+    <ListView
+        android:id="@+id/id_listview"
         android:layout_width="match_parent"
         android:gravity="center"
         android:layout_height="match_parent"
-        android:textSize="48sp" />
+         />
 </LinearLayout>
