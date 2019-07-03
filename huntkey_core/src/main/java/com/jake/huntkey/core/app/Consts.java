@@ -5,15 +5,15 @@ import com.jake.huntkey.core.ui.icon.HKIcons;
 import java.util.ArrayList;
 
 public class Consts {
-    public static String[] items = {"看板", "图标", "我的", "预警", "流程"};
+    public static String[] items = {"深圳消费", "深圳SMT", "河源消费", "深圳电源"};
 
     public static ArrayList<String> homeItems = new ArrayList<>();
 
     static {
-        homeItems.add("{" + HKIcons.icon_board.name().replace('_', '-') + "}");
-        homeItems.add("{" + HKIcons.icon_chart.name().replace('_', '-') + "}");
-        homeItems.add("{" + HKIcons.icon_mine.name().replace('_', '-') + "}");
-        homeItems.add("{" + HKIcons.icon_prewarning.name().replace('_', '-') + "}");
-        homeItems.add("{" + HKIcons.icon_process.name().replace('_', '-') + "}");
+        homeItems.add("{" + HKIcons.icon_factory.name().replace('_', '-') + "}");
+        homeItems.add("{" + HKIcons.icon_factory.name().replace('_', '-') + "}");
+        homeItems.add("{" + HKIcons.icon_factory.name().replace('_', '-') + "}");
+        homeItems.add("{" + HKIcons.icon_factory.name().replace('_', '-') + "}");
+
     }
 }

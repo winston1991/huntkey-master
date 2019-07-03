@@ -8,7 +8,8 @@ import android.widget.BaseAdapter;
 
 import com.bin.david.form.core.SmartTable;
 import com.bin.david.form.data.column.Column;
-import com.bin.david.form.data.style.LineStyle;
+import com.bin.david.form.data.format.selected.BaseSelectFormat;
+
 import com.bin.david.form.data.table.TableData;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
@@ -52,19 +53,23 @@ public class ProductionLineListViewAdapter extends BaseAdapter {
             viewHold.smartTable.getConfig().setShowTableTitle(false);
             viewHold.smartTable.getConfig().setShowXSequence(false);
             viewHold.smartTable.getConfig().setHorizontalPadding(16);
-            viewHold.smartTable.getConfig().setColumnTitleHorizontalPadding(16);
+            viewHold.smartTable.getConfig().setColumnTitleHorizontalPadding(17);
             convertView.setTag(viewHold);
         } else {
             viewHold = (ViewHold) convertView.getTag();
         }
-//        if (position != 0) {
-//            viewHold.smartTable.getConfig().setShowColumnTitle(false);
-//        }
+        if (position != 0) {
+            viewHold.smartTable.getConfig().setShowColumnTitle(false);
+        }else
+        {
+            viewHold.smartTable.getConfig().setShowColumnTitle(true);
+        }
+//        viewHold.smartTable.setSelectFormat(new BaseSelectFormat());
         viewHold.smartTable.setData(datas.get(position));
         viewHold.smartTable.getTableData().setOnItemClickListener(new TableData.OnItemClickListener() {
             @Override
             public void onClick(Column column, String value, Object o, int col, int row) {
-                ToastUtils.showShort("col:" + col + "   row:" + row);
+                ToastUtils.showShort("col:" + col + "   row:" + row+"    postion:"+position);
             }
         });
         return convertView;

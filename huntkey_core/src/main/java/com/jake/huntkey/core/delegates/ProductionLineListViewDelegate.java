@@ -72,6 +72,10 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
         datas.add(getLinedata(data, "E1线"));
         data = new ArrayList<>();
         datas.add(getLinedata(data, "E2线"));
+        data = new ArrayList<>();
+        datas.add(getLinedata(data, "E3线"));
+        data = new ArrayList<>();
+        datas.add(getLinedata(data, "E4线"));
         return datas;
     }
 

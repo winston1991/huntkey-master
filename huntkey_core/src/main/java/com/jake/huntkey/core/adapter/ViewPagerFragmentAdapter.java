@@ -13,28 +13,20 @@ import me.yokeyword.fragmentation.SupportFragment;
 public class ViewPagerFragmentAdapter extends FragmentPagerAdapter {
     private String[] mTitles;
 
-    public ViewPagerFragmentAdapter(FragmentManager fm, String... titles) {
+    public ViewPagerFragmentAdapter(FragmentManager fm) {
         super(fm);
-        mTitles = titles;
+
     }
 
     @Override
     public SupportFragment getItem(int position) {
-        if (position == 0) {
             return HomePageDelegate.newInstance();
-        } else {
-            return DebugPagerFragment.newInstance(mTitles[position]);
-        }
-
     }
 
     @Override
     public int getCount() {
-        return mTitles.length;
+        return 1;
     }
 
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return mTitles[position];
-    }
+
 }

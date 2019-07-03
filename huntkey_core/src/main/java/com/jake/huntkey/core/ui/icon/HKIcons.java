@@ -11,7 +11,8 @@ public enum HKIcons implements Icon {
     icon_mine('\ue608'),
     icon_prewarning('\ue72a'),
     icon_process('\ue64c'),
-    icon_chart('\ue61e');
+    icon_chart('\ue61e'),
+    icon_factory('\ue610');
 
     private char character;
 

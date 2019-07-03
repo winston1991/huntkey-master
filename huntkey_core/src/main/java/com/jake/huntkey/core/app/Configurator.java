@@ -10,6 +10,7 @@ import com.joanzapata.iconify.Iconify;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.xuexiang.xui.XUI;
+import com.zhouyou.http.EasyHttp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,11 @@ public final class Configurator {
         //初始化Android通用工具集合
         Utils.init(HkEngine.getApplicationContext());
         XUI.init((Application) HkEngine.getApplicationContext());
+        //网络请求库初始化
+        EasyHttp.init((Application) HkEngine.getApplicationContext());
+        EasyHttp.getInstance().setBaseUrl((String) HkEngine.getConfiguration(ConfigKeys.API_HOST));//设置全局URL  url只能是域名 或者域名+端口号
+
+
     }
 
     public final Configurator withApiHost(String host) {

@@ -10,11 +10,10 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         HkEngine.init(this)
                 .withIcon(new FontAwesomeModule())
                 .withIcon(new FontHkModule())
                 .withLoaderDelayed(1000)
-                .withApiHost("https://127.0.0.1").configure();
+                .withApiHost("http://192.168.13.17:8033").configure();
     }
 }
