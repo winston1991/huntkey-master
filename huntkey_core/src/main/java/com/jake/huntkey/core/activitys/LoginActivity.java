@@ -1,20 +1,20 @@
-package com.jake.huntkey;
+package com.jake.huntkey.core.activitys;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.blankj.utilcode.util.ToastUtils;
+
+import com.jake.huntkey.core.R;
+import com.jake.huntkey.core.R2;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
-import com.blankj.utilcode.util.ToastUtils;
-import com.jake.huntkey.core.R2;
-import com.jake.huntkey.core.activitys.BaseActivity;
-
+import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 
 public class LoginActivity extends BaseActivity {
-
 
 
     @BindView(R2.id.id_edt_username)
@@ -26,32 +26,33 @@ public class LoginActivity extends BaseActivity {
     @BindView(R2.id.id_btn_login)
     protected Button login;
 
+    @BindView(R2.id.toolbar)
+    protected Toolbar toolbar;
+
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity_layout);
+    protected int setLayoutId() {
+        return R.layout.login_activity_layout;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-        setContentView(R.layout.login_activity_layout);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
     }
 
     @Override
     protected void initView() {
-
+        toolbar.setTitle("MES系统");
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                ToastUtils.showShort("  ");
             }
         });
+
+
     }
-
-
 
 
 }
