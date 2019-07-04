@@ -76,7 +76,7 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
         IconTextView iconTextView = view.findViewById(R.id.item_icon);
         TextView textView = view.findViewById(R.id.item_name);
         if (position == 0) {
-            ((SupportFragment) getParentFragment()).start(FactoryWorkshopDelegate.newInstance("河源消费"));
+            ((SupportFragment) getParentFragment()).start(FactoryWorkShopContainerDelegate.newInstance());
         } else if (position == 1) {
             ((SupportFragment) getParentFragment()).start(DebugPagerFragment.newInstance(position + ""));
         } else {

@@ -53,7 +53,7 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
 
     protected void initView(View view) {
 
-        ProductionLineListViewAdapter adapter = new ProductionLineListViewAdapter(getContext(), getdatas());
+        ProductionLineListViewAdapter adapter = new ProductionLineListViewAdapter(this, getdatas());
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

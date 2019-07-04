@@ -13,17 +13,22 @@ import com.bin.david.form.data.format.selected.BaseSelectFormat;
 import com.bin.david.form.data.table.TableData;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
+import com.jake.huntkey.core.delegates.EChartsDelegate.EChartsBoardDelegate;
 import com.jake.huntkey.core.entity.ProductionLineEntity;
 
 import java.util.ArrayList;
 
+import me.yokeyword.fragmentation.SupportFragment;
+
 public class ProductionLineListViewAdapter extends BaseAdapter {
     private ArrayList<ArrayList<ProductionLineEntity>> datas;
     private LayoutInflater inflater;
+    private SupportFragment supportFragment;
 
-    public ProductionLineListViewAdapter(Context context, ArrayList<ArrayList<ProductionLineEntity>> datas) {
+    public ProductionLineListViewAdapter(SupportFragment supportFragment, ArrayList<ArrayList<ProductionLineEntity>> datas) {
         this.datas = datas;
-        inflater = LayoutInflater.from(context);
+        inflater = LayoutInflater.from(supportFragment.getContext());
+        this.supportFragment = supportFragment;
     }
 
     @Override
@@ -60,8 +65,7 @@ public class ProductionLineListViewAdapter extends BaseAdapter {
         }
         if (position != 0) {
             viewHold.smartTable.getConfig().setShowColumnTitle(false);
-        }else
-        {
+        } else {
             viewHold.smartTable.getConfig().setShowColumnTitle(true);
         }
 //        viewHold.smartTable.setSelectFormat(new BaseSelectFormat());
@@ -69,7 +73,8 @@ public class ProductionLineListViewAdapter extends BaseAdapter {
         viewHold.smartTable.getTableData().setOnItemClickListener(new TableData.OnItemClickListener() {
             @Override
             public void onClick(Column column, String value, Object o, int col, int row) {
-                ToastUtils.showShort("col:" + col + "   row:" + row+"    postion:"+position);
+                ToastUtils.showShort("col:" + col + "   row:" + row + "    postion:" + position);
+                ((SupportFragment) supportFragment.getParentFragment()).start(EChartsBoardDelegate.newInstance("看板"));
             }
         });
         return convertView;

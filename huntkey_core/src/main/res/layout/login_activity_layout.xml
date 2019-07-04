@@ -30,6 +30,7 @@
             android:gravity="left|center_vertical"
             android:hint="账号"
             android:padding="4dp"
+            android:text="16100175"
             android:textSize="18sp" />
 
         <androidx.appcompat.widget.AppCompatEditText
@@ -50,8 +51,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:background="@drawable/login_rounded_button_backgroud"
-            android:gravity="center"
             android:clickable="true"
+            android:gravity="center"
             android:padding="3dp"
             android:text="登录"
             android:textColor="@android:color/white"

@@ -9,8 +9,9 @@ import com.joanzapata.iconify.IconFontDescriptor;
 import com.joanzapata.iconify.Iconify;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
+import com.vise.xsnow.http.ViseHttp;
 import com.xuexiang.xui.XUI;
-import com.zhouyou.http.EasyHttp;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,8 +52,8 @@ public final class Configurator {
         Utils.init(HkEngine.getApplicationContext());
         XUI.init((Application) HkEngine.getApplicationContext());
         //网络请求库初始化
-        EasyHttp.init((Application) HkEngine.getApplicationContext());
-        EasyHttp.getInstance().setBaseUrl((String) HkEngine.getConfiguration(ConfigKeys.API_HOST));//设置全局URL  url只能是域名 或者域名+端口号
+        ViseHttp.init((Application) HkEngine.getApplicationContext());
+        ViseHttp.CONFIG().baseUrl((String) HkEngine.getConfiguration(ConfigKeys.API_HOST));//设置全局URL  url只能是域名 或者域名+端口号
 
 
     }

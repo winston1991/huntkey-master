@@ -14,6 +14,6 @@ public class MyApplication extends Application {
                 .withIcon(new FontAwesomeModule())
                 .withIcon(new FontHkModule())
                 .withLoaderDelayed(1000)
-                .withApiHost("http://192.168.13.17:8033").configure();
+                .withApiHost("http://192.168.13.17:8033/").configure();
     }
 }

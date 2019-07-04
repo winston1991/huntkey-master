@@ -60,7 +60,6 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     }
 
     protected void initViews(View rootview) {
-
         super.initView(rootview);
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -68,7 +67,7 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
             super.mToolbar.setTitle(mTitle);
         }
         MarqueeFactory<TextView, String> marqueeFactory = new SimpleNoticeMF(getContext());
-        String[] data = {"WBJ7941279124", "WBJ53823902", "WBJ8085340", "WBJ9829202"};
+        String[] data = {"WBJ7941279124, WBJ53823902, WBJ8085340, WBJ9829202"};
         marqueeFactory.setData(Arrays.asList(data));
         marqueeTextView.setMarqueeFactory(marqueeFactory);
         marqueeTextView.startFlipping();
@@ -115,18 +114,13 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
             public void onTabSelected(TabLayout.Tab tab) {
 
                 if (tab.getPosition() != mCurrentFragmentPostion) {
-                    if (tab.getPosition() == 1) {
-                        // ((EChartDaChengLvDelegate) mFragments[tab.getPosition()]).button.performClick();
-                    }
                     showHideFragment(mFragments[tab.getPosition()], mFragments[mCurrentFragmentPostion]);
                     mCurrentFragmentPostion = tab.getPosition();
                 }
             }
-
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
             }
-
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
             }
