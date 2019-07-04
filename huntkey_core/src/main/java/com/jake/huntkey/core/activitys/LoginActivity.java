@@ -68,7 +68,7 @@ public class LoginActivity extends BaseActivity {
     private void login() {
         HashMap<String, String> map = new HashMap<>();
         map.put("i_emp", userName.getText().toString());
-        map.put("i_pwd", "");
+        map.put("i_pwd", passwd.getText().toString());
         JSONObject jsonObject = new JSONObject(map);
 
         DialogLoaderManager.showLoading(this);
@@ -77,11 +77,20 @@ public class LoginActivity extends BaseActivity {
                 .request(new ACallback<LoginResponse>() {
                     @Override
                     public void onSuccess(LoginResponse data) {
-                        ToastUtils.showShort("登录成功");
+                        if (data != null) {
+                            if (data.getContent().get(0).getResult().equals("1")) {
+                                finish();
+                                ActivityUtils.startActivity(MainActivity.class);
+                                ToastUtils.showShort("登录成功");
+                            } else {
+                                ToastUtils.showShort(data.getContent().get(0).getMessage());
+                            }
+                        } else {
+                            ToastUtils.showShort("登录失败");
+                        }
                         DialogLoaderManager.stopLoading();
-                        finish();
-                        ActivityUtils.startActivity(MainActivity.class);
                     }
+
                     @Override
                     public void onFail(int errCode, String errMsg) {
                         ToastUtils.showShort(errMsg);

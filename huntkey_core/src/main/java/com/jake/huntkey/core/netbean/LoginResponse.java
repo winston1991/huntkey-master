@@ -52,6 +52,15 @@ public class LoginResponse {
         private String Result;
         private String User;
 
+        public String getMessage() {
+            return Message;
+        }
+
+        public void setMessage(String message) {
+            Message = message;
+        }
+
+        private String Message;
         @Override
         public String toString() {
             return "LoginResponse{" +

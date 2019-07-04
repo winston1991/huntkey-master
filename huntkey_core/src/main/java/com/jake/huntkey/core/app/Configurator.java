@@ -9,7 +9,10 @@ import com.joanzapata.iconify.IconFontDescriptor;
 import com.joanzapata.iconify.Iconify;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
+import com.vise.log.ViseLog;
+import com.vise.log.inner.LogcatTree;
 import com.vise.xsnow.http.ViseHttp;
+import com.vise.xsnow.http.interceptor.HttpLogInterceptor;
 import com.xuexiang.xui.XUI;
 
 
@@ -52,9 +55,15 @@ public final class Configurator {
         Utils.init(HkEngine.getApplicationContext());
         XUI.init((Application) HkEngine.getApplicationContext());
         //网络请求库初始化
+        ViseLog.getLogConfig()
+                .configAllowLog(true)//是否输出日志
+                .configShowBorders(false);//是否排版显示
+        ViseLog.plant(new LogcatTree());//添加打印日志信息到Logcat的树
         ViseHttp.init((Application) HkEngine.getApplicationContext());
-        ViseHttp.CONFIG().baseUrl((String) HkEngine.getConfiguration(ConfigKeys.API_HOST));//设置全局URL  url只能是域名 或者域名+端口号
-
+        ViseHttp.CONFIG().baseUrl((String) HkEngine.getConfiguration(ConfigKeys.API_HOST))//设置全局URL  url只能是域名 或者域名+端口号
+                //配置日志拦截器
+                .interceptor(new HttpLogInterceptor()
+                        .setLevel(HttpLogInterceptor.Level.BODY));
 
     }
 
