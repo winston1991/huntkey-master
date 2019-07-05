@@ -6,15 +6,19 @@ import android.view.ViewTreeObserver;
 import android.webkit.JavascriptInterface;
 import android.widget.FrameLayout;
 
+import com.github.abel533.echarts.AxisPointer;
 import com.github.abel533.echarts.DataZoom;
 import com.github.abel533.echarts.Legend;
 import com.github.abel533.echarts.Title;
 import com.github.abel533.echarts.Tooltip;
 import com.github.abel533.echarts.axis.AxisLabel;
+import com.github.abel533.echarts.axis.AxisTick;
 import com.github.abel533.echarts.axis.CategoryAxis;
 import com.github.abel533.echarts.axis.ValueAxis;
 import com.github.abel533.echarts.code.AxisType;
 import com.github.abel533.echarts.code.DataZoomType;
+import com.github.abel533.echarts.code.PointerType;
+import com.github.abel533.echarts.code.Position;
 import com.github.abel533.echarts.code.Trigger;
 import com.github.abel533.echarts.data.Data;
 import com.github.abel533.echarts.data.PieData;
@@ -23,6 +27,7 @@ import com.github.abel533.echarts.series.Bar;
 import com.github.abel533.echarts.series.Gauge;
 import com.github.abel533.echarts.series.Line;
 import com.github.abel533.echarts.series.Pie;
+import com.github.abel533.echarts.series.SeriesFactory;
 import com.github.abel533.echarts.series.gauge.Detail;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
@@ -73,7 +78,7 @@ public class EChartChuQinLvDelegate extends BaseWebViewDelegate implements WebVi
     }
 
 
-    private void initPieChart() {
+    private void initGaugeChart() {
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.makeGaugeChartOptions());
     }
 
@@ -85,7 +90,7 @@ public class EChartChuQinLvDelegate extends BaseWebViewDelegate implements WebVi
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart3", mChartInterface.makeLineChartOptions());
     }
 
-    private void initGaugeChart() {
+    private void initPieChart() {
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart4", mChartInterface.makePieChartOptions());
     }
 
@@ -112,18 +117,48 @@ public class EChartChuQinLvDelegate extends BaseWebViewDelegate implements WebVi
         @JavascriptInterface
         public String makePieChartOptions() {
             GsonOption option = new GsonOption();
-            option.tooltip().trigger(Trigger.item).formatter("{a} <br/>{b} : {c} ({d}%)");
-            option.legend().data("直接", "邮件", "联盟", "视频", "搜索");
+            Tooltip tooltip = new Tooltip();
+            tooltip.setTrigger(Trigger.axis);
+            AxisPointer axisPointer = new AxisPointer();
+            axisPointer.setType(PointerType.cross);
+            tooltip.axisPointer(axisPointer);
+            option.setTooltip(tooltip);
+            option.legend().data("在职人数", "实际出勤人数", "实际出勤率");
 
-            Pie pie = new Pie("访问来源").data(
-                    new PieData("直接", 335),
-                    new PieData("邮件", 310),
-                    new PieData("联盟", 274),
-                    new PieData("视频", 235),
-                    new PieData("搜索", 400)
-            ).center("50%", "45%").radius("50%");
-            pie.label().normal().show(true).formatter("{b}{c}({d}%)");
-            option.series(pie);
+            CategoryAxis categoryAxisX = new CategoryAxis();
+            categoryAxisX.setAxisTick(new AxisTick().show(true));
+            categoryAxisX.data("航嘉股份.IT.BG.ITBG制造部.IT制造处A班", "航嘉股份.IT.BG.ITBG制造部.IT制造处B班");
+            option.xAxis(categoryAxisX);
+
+            //Y轴
+            CategoryAxis categoryAxisY1 = new CategoryAxis();
+            categoryAxisY1.setType(AxisType.value);
+            categoryAxisY1.name("数量").position(Position.left).min(0);
+            CategoryAxis categoryAxisY2 = new CategoryAxis();
+            categoryAxisY2.setType(AxisType.value);
+            categoryAxisY2.name("出勤率").position(Position.right).min(0);
+            categoryAxisY2.axisLabel().setFormatter("{value} %");
+            option.yAxis(categoryAxisY1, categoryAxisY2);
+
+            DataZoom dataZoom = new DataZoom();
+            dataZoom.setType(DataZoomType.slider);
+            dataZoom.start(0).end(100).bottom("10%");
+            option.dataZoom(dataZoom);
+
+            SeriesFactory seriesFactory = new SeriesFactory();
+            Bar bar1 = SeriesFactory.newBar("在职人数");
+            bar1.yAxisIndex(0).label().normal().show(true).position(Position.top);
+            bar1.data(890, 845);
+            Bar bar2 = SeriesFactory.newBar("实际出勤人数");
+            bar2.yAxisIndex(0).label().normal().show(true).position(Position.top);
+            bar2.data(390, 345);
+
+            Line line1 = seriesFactory.newLine("实际出勤率");
+            line1.yAxisIndex(1).label().normal().show(true).position(Position.top);
+            line1.data(70, 80);
+
+            option.grid().top("20%").containLabel(false);
+            option.series(bar1, bar2, line1);
             return option.toString();
         }
 
@@ -145,7 +180,7 @@ public class EChartChuQinLvDelegate extends BaseWebViewDelegate implements WebVi
             dataZoom.setEnd(100);
             option.dataZoom(dataZoom);
             Bar bar = new Bar("销量");
-            bar.data(5, 20, 36, 10, 10, 20,5, 20, 36, 10, 10, 20,2,8,10);
+            bar.data(5, 20, 36, 10, 10, 20, 5, 20, 36, 10, 10, 20, 2, 8, 10);
             option.series(bar);
             return option.toString();
         }
@@ -154,31 +189,58 @@ public class EChartChuQinLvDelegate extends BaseWebViewDelegate implements WebVi
         @JavascriptInterface
         public String makeLineChartOptions() {
             GsonOption option = new GsonOption();
-            option.legend("高度(km)与气温(°C)变化关系");
-            option.toolbox().show(false);
-            option.calculable(true);
-            option.tooltip().trigger(Trigger.axis).formatter("Temperature : <br/>{b}km : {c}°C");
+            Tooltip tooltip = new Tooltip();
+            tooltip.setTrigger(Trigger.axis);
+            AxisPointer axisPointer = new AxisPointer();
+            axisPointer.setType(PointerType.cross);
+            tooltip.axisPointer(axisPointer);
+            option.setTooltip(tooltip);
+            option.legend().data("在职人数", "A班出勤人数", "B班出勤人数", "A班出勤率", "B班出勤率");
 
-            ValueAxis valueAxis = new ValueAxis();
-            valueAxis.axisLabel().formatter("{value} °C");
-            option.xAxis(valueAxis);
+            CategoryAxis categoryAxisX = new CategoryAxis();
+            categoryAxisX.setAxisTick(new AxisTick().show(true));
+            categoryAxisX.data("上周", "本周");
+            option.xAxis(categoryAxisX);
 
-            CategoryAxis categoryAxis = new CategoryAxis();
-            categoryAxis.axisLine().onZero(false);
-            categoryAxis.axisLabel().formatter("{value} km");
-            categoryAxis.boundaryGap(false);
-            categoryAxis.data(0, 10, 20, 30, 40, 50, 60, 70, 80);
-            option.yAxis(categoryAxis);
+            //Y轴
+            CategoryAxis categoryAxisY1 = new CategoryAxis();
+            categoryAxisY1.setType(AxisType.value);
+            categoryAxisY1.name("数量").position(Position.left).min(0);
+            CategoryAxis categoryAxisY2 = new CategoryAxis();
+            categoryAxisY2.setType(AxisType.value);
+            categoryAxisY2.name("出勤率").position(Position.right).min(0);
+            categoryAxisY2.axisLabel().setFormatter("{value} %");
+            option.yAxis(categoryAxisY1, categoryAxisY2);
 
-            Line line = new Line();
-            line.smooth(true).name("高度(km)与气温(°C)变化关系").data(15, -50, -56.5, -46.5, -22.1, -2.5, -27.7, -55.7, -76.5).itemStyle().normal().lineStyle().shadowColor("rgba(0,0,0,0.4)");
-            option.series(line);
+            DataZoom dataZoom = new DataZoom();
+            dataZoom.setType(DataZoomType.slider);
+            dataZoom.start(0).end(100).bottom("10%");
+            option.dataZoom(dataZoom);
+
+            SeriesFactory seriesFactory = new SeriesFactory();
+            Bar bar1 = SeriesFactory.newBar("在职人数");
+            bar1.yAxisIndex(0).label().normal().show(true).position(Position.top);
+            bar1.data(890, 845);
+            Bar bar2 = SeriesFactory.newBar("A班出勤人数");
+            bar2.yAxisIndex(0).label().normal().show(true).position(Position.top);
+            bar2.data(390, 345);
+            Bar bar3 = SeriesFactory.newBar("B班出勤人数");
+            bar3.yAxisIndex(0).label().normal().show(true).position(Position.top);
+            bar3.data(500, 500);
+            Line line1 = seriesFactory.newLine("A班出勤率");
+            line1.yAxisIndex(1).label().normal().show(true).position(Position.top);
+            line1.data(70, 80);
+            Line line2 = seriesFactory.newLine("B班出勤率");
+            line2.yAxisIndex(1).label().normal().show(true).position(Position.top);
+            line2.data(80, 90);
+            option.grid().top("20%").containLabel(false);
+            option.series(bar1, bar2, bar3, line1, line2);
             return option.toString();
         }
 
         @JavascriptInterface
         public String getDoubleAxisBarLineOptions() {
-            return GetChartsOptionString.getDoubleAxisBarLineOptions();
+            return GetChartsOptionString.getChuQinLvDoubleAxisBarLineOptions();
         }
 
         @JavascriptInterface

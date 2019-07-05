@@ -41,6 +41,16 @@ public class Get7DayFpyRateResponse {
         private String date_str;
         private String otpt_start_time;
         private String fpy_rate;
+
+        @Override
+        public String toString() {
+            return "Content{" +
+                    "date_str='" + date_str + '\'' +
+                    ", otpt_start_time='" + otpt_start_time + '\'' +
+                    ", fpy_rate='" + fpy_rate + '\'' +
+                    '}';
+        }
+
         public void setDate_str(String date_str) {
             this.date_str = date_str;
         }

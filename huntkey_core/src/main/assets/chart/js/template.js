@@ -12,6 +12,14 @@ function loadChartView(id, option) {
 
 
 
+function hideDiv()
+{
+   document.getElementById("chart4").style.display="none";//隐藏
+}
+function showDiv()
+{
+   document.getElementById("chart4").style.display="";//显示
+}
 
 function initChart() {
 

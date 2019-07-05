@@ -18,6 +18,7 @@ import com.xuexiang.xui.XUI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 
@@ -61,10 +62,10 @@ public final class Configurator {
         ViseLog.plant(new LogcatTree());//添加打印日志信息到Logcat的树
         ViseHttp.init((Application) HkEngine.getApplicationContext());
         ViseHttp.CONFIG().baseUrl((String) HkEngine.getConfiguration(ConfigKeys.API_HOST))//设置全局URL  url只能是域名 或者域名+端口号
+                .connectTimeout(10, TimeUnit.SECONDS)//设置连接超时时间10秒
                 //配置日志拦截器
                 .interceptor(new HttpLogInterceptor()
                         .setLevel(HttpLogInterceptor.Level.BODY));
-
     }
 
     public final Configurator withApiHost(String host) {

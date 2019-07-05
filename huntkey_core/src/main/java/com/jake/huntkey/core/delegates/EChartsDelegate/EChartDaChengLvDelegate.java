@@ -9,12 +9,18 @@ import android.widget.FrameLayout;
 
 import com.bin.david.form.core.SmartTable;
 import com.blankj.utilcode.util.ToastUtils;
+import com.github.abel533.echarts.AxisPointer;
+import com.github.abel533.echarts.DataZoom;
 import com.github.abel533.echarts.Legend;
 import com.github.abel533.echarts.Title;
 import com.github.abel533.echarts.Tooltip;
+import com.github.abel533.echarts.axis.AxisTick;
 import com.github.abel533.echarts.axis.CategoryAxis;
 import com.github.abel533.echarts.axis.ValueAxis;
 import com.github.abel533.echarts.code.AxisType;
+import com.github.abel533.echarts.code.DataZoomType;
+import com.github.abel533.echarts.code.PointerType;
+import com.github.abel533.echarts.code.Position;
 import com.github.abel533.echarts.code.Trigger;
 import com.github.abel533.echarts.data.Data;
 import com.github.abel533.echarts.data.PieData;
@@ -23,9 +29,11 @@ import com.github.abel533.echarts.series.Bar;
 import com.github.abel533.echarts.series.Gauge;
 import com.github.abel533.echarts.series.Line;
 import com.github.abel533.echarts.series.Pie;
+import com.github.abel533.echarts.series.SeriesFactory;
 import com.github.abel533.echarts.series.gauge.Detail;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
+import com.jake.huntkey.core.delegates.EChartsDelegate.FormatEchartsDataUtil.GetChartsOptionString;
 import com.jake.huntkey.core.entity.WIPEntity;
 import com.just.agentweb.core.AgentWeb;
 
@@ -75,15 +83,15 @@ public class EChartDaChengLvDelegate extends BaseWebViewDelegate implements WebV
                 initBarChart();
                 initGaugeChart();
                 initLineChart();
-                initPieChart();
+                mAgentWeb.getJsAccessEntrace().quickCallJs("hideDiv");
             }
         });
 
     }
 
 
-    private void initPieChart() {
-        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1",  mChartInterface.makeGaugeChartOptions());
+    private void initGaugeChart() {
+        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.makeGaugeChartOptions());
     }
 
     private void initBarChart() {
@@ -94,9 +102,6 @@ public class EChartDaChengLvDelegate extends BaseWebViewDelegate implements WebV
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart3", mChartInterface.makeLineChartOptions());
     }
 
-    private void initGaugeChart() {
-        mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart4",mChartInterface.makePieChartOptions());
-    }
 
     @Override
     public Object setLayout() {
@@ -118,60 +123,50 @@ public class EChartDaChengLvDelegate extends BaseWebViewDelegate implements WebV
      * 注入到JS里的对象接口
      */
     public class ChartInterface {
-        @JavascriptInterface
-        public String makePieChartOptions() {
-            GsonOption option = new GsonOption();
-            option.tooltip().trigger(Trigger.item).formatter("{a} <br/>{b} : {c} ({d}%)");
-            option.legend().data("直接", "邮件", "联盟", "视频", "搜索");
-
-            Pie pie = new Pie("访问来源").data(
-                    new PieData("直接", 335),
-                    new PieData("邮件", 310),
-                    new PieData("联盟", 274),
-                    new PieData("视频", 235),
-                    new PieData("搜索", 400)
-            ).center("50%", "45%").radius("50%");
-            pie.label().normal().show(true).formatter("{b}{c}({d}%)");
-            option.series(pie);
-            return option.toString();
-        }
 
         @JavascriptInterface
         public String makeBarChartOptions() {
-            GsonOption option = new GsonOption();
-            option.setLegend(new Legend().data("销量"));
-            option.xAxis(new CategoryAxis().data("衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"));
-            CategoryAxis categoryAxis = new CategoryAxis();
-            option.yAxis(categoryAxis.type(AxisType.value));
-            Bar bar = new Bar("销量");
-            bar.data(5, 20, 36, 10, 10, 20);
-            option.series(bar);
-            return option.toString();
+            return GetChartsOptionString.getDoubleAxisBarLineOptions();
         }
 
 
         @JavascriptInterface
         public String makeLineChartOptions() {
             GsonOption option = new GsonOption();
-            option.legend("高度(km)与气温(°C)变化关系");
-            option.toolbox().show(false);
-            option.calculable(true);
-            option.tooltip().trigger(Trigger.axis).formatter("Temperature : <br/>{b}km : {c}°C");
+            Tooltip tooltip = new Tooltip();
+            tooltip.setTrigger(Trigger.axis);
+            AxisPointer axisPointer = new AxisPointer();
+            axisPointer.setType(PointerType.cross);
+            tooltip.axisPointer(axisPointer);
+            option.setTooltip(tooltip);
+            option.legend().data("计划产能", "实际产能");
 
-            ValueAxis valueAxis = new ValueAxis();
-            valueAxis.axisLabel().formatter("{value} °C");
-            option.xAxis(valueAxis);
+            CategoryAxis categoryAxisX = new CategoryAxis();
+            categoryAxisX.setAxisTick(new AxisTick().show(true));
+            categoryAxisX.data("08点", "09点", "10点", "11点", "12点", "13点", "14点", "15点", "16点");
+            option.xAxis(categoryAxisX);
 
-            CategoryAxis categoryAxis = new CategoryAxis();
-            categoryAxis.axisLine().onZero(false);
-            categoryAxis.axisLabel().formatter("{value} km");
-            categoryAxis.boundaryGap(false);
-            categoryAxis.data(0, 10, 20, 30, 40, 50, 60, 70, 80);
-            option.yAxis(categoryAxis);
+            //Y轴
+            CategoryAxis categoryAxisY1 = new CategoryAxis();
+            categoryAxisY1.setType(AxisType.value);
+            categoryAxisY1.name("数量").position(Position.left).min(0);
+            option.yAxis(categoryAxisY1);
 
-            Line line = new Line();
-            line.smooth(true).name("高度(km)与气温(°C)变化关系").data(15, -50, -56.5, -46.5, -22.1, -2.5, -27.7, -55.7, -76.5).itemStyle().normal().lineStyle().shadowColor("rgba(0,0,0,0.4)");
-            option.series(line);
+
+            DataZoom dataZoom = new DataZoom();
+            dataZoom.setType(DataZoomType.slider);
+            dataZoom.start(0).end(100).bottom("10%");
+            option.dataZoom(dataZoom);
+
+            SeriesFactory seriesFactory = new SeriesFactory();
+            Bar bar1 = SeriesFactory.newBar("计划产能");
+            bar1.yAxisIndex(0).label().normal().show(true).position(Position.top);
+            bar1.data(1239, 1234, 2394, 1003, 998, 1200, 1029, 1204);
+            Bar bar2 = SeriesFactory.newBar("实际产能");
+            bar2.yAxisIndex(0).label().normal().show(true).position(Position.top);
+            bar2.data(1390, 1345, 949, 1023, 898, 710, 600, 300);
+            option.grid().top("20%").containLabel(false);
+            option.series(bar1, bar2);
             return option.toString();
         }
 
@@ -180,9 +175,9 @@ public class EChartDaChengLvDelegate extends BaseWebViewDelegate implements WebV
             GsonOption option = new GsonOption();
             option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
             Gauge gauge = new Gauge();
-            gauge.name("业务指标");
+            gauge.name("达成率");
             gauge.detail(new Detail().formatter("{value}%"));
-            gauge.data(new Data().setValue(89).setName("完成率"));
+            gauge.data(new Data().setValue(89).setName("达成率"));
             option.series(gauge);
             return option.toString();
         }

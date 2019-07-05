@@ -7,21 +7,13 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.google.android.material.tabs.TabLayout;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
-import com.jake.huntkey.core.delegates.DebugPagerFragment;
 import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
-import com.xuexiang.xui.widget.textview.marqueen.MarqueeFactory;
-import com.xuexiang.xui.widget.textview.marqueen.MarqueeView;
-import com.xuexiang.xui.widget.textview.MarqueeTextView;
-import com.xuexiang.xui.widget.textview.marqueen.SimpleNoticeMF;
 
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import butterknife.BindView;
 import me.yokeyword.fragmentation.SupportFragment;
@@ -41,7 +33,10 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     @BindView(R2.id.id_tablayout)
     TabLayout tabLayout;
     @BindView(R2.id.id_marqueeview)
-    MarqueeView marqueeTextView;
+    public AppCompatTextView marqueeTextView;
+    @BindView(R2.id.id_marqueeview_material_number)
+    public AppCompatTextView material_number_marqueenview;
+
     @BindView(R2.id.id_material_number_tv)
     TextView material_number_tv;
     @BindView(R2.id.id_upm_tv)
@@ -66,11 +61,8 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
             String mTitle = bundle.getString(ARG_TITLE);
             super.mToolbar.setTitle(mTitle);
         }
-        MarqueeFactory<TextView, String> marqueeFactory = new SimpleNoticeMF(getContext());
-        String[] data = {"WBJ7941279124, WBJ53823902, WBJ8085340, WBJ9829202"};
-        marqueeFactory.setData(Arrays.asList(data));
-        marqueeTextView.setMarqueeFactory(marqueeFactory);
-        marqueeTextView.startFlipping();
+        marqueeTextView.setText("WBJ7941279124, WBJ53823902, WBJ8085340, WBJ9829202");
+        material_number_marqueenview.setText("     P23-324657M78S6, P23-324657M79S6, P23-324657M78S7");
         SupportFragment firstFragment = findFragment(EChartZhiTongLvDelegate.class);
         mCurrentFragmentPostion = FIRST;
         if (firstFragment == null) {
@@ -93,6 +85,7 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
             mFragments[FOURTH] = findFragment(EChartChuQinLvDelegate.class);
             mFragments[FIVE] = findFragment(EChart_WIP_Tj_Delegate.class);
         }
+
     }
 
     @Override
@@ -118,9 +111,11 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
                     mCurrentFragmentPostion = tab.getPosition();
                 }
             }
+
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
             }
+
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
             }

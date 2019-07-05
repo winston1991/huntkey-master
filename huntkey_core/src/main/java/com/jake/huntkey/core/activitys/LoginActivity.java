@@ -1,10 +1,12 @@
 package com.jake.huntkey.core.activitys;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
@@ -12,7 +14,6 @@ import com.jake.huntkey.core.netbean.LoginResponse;
 import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.callback.ACallback;
-import com.vise.xsnow.http.mode.CacheMode;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
@@ -77,10 +78,21 @@ public class LoginActivity extends BaseActivity {
                 .request(new ACallback<LoginResponse>() {
                     @Override
                     public void onSuccess(LoginResponse data) {
-                        if (data != null) {
+                        if (data != null && data.getContent().size() > 0) {
                             if (data.getContent().get(0).getResult().equals("1")) {
                                 finish();
-                                ActivityUtils.startActivity(MainActivity.class);
+                                //给网络请求设置全局的请求头部  添加token
+                                HashMap<String, String> map = new HashMap<>();
+                                map.put("Authorization", "Bearer " + data.getContent().get(0).getToken());
+                                map.put("Content-Type", "application/json;charset=utf-8");
+                                SPUtils spUtils = SPUtils.getInstance("loginToken");
+                                spUtils.put("Authorization", data.getContent().get(0).getToken());
+
+                                ViseHttp.CONFIG().globalHeaders(map);//设置全局请求头
+                                Bundle bundle1 = new Bundle();
+                                // 把Persion数据放入到bundle中
+                                //bundle1.put("factorys",data.getContent().get(0).getFactorys())
+                                ActivityUtils.startActivity(bundle1,MainActivity.class);
                                 ToastUtils.showShort("登录成功");
                             } else {
                                 ToastUtils.showShort(data.getContent().get(0).getMessage());
@@ -98,6 +110,7 @@ public class LoginActivity extends BaseActivity {
                     }
                 });
     }
+
 
 }
 

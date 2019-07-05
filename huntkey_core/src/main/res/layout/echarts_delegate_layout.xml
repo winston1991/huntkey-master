@@ -18,46 +18,71 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
             android:paddingLeft="15dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="工单:"
+                android:text="工单: "
                 android:textSize="16sp" />
 
-            <com.xuexiang.xui.widget.textview.marqueen.MarqueeView
+
+            <com.jake.huntkey.core.view.MarqueeTextView
                 android:id="@+id/id_marqueeview"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                app:mq_animDuration="2000"
-                app:mq_animIn="@anim/marquee_right_in"
-                app:mq_animOut="@anim/marquee_left_out"
-                app:mq_interval="2500" />
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:textColor="@color/colorAccent"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+
+                />
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
             android:orientation="horizontal"
-            android:paddingLeft="15dp">
+            android:paddingLeft="15dp"
+            android:paddingBottom="10dp">
 
             <TextView
                 android:id="@+id/id_material_number_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="料号:  P23-324657M78S6"
+                android:text="料号: "
                 android:textSize="16sp" />
+
+            <com.jake.huntkey.core.view.MarqueeTextView
+                android:id="@+id/id_marqueeview_material_number"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:text="P23-324657M78S6"
+                android:textColor="@color/colorAccent"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                />
 
             <TextView
                 android:id="@+id/id_upm_tv"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
-                android:layout_weight="1"
+                android:layout_marginRight="15dp"
                 android:gravity="center"
                 android:lines="1"
                 android:text="UPM: 23.0"
