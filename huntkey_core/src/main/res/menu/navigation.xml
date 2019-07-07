@@ -2,21 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_home"
-        android:icon="@mipmap/ic_home_white_24dp"
         android:title="@string/tab_title_home" />
 
     <item
         android:id="@+id/navigation_dashboard"
-        android:icon="@mipmap/ic_discover_white_24dp"
         android:title="@string/tab_title_discovery" />
 
     <item
         android:id="@+id/navigation_notifications"
-        android:icon="@mipmap/ic_message_white_24dp"
         android:title="@string/tab_title_process" />
 
     <item
         android:id="@+id/navigation_setting"
-        android:icon="@mipmap/ic_account_circle_white_48dp"
         android:title="@string/tab_title_my" />
 </menu>

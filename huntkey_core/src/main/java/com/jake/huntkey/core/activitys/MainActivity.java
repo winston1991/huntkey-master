@@ -9,6 +9,7 @@ import com.jake.huntkey.core.delegates.basedelegate.MainBackPressDelegate;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 
 
 public class MainActivity extends BaseActivity implements MainBackPressDelegate.OnBackToFirstListener {
@@ -38,10 +39,13 @@ public class MainActivity extends BaseActivity implements MainBackPressDelegate.
             mainDelegate = MainDelegate.newInstance();
         }
         loadRootFragment(R.id.fl_container, mainDelegate);
-    }
+       }
 
     @Override
     protected void initView() {
+        LoginActivity.MessageEvent messageEvent = new LoginActivity.MessageEvent("dgre");
+
+        EventBusActivityScope.getDefault(MainActivity.this).postSticky(messageEvent);
 
     }
 

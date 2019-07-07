@@ -2,10 +2,14 @@ package com.jake.huntkey.core.delegates;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +19,8 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
+import com.jake.huntkey.core.activitys.LoginActivity;
+import com.jake.huntkey.core.activitys.MainActivity;
 import com.jake.huntkey.core.adapter.HomePageRecyclerViewAdapter;
 import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.delegates.EChartsDelegate.EChartsBoardDelegate;
@@ -29,10 +35,14 @@ import com.vise.xsnow.http.callback.ACallback;
 import com.vise.xsnow.http.core.ApiTransformer;
 import com.vise.xsnow.http.subscriber.ApiCallbackSubscriber;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 import me.yokeyword.fragmentation.SupportFragment;
 
 
@@ -116,11 +126,31 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
                             ToastUtils.showShort(get7DayFpyRateResponse.getContent().toString());
                         }
                     }
+
                     @Override
                     public void onFail(int errCode, String errMsg) {
                         ToastUtils.showShort(errMsg);
                     }
                 }));
 
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        EventBusActivityScope.getDefault(_mActivity).register(this);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        EventBusActivityScope.getDefault(_mActivity).unregister(this);
+
+        super.onDestroyView();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTabSelectedEvent(LoginActivity.MessageEvent event) {
+        ToastUtils.showShort(event.getName());
     }
 }

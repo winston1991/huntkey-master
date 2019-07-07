@@ -12,7 +12,9 @@ public enum HKIcons implements Icon {
     icon_prewarning('\ue72a'),
     icon_process('\ue64c'),
     icon_chart('\ue61e'),
-    icon_factory('\ue610');
+    icon_factory('\ue610'),
+    icon_user('\ue634'),
+    icon_password('\ue64d');
 
     private char character;
 

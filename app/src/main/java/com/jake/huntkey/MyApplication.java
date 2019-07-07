@@ -10,6 +10,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         HkEngine.init(this)
                 .withIcon(new FontAwesomeModule())
                 .withIcon(new FontHkModule())

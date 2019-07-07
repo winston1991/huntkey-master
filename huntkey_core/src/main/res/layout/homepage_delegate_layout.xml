@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="130dp"
         android:scaleType="fitCenter"
-        android:background="@drawable/factory_workshop_top"/>
+        android:background="@mipmap/factory_workshop_top"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/id_recyclerView"

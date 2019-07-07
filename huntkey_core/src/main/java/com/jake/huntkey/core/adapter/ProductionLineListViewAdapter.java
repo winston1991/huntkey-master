@@ -8,9 +8,13 @@ import android.widget.BaseAdapter;
 
 import com.bin.david.form.core.SmartTable;
 import com.bin.david.form.data.column.Column;
+import com.bin.david.form.data.format.bg.BaseBackgroundFormat;
 import com.bin.david.form.data.format.selected.BaseSelectFormat;
 
+import com.bin.david.form.data.style.FontStyle;
 import com.bin.david.form.data.table.TableData;
+import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.delegates.EChartsDelegate.EChartsBoardDelegate;
@@ -59,6 +63,7 @@ public class ProductionLineListViewAdapter extends BaseAdapter {
             viewHold.smartTable.getConfig().setShowXSequence(false);
             viewHold.smartTable.getConfig().setHorizontalPadding(16);
             viewHold.smartTable.getConfig().setColumnTitleHorizontalPadding(17);
+            viewHold.smartTable.getConfig().setMinTableWidth(ScreenUtils.getScreenWidth());
             convertView.setTag(viewHold);
         } else {
             viewHold = (ViewHold) convertView.getTag();
@@ -67,6 +72,11 @@ public class ProductionLineListViewAdapter extends BaseAdapter {
             viewHold.smartTable.getConfig().setShowColumnTitle(false);
         } else {
             viewHold.smartTable.getConfig().setShowColumnTitle(true);
+            FontStyle fontStyle = new FontStyle();
+            fontStyle.setTextSize(ConvertUtils.sp2px(15));
+            fontStyle.setTextColor(R.color.white);
+            viewHold.smartTable.getConfig().setColumnTitleStyle(fontStyle);
+            viewHold.smartTable.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(R.color.colorAccent));
         }
 //        viewHold.smartTable.setSelectFormat(new BaseSelectFormat());
         viewHold.smartTable.setData(datas.get(position));

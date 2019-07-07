@@ -60,6 +60,6 @@
         <!--允许模糊-->
         <item name="android:backgroundDimEnabled">true</item>
         <!--全屏幕-->
-        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowFullscreen">false</item>
     </style>
 </resources>

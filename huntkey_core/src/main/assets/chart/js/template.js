@@ -1,5 +1,5 @@
 function loadChartView(id, option) {
-    var myChart = echarts.init(document.getElementById(id));
+    var myChart = echarts.init(document.getElementById(id), "shine");
     myChart.setOption(option);
     window.addEventListener("resize", function(){
         myChart.resize();
@@ -10,12 +10,20 @@ function loadChartView(id, option) {
   return "ok";
 }
 
+function clearChart()
+{
+   echarts.getInstanceByDom(document.getElementById("chart1")).dispose ();
+   echarts.getInstanceByDom(document.getElementById("chart2")).dispose ();
+   echarts.getInstanceByDom(document.getElementById("chart3")).dispose ();
+   echarts.getInstanceByDom(document.getElementById("chart4")).dispose ();
 
+}
 
 function hideDiv()
 {
    document.getElementById("chart4").style.display="none";//隐藏
 }
+
 function showDiv()
 {
    document.getElementById("chart4").style.display="";//显示

@@ -20,12 +20,6 @@ import me.yokeyword.fragmentation.SupportFragment;
 
 public class EChartsBoardDelegate extends BaseBackDelegate {
     public static final int FIRST = 0;
-    public static final int SECOND = 1;
-    public static final int THIRD = 2;
-    public static final int FOURTH = 3;
-    public static final int FIVE = 4;
-    private SupportFragment[] mFragments = new SupportFragment[5];
-
 
     private static final String ARG_TITLE = "arg_type";
     @BindView(R2.id.fl_container)
@@ -43,7 +37,9 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     TextView upm_tv;
 
 
-    private int mCurrentFragmentPostion;
+    private int mCurrentFragmentPostion = 0;
+    private SupportFragment mCurrentFragment;
+    private SupportFragment mFragment;
 
     public static EChartsBoardDelegate newInstance(String title) {
 
@@ -63,30 +59,12 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
         }
         marqueeTextView.setText("WBJ7941279124, WBJ53823902, WBJ8085340, WBJ9829202");
         material_number_marqueenview.setText("     P23-324657M78S6, P23-324657M79S6, P23-324657M78S7");
-        SupportFragment firstFragment = findFragment(EChartZhiTongLvDelegate.class);
-        mCurrentFragmentPostion = FIRST;
-        if (firstFragment == null) {
-            mFragments[FIRST] = EChartZhiTongLvDelegate.newInstance("");
-            mFragments[SECOND] = EChartDaChengLvDelegate.newInstance("");
-            mFragments[THIRD] = EChartSheBieJiaDongLvDelegate.newInstance("");
-            mFragments[FOURTH] = EChartChuQinLvDelegate.newInstance("");
-            mFragments[FIVE] = EChart_WIP_Tj_Delegate.newInstance("");
-
-            loadMultipleRootFragment(R.id.fl_container, FIRST,
-                    mFragments[FIRST],
-                    mFragments[SECOND],
-                    mFragments[THIRD],
-                    mFragments[FOURTH], mFragments[FIVE]);
-        } else {
-            // 这里库已经做了Fragment恢复,所有不需要额外的处理了, 不会出现重叠问题这里我们需要拿到mFragments的引用
-            mFragments[FIRST] = firstFragment;
-            mFragments[SECOND] = findFragment(EChartDaChengLvDelegate.class);
-            mFragments[THIRD] = findFragment(EChartSheBieJiaDongLvDelegate.class);
-            mFragments[FOURTH] = findFragment(EChartChuQinLvDelegate.class);
-            mFragments[FIVE] = findFragment(EChart_WIP_Tj_Delegate.class);
-        }
+        mCurrentFragment = EChartContainerDelegate.newInstance("");
+        mFragment = EChart_WIP_Tj_Delegate.newInstance("");
+        loadMultipleRootFragment(R.id.fl_container, 0, mCurrentFragment, mFragment );
 
     }
+
 
     @Override
     public Object setLayout() {
@@ -107,7 +85,33 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
             public void onTabSelected(TabLayout.Tab tab) {
 
                 if (tab.getPosition() != mCurrentFragmentPostion) {
-                    showHideFragment(mFragments[tab.getPosition()], mFragments[mCurrentFragmentPostion]);
+                    switch (tab.getPosition()) {
+                        case 0:
+
+                            showHideFragment(mCurrentFragment, mFragment);
+                            ((EChartContainerDelegate) mCurrentFragment).loadZhiTongLvChart();
+
+                            break;
+                        case 1:
+                            showHideFragment(mCurrentFragment, mFragment);
+
+                            ((EChartContainerDelegate) mCurrentFragment).loadDaChengLvChart();
+                            break;
+                        case 2:
+                            showHideFragment(mCurrentFragment, mFragment);
+
+                            ((EChartContainerDelegate) mCurrentFragment).loadJiaDongLvChart();
+                            break;
+                        case 3:
+                            showHideFragment(mCurrentFragment, mFragment);
+
+                            ((EChartContainerDelegate) mCurrentFragment).loadChuQinLvChart();
+                            break;
+                        case 4:
+                            showHideFragment(mFragment, mCurrentFragment);
+                            break;
+
+                    }
                     mCurrentFragmentPostion = tab.getPosition();
                 }
             }

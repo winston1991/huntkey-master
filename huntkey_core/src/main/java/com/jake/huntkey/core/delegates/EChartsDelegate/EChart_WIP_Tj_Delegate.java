@@ -1,5 +1,6 @@
 package com.jake.huntkey.core.delegates.EChartsDelegate;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -8,6 +9,9 @@ import android.widget.FrameLayout;
 
 import com.bin.david.form.core.SmartTable;
 import com.bin.david.form.data.column.Column;
+import com.bin.david.form.data.format.bg.BaseBackgroundFormat;
+import com.bin.david.form.data.style.FontStyle;
+import com.blankj.utilcode.util.ConvertUtils;
 import com.github.abel533.echarts.Legend;
 import com.github.abel533.echarts.Title;
 import com.github.abel533.echarts.Tooltip;
@@ -63,12 +67,20 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         smartTable1.getConfig().setShowXSequence(false);
         smartTable1.getConfig().setShowYSequence(false);
         smartTable1.setData(getData());
-
+        FontStyle fontStyle = new FontStyle();
+        fontStyle.setTextColor(R.color.colorPrimaryDark);
+        fontStyle.setTextSize(ConvertUtils.sp2px(20));
+        smartTable1.getConfig().setTableTitleStyle(fontStyle);
+        smartTable1.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(155,100,0)));
+        smartTable1.setZoom(true);
 
         smartTable2.getConfig().setFixedTitle(true);
         smartTable2.getConfig().setShowXSequence(false);
         smartTable2.getConfig().setShowYSequence(false);
         smartTable2.setData(getData2());
+        smartTable2.getConfig().setTableTitleStyle(fontStyle);
+        smartTable2.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(155,100,0)));
+        smartTable2.setZoom(true);
 
     }
 
@@ -107,7 +119,7 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         StationSheetEntity stationSheetEntity;
         for (int i = 0; i < 22; i++) {
             stationSheetEntity = new StationSheetEntity();
-            stationSheetEntity.setStationSheet("WBJ332"+i);
+            stationSheetEntity.setStationSheet("WBJ332" + i);
             stationSheetEntity.setAoiTest("23");
             stationSheetEntity.setBarCodeBinding("23" + i);
             stationSheetEntity.setFunctionFinalTest("" + i);
