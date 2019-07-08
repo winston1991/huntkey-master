@@ -22,7 +22,9 @@ import com.vise.xsnow.http.callback.ACallback;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.Nullable;
@@ -76,7 +78,7 @@ public class LoginActivity extends BaseActivity {
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                login();
+                testlogin();
             }
         });
 
@@ -134,20 +136,34 @@ public class LoginActivity extends BaseActivity {
 
     private void testlogin() {
         DialogLoaderManager.showLoading(this);
-        Observable.timer(5, TimeUnit.SECONDS).subscribe(new Consumer<Long>() {
+        Observable.timer(2, TimeUnit.SECONDS).subscribe(new Consumer<Long>() {
             @Override
             public void accept(Long aLong) throws Exception {
 
 
                 ActivityUtils.startActivity(MainActivity.class);
                 ToastUtils.showShort("登录成功");
+                EventBus.getDefault().postSticky(getTestData());
+
                 finish();
                 DialogLoaderManager.stopLoading();
             }
         });
     }
 
+    private List<LoginResponse.Factorys> getTestData() {
 
+        ArrayList<LoginResponse.Factorys> arrayList = new ArrayList<>();
+        LoginResponse.Factorys factorys;
+        for (int i = 0; i < 6; i++) {
+            factorys = new LoginResponse.Factorys();
+            factorys.setSid("" + i);
+            factorys.setAcctId("" + i);
+            factorys.setName("深圳电源" + i);
+            arrayList.add(factorys);
+        }
+        return arrayList;
+    }
 
 }
 

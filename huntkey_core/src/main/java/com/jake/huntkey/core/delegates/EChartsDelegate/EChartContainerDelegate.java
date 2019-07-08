@@ -2,8 +2,10 @@ package com.jake.huntkey.core.delegates.EChartsDelegate;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.delegates.EChartsDelegate.FormatEchartsDataUtil.ChartInterface;
@@ -37,6 +39,12 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
             String mTitle = bundle.getString(ARG_TITLE);
         }
 
+        rootview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                ToastUtils.showShort("ggg");
+            }
+        });
     }
 
 

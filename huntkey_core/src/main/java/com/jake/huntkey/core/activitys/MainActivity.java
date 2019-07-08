@@ -16,6 +16,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
@@ -49,7 +50,7 @@ public class MainActivity extends BaseActivity implements MainBackPressDelegate.
             mainDelegate = MainDelegate.newInstance();
         }
         loadRootFragment(R.id.fl_container, mainDelegate);
-       }
+    }
 
     @Override
     protected void initView() {
@@ -67,8 +68,24 @@ public class MainActivity extends BaseActivity implements MainBackPressDelegate.
         super.onDestroy();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN , sticky = true)
-    public void onEvent(List<LoginResponse.Factorys>  factorys) {
-        EventBusActivityScope.getDefault(MainActivity.this).postSticky(factorys);
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onEvent(List<LoginResponse.Factorys> factorys) {
+
+        EventBusActivityScope.getDefault(MainActivity.this).postSticky(getTestData());
+    }
+
+
+    private List<LoginResponse.Factorys> getTestData() {
+
+        ArrayList<LoginResponse.Factorys> arrayList = new ArrayList<>();
+        LoginResponse.Factorys factorys;
+        for (int i = 0; i < 6; i++) {
+            factorys = new LoginResponse.Factorys();
+            factorys.setSid("" + i);
+            factorys.setAcctId("" + i);
+            factorys.setName("深圳电源" + i);
+            arrayList.add(factorys);
+        }
+        return arrayList;
     }
 }
