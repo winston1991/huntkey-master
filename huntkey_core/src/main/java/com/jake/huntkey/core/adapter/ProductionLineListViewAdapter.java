@@ -1,6 +1,7 @@
 package com.jake.huntkey.core.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.jake.huntkey.core.delegates.EChartsDelegate.EChartsBoardDelegate;
 import com.jake.huntkey.core.entity.ProductionLineEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.yokeyword.fragmentation.SupportFragment;
 
@@ -28,11 +30,13 @@ public class ProductionLineListViewAdapter extends BaseAdapter {
     private ArrayList<ArrayList<ProductionLineEntity>> datas;
     private LayoutInflater inflater;
     private SupportFragment supportFragment;
+    private ArrayList<Column> colums;
 
-    public ProductionLineListViewAdapter(SupportFragment supportFragment, ArrayList<ArrayList<ProductionLineEntity>> datas) {
+    public ProductionLineListViewAdapter(SupportFragment supportFragment, ArrayList<ArrayList<ProductionLineEntity>> datas, ArrayList<Column> colums) {
         this.datas = datas;
         inflater = LayoutInflater.from(supportFragment.getContext());
         this.supportFragment = supportFragment;
+        this.colums = colums;
     }
 
     @Override
@@ -73,13 +77,14 @@ public class ProductionLineListViewAdapter extends BaseAdapter {
         } else {
             viewHold.smartTable.getConfig().setShowColumnTitle(true);
             FontStyle fontStyle = new FontStyle();
-            fontStyle.setTextSize(ConvertUtils.sp2px(15));
-            fontStyle.setTextColor(R.color.white);
+            fontStyle.setTextColor(Color.parseColor("#ffffff"));
             viewHold.smartTable.getConfig().setColumnTitleStyle(fontStyle);
-            viewHold.smartTable.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(R.color.colorAccent));
+            viewHold.smartTable.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.BLUE));
         }
 //        viewHold.smartTable.setSelectFormat(new BaseSelectFormat());
-        viewHold.smartTable.setData(datas.get(position));
+
+        TableData<ProductionLineEntity> tableData = new TableData<ProductionLineEntity>("", datas.get(position),colums);
+        viewHold.smartTable.setTableData(tableData);
         viewHold.smartTable.getTableData().setOnItemClickListener(new TableData.OnItemClickListener() {
             @Override
             public void onClick(Column column, String value, Object o, int col, int row) {

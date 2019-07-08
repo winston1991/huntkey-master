@@ -1,6 +1,7 @@
 package com.jake.huntkey.core.net;
 
 import com.jake.huntkey.core.netbean.Get20BdJianKongInfoResponse;
+import com.jake.huntkey.core.netbean.Get20Be31DataResponse;
 import com.jake.huntkey.core.netbean.Get20BeJianKongInfoResponse;
 import com.jake.huntkey.core.netbean.Get7DayEmpRateResponse;
 import com.jake.huntkey.core.netbean.Get7DayFpyRateResponse;
@@ -236,7 +237,6 @@ public interface WebApiServices {
     Observable<GetFtyInfoResponse> GetFtyInfo(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
 
 
-
     /**
      * @param sid    服务器ID
      * @param lineId 线别ID
@@ -265,7 +265,14 @@ public interface WebApiServices {
     Observable<GetPeriodInfoResponse> GetPeriodInfo(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
 
 
-
+    /**
+     * @param sid      服务器ID
+     * @param deptCode 部门ID
+     * @param acctId   工厂ID
+     * @return 统计32天的直通率，损失率，综合率
+     */
+    @GET("api/Report/Get20Be31Data")
+    Observable<Get20Be31DataResponse> Get20Be31Data(@Query("sid") String sid, @Query("deptCode") String deptCode, @Query("acctId") String acctId);
 
 
 }

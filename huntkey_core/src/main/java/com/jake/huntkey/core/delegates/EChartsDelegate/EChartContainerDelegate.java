@@ -47,6 +47,8 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart2", mChartInterface.getZhiTongLvLvOptions2());
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart3", mChartInterface.getZhiTongLvLvOptions3());
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.getZhiTongLvLvOptions1());
+
+
     }
 
 
@@ -56,6 +58,7 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.getDaChengLvOptions1());
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart2", mChartInterface.getDaChengLvOptions2());
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart3", mChartInterface.getDaChengLvOptions3());
+
     }
 
     public void loadJiaDongLvChart() {
@@ -65,6 +68,7 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart3", mChartInterface.getJiaDongLvOptions3());
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.getJiaDongLvOptions1());
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart2", mChartInterface.getJiaDongLvOptions2());
+
     }
 
     public void loadChuQinLvChart() {
@@ -74,6 +78,7 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart2", mChartInterface.getChuQinLvOptions2());
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart3", mChartInterface.getChuQinLvOptions3());
         mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.getChuQinLvOptions1());
+
     }
     @Override
     public Object setLayout() {

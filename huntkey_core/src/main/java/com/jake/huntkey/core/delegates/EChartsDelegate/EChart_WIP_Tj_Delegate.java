@@ -68,20 +68,24 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         smartTable1.getConfig().setShowYSequence(false);
         smartTable1.setData(getData());
         FontStyle fontStyle = new FontStyle();
-        fontStyle.setTextColor(R.color.colorPrimaryDark);
-        fontStyle.setTextSize(ConvertUtils.sp2px(20));
-        smartTable1.getConfig().setTableTitleStyle(fontStyle);
-        smartTable1.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(155,100,0)));
-        smartTable1.setZoom(true);
+        fontStyle.setTextColor(Color.WHITE);
+        smartTable1.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.BLUE));
+        smartTable1.getConfig().setColumnTitleStyle(fontStyle);
+
+
 
         smartTable2.getConfig().setFixedTitle(true);
         smartTable2.getConfig().setShowXSequence(false);
         smartTable2.getConfig().setShowYSequence(false);
         smartTable2.setData(getData2());
-        smartTable2.getConfig().setTableTitleStyle(fontStyle);
-        smartTable2.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(155,100,0)));
-        smartTable2.setZoom(true);
+        smartTable2.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.BLUE));
+        smartTable2.getConfig().setColumnTitleStyle(fontStyle);
 
+        fontStyle = new FontStyle();
+        fontStyle.setTextColor(Color.GRAY);
+        fontStyle.setTextSize(ConvertUtils.sp2px(20));
+        smartTable1.getConfig().setTableTitleStyle(fontStyle);
+        smartTable2.getConfig().setTableTitleStyle(fontStyle);
     }
 
     @Override

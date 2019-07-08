@@ -52,6 +52,15 @@ public class LoginResponse {
         private String Result;
         private String User;
 
+        public String getDeptAuthority() {
+            return DeptAuthority;
+        }
+
+        public void setDeptAuthority(String deptAuthority) {
+            DeptAuthority = deptAuthority;
+        }
+
+        private String DeptAuthority;
         public String getMessage() {
             return Message;
         }
@@ -120,6 +129,15 @@ public class LoginResponse {
 
         private String Name;
         private String Sid;
+        private String AcctId;
+
+        public String getAcctId() {
+            return AcctId;
+        }
+
+        public void setAcctId(String acctId) {
+            AcctId = acctId;
+        }
 
         public void setName(String Name) {
             this.Name = Name;

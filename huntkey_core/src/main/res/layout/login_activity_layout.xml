@@ -31,14 +31,15 @@
 
             <ImageView
                 android:id="@+id/id_img_user"
-                android:layout_width="30dp"
-                android:layout_height="30dp" />
+                android:layout_width="25dp"
+                android:layout_height="25dp" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/id_edt_username"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="left|center_vertical"
+                android:layout_marginLeft="10dp"
                 android:background="@null"
                 android:hint="账号"
                 android:text="16100175"
@@ -55,14 +56,15 @@
 
             <ImageView
                 android:id="@+id/id_img_passwd"
-                android:layout_width="30dp"
-                android:layout_height="30dp" />
+                android:layout_width="25dp"
+                android:layout_height="25dp" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/id_edt_passwd"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
+                android:layout_marginLeft="10dp"
                 android:gravity="left|center_vertical"
                 android:hint="密码"
                 android:inputType="textPassword"

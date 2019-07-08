@@ -5,14 +5,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
+import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.netbean.LoginResponse;
 import com.jake.huntkey.core.ui.icon.HKIcons;
 import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
@@ -20,6 +19,7 @@ import com.joanzapata.iconify.IconDrawable;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.callback.ACallback;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -31,7 +31,6 @@ import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
-import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 
 
 public class LoginActivity extends BaseActivity {
@@ -77,7 +76,7 @@ public class LoginActivity extends BaseActivity {
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                testlogin();
+                login();
             }
         });
 
@@ -102,14 +101,12 @@ public class LoginActivity extends BaseActivity {
                                 HashMap<String, String> map = new HashMap<>();
                                 map.put("Authorization", "Bearer " + data.getContent().get(0).getToken());
                                 map.put("Content-Type", "application/json;charset=utf-8");
-                                SPUtils spUtils = SPUtils.getInstance("loginToken");
-                                spUtils.put("Authorization", data.getContent().get(0).getToken());
+                                saveLoginInfo(data);
 
                                 ViseHttp.CONFIG().globalHeaders(map);//设置全局请求头
-                                Bundle bundle1 = new Bundle();
-                                // 把Persion数据放入到bundle中
-                                //bundle1.put("factorys",data.getContent().get(0).getFactorys())
-                                ActivityUtils.startActivity(bundle1, MainActivity.class);
+                                ActivityUtils.startActivity( MainActivity.class);
+                                //发送工厂对象实体
+                                EventBus.getDefault().postSticky(data.getContent().get(0).getFactorys());
                                 ToastUtils.showShort("登录成功");
                             } else {
                                 ToastUtils.showShort(data.getContent().get(0).getMessage());
@@ -128,12 +125,19 @@ public class LoginActivity extends BaseActivity {
                 });
     }
 
+    private void saveLoginInfo(LoginResponse data) {
+        SPUtils spUtils = SPUtils.getInstance(Consts.SP_INSTANT_NAME);
+        spUtils.put(Consts.SP_ITEM_TOKEN_NAME, data.getContent().get(0).getToken());
+        spUtils.put(Consts.SP_ITEM_DEPTCODE_NAME, data.getContent().get(0).getDeptAuthority());
+    }
+
 
     private void testlogin() {
         DialogLoaderManager.showLoading(this);
         Observable.timer(5, TimeUnit.SECONDS).subscribe(new Consumer<Long>() {
             @Override
             public void accept(Long aLong) throws Exception {
+
 
                 ActivityUtils.startActivity(MainActivity.class);
                 ToastUtils.showShort("登录成功");
@@ -144,14 +148,7 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-    public static class MessageEvent {
-        public String name;
 
-        public MessageEvent(String name) {
-            this.name = name;
-        }
-
-    }
 }
 
 

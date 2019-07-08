@@ -1,12 +1,10 @@
 package com.jake.huntkey.core.delegates;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,20 +12,17 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
-import com.jake.huntkey.core.activitys.LoginActivity;
-import com.jake.huntkey.core.activitys.MainActivity;
 import com.jake.huntkey.core.adapter.HomePageRecyclerViewAdapter;
 import com.jake.huntkey.core.app.Consts;
-import com.jake.huntkey.core.delegates.EChartsDelegate.EChartsBoardDelegate;
 import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.net.WebApiServices;
 import com.jake.huntkey.core.netbean.Get7DayFpyRateResponse;
+import com.jake.huntkey.core.netbean.LoginResponse;
 import com.joanzapata.iconify.widget.IconTextView;
 import com.vise.log.ViseLog;
 import com.vise.xsnow.http.ViseHttp;
@@ -52,6 +47,7 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
     @BindView(R2.id.id_recyclerView)
     RecyclerView mRecyclerView;
     HomePageRecyclerViewAdapter mHomePageRecyclerViewAdapter;
+    ArrayList<HomePageItemEntity> entityList;
 
     public static HomePageDelegate newInstance() {
         Bundle args = new Bundle();
@@ -69,8 +65,6 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
     protected void onBindView(Bundle savedInstanceState, View rootView) {
         initToobar(rootView);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        mHomePageRecyclerViewAdapter = new HomePageRecyclerViewAdapter(R.layout.homepage_delegate_recycler_item_layout, initEntityList());
-        mHomePageRecyclerViewAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mHomePageRecyclerViewAdapter);
     }
 
@@ -80,16 +74,18 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
 
     }
 
-    private List<HomePageItemEntity> initEntityList() {
-        ArrayList<HomePageItemEntity> entityList = new ArrayList();
+    private void initEntityList(List<LoginResponse.Factorys> factorys) {
+        entityList = new ArrayList();
         HomePageItemEntity entity = null;
-        for (int i = 0; i < Consts.items.length; i++) {
+        for (int i = 0; i < factorys.size(); i++) {
             entity = new HomePageItemEntity();
-            entity.text = Consts.homeItems.get(i);
-            entity.name = Consts.items[i];
+            entity.icon = Consts.homeItems.get(0);
+            entity.name = factorys.get(i).getName();
+            entity.sid = factorys.get(i).getSid();
+            entity.accid = factorys.get(i).getAcctId();
             entityList.add(entity);
         }
-        return entityList;
+
     }
 
 
@@ -97,8 +93,8 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         IconTextView iconTextView = view.findViewById(R.id.item_icon);
         TextView textView = view.findViewById(R.id.item_name);
-        if (position == 0) {
-            ((SupportFragment) getParentFragment()).start(FactoryWorkShopContainerDelegate.newInstance());
+        if (position == 4) {
+            ((SupportFragment) getParentFragment()).start(FactoryWorkShopContainerDelegate.newInstance(((List<HomePageItemEntity>) adapter.getData()).get(position).name));
         } else if (position == 1) {
 
             test();
@@ -106,7 +102,8 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
         } else {
             ((SupportFragment) getParentFragment()).start(DebugPagerFragment.newInstance(position + ""));
         }
-
+        ToastUtils.showShort(((List<HomePageItemEntity>) adapter.getData()).get(position).toString());
+        EventBusActivityScope.getDefault(_mActivity).postSticky(((List<HomePageItemEntity>) adapter.getData()).get(position));
 
     }
 
@@ -145,12 +142,13 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
     @Override
     public void onDestroyView() {
         EventBusActivityScope.getDefault(_mActivity).unregister(this);
-
         super.onDestroyView();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onTabSelectedEvent(LoginActivity.MessageEvent event) {
-        ToastUtils.showShort(event.getName());
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onEvent(List<LoginResponse.Factorys> factorys) {
+        initEntityList(factorys);
+        mHomePageRecyclerViewAdapter = new HomePageRecyclerViewAdapter(R.layout.homepage_delegate_recycler_item_layout, entityList);
+        mHomePageRecyclerViewAdapter.setOnItemClickListener(this);
     }
 }
