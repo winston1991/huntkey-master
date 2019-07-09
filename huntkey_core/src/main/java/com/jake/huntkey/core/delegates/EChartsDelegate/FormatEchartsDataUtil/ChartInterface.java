@@ -22,6 +22,8 @@ import com.github.abel533.echarts.series.Gauge;
 import com.github.abel533.echarts.series.SeriesFactory;
 import com.github.abel533.echarts.series.gauge.Detail;
 
+import java.util.ArrayList;
+
 /**
  * 注入到JS里的对象接口
  */
@@ -29,23 +31,23 @@ public class ChartInterface {
 
 
     @JavascriptInterface
-    public String getZhiTongLvLvOptions1() {
-        return GetChartsOptionString.getZhiTongLvGauge1();
+    public String getZhiTongLvLvOptions1(String rate) {
+        return GetChartsOptionString.getZhiTongLvGauge1(rate);
     }
 
     @JavascriptInterface
-    public String getZhiTongLvLvOptions2() {
-        return GetChartsOptionString.getZhiTongLvBarOptions2();
+    public String getZhiTongLvLvOptions2(ArrayList<String> axis, ArrayList<String> data) {
+        return GetChartsOptionString.getZhiTongLvBarOptions2(axis, data);
     }
 
     @JavascriptInterface
-    public String getZhiTongLvLvOptions3() {
-        return GetChartsOptionString.getZhiTongLvBarOptions3();
+    public String getZhiTongLvLvOptions3(ArrayList<String> axis, ArrayList<String> data) {
+        return GetChartsOptionString.getZhiTongLvBarOptions3(axis, data);
     }
 
     @JavascriptInterface
-    public String getZhiTongLvLvOptions4() {
-        return GetChartsOptionString.getZhiTongLvBarOptions4();
+    public String getZhiTongLvLvOptions4(ArrayList<String> axis, ArrayList<String> data) {
+        return GetChartsOptionString.getZhiTongLvBarOptions4(axis, data);
     }
 
     @JavascriptInterface

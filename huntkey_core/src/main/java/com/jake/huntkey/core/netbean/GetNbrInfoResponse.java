@@ -14,6 +14,16 @@ public class GetNbrInfoResponse {
 
     private String ErrorMsg;
     private String Status;
+
+    @Override
+    public String toString() {
+        return "GetNbrInfoResponse{" +
+                "ErrorMsg='" + ErrorMsg + '\'' +
+                ", Status='" + Status + '\'' +
+                ", Content=" + Content +
+                '}';
+    }
+
     private List<Content> Content;
     public void setErrorMsg(String ErrorMsg) {
          this.ErrorMsg = ErrorMsg;
@@ -41,6 +51,17 @@ public class GetNbrInfoResponse {
         private String otpt_wo_nbr;
         private String otpt_part;
         private String upm;
+
+        @Override
+        public String toString() {
+            return "Content{" +
+                    "otpt_wo_nbr='" + otpt_wo_nbr + '\'' +
+                    ", otpt_part='" + otpt_part + '\'' +
+                    ", upm='" + upm + '\'' +
+                    ", line_name='" + line_name + '\'' +
+                    '}';
+        }
+
         private String line_name;
         public void setOtpt_wo_nbr(String otpt_wo_nbr) {
             this.otpt_wo_nbr = otpt_wo_nbr;

@@ -7,5 +7,8 @@
     <color name="colorPrimary">#5486DB</color>
     <color name="colorPrimaryDark">#5486DB</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="tableTitle">#0098D9</color>
+
+    <color name="tabIndicatorColor">#E6B600</color>
 
 </resources>

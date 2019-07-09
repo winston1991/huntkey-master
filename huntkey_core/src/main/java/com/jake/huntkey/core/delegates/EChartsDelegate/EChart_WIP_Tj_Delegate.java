@@ -66,19 +66,20 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         smartTable1.getConfig().setFixedTitle(true);
         smartTable1.getConfig().setShowXSequence(false);
         smartTable1.getConfig().setShowYSequence(false);
+        smartTable1.getConfig().setShowTableTitle(false);
         smartTable1.setData(getData());
         FontStyle fontStyle = new FontStyle();
         fontStyle.setTextColor(Color.WHITE);
-        smartTable1.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.BLUE));
+        smartTable1.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(0, 152, 217)));
         smartTable1.getConfig().setColumnTitleStyle(fontStyle);
-
 
 
         smartTable2.getConfig().setFixedTitle(true);
         smartTable2.getConfig().setShowXSequence(false);
         smartTable2.getConfig().setShowYSequence(false);
+        smartTable2.getConfig().setShowTableTitle(false);
         smartTable2.setData(getData2());
-        smartTable2.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.BLUE));
+        smartTable2.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(0, 152, 217)));
         smartTable2.getConfig().setColumnTitleStyle(fontStyle);
 
         fontStyle = new FontStyle();

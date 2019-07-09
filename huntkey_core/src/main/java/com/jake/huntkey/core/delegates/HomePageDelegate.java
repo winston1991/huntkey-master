@@ -22,6 +22,7 @@ import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.net.WebApiServices;
 import com.jake.huntkey.core.netbean.Get7DayFpyRateResponse;
+import com.jake.huntkey.core.netbean.GetFpyRateResponse;
 import com.jake.huntkey.core.netbean.LoginResponse;
 import com.joanzapata.iconify.widget.IconTextView;
 import com.vise.log.ViseLog;
@@ -111,16 +112,16 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
 
         ViseHttp.RETROFIT()
                 .create(WebApiServices.class)
-                .Get7DayFpyRate("5", "431", "1")
-                .compose(ApiTransformer.<Get7DayFpyRateResponse>norTransformer())
-                .subscribe(new ApiCallbackSubscriber<>(new ACallback<Get7DayFpyRateResponse>() {
+                .GetFpyRate("5", "431", "1")
+                .compose(ApiTransformer.<GetFpyRateResponse>norTransformer())
+                .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetFpyRateResponse>() {
                     @Override
-                    public void onSuccess(Get7DayFpyRateResponse get7DayFpyRateResponse) {
+                    public void onSuccess(GetFpyRateResponse getFpyRateResponse) {
                         ViseLog.i("request onSuccess!");
-                        if (get7DayFpyRateResponse == null) {
+                        if (getFpyRateResponse == null) {
                             return;
                         } else {
-                            ToastUtils.showShort(get7DayFpyRateResponse.getContent().toString());
+                            ToastUtils.showShort(getFpyRateResponse.getContent().toString());
                         }
                     }
 

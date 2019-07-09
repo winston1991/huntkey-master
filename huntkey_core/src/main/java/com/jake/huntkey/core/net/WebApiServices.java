@@ -9,6 +9,7 @@ import com.jake.huntkey.core.netbean.Get7DayJdRateResponse;
 import com.jake.huntkey.core.netbean.Get7DayTcrRateResponse;
 import com.jake.huntkey.core.netbean.GetAttendanceRateResponse;
 import com.jake.huntkey.core.netbean.GetDtInfoResponse;
+import com.jake.huntkey.core.netbean.GetFpyRateResponse;
 import com.jake.huntkey.core.netbean.GetFtyInfoResponse;
 import com.jake.huntkey.core.netbean.GetJdTop5Response;
 import com.jake.huntkey.core.netbean.GetJiePaiResponse;
@@ -89,8 +90,8 @@ public interface WebApiServices {
      * @param acctId 工厂ID
      * @return 统计近七天的直通率
      */
-    @GET("api/Report/Get7DayFpyRate")
-    Observable<Get7DayFpyRateResponse> Get7DayFpyRate(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
+    @GET("api/Report/GetFpyRate")
+    Observable<GetFpyRateResponse> GetFpyRate(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
 
     /**
      * @param sid    服务器ID

@@ -78,7 +78,7 @@ public class LoginActivity extends BaseActivity {
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                testlogin();
+                login();
             }
         });
 

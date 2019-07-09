@@ -92,12 +92,14 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/id_tablayout"
+        android:background="@android:color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabIndicatorColor="@color/tab_selected"
+        app:tabIndicatorColor="@color/tabIndicatorColor"
+        app:tabIndicatorHeight="3dp"
         app:tabSelectedTextColor="@color/tab_selected"
         app:tabTextAppearance="@style/tab_appearance"
-        app:tabTextColor="@color/colorPrimary"></com.google.android.material.tabs.TabLayout>
+        app:tabTextColor="@color/tableTitle"></com.google.android.material.tabs.TabLayout>
 
     <FrameLayout
         android:id="@+id/fl_container"

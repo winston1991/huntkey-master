@@ -1,27 +1,41 @@
 package com.jake.huntkey.core.delegates.EChartsDelegate;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
-
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
+import com.jake.huntkey.core.entity.HomePageItemEntity;
+import com.jake.huntkey.core.net.WebApiServices;
+import com.jake.huntkey.core.netbean.GetNbrInfoResponse;
+import com.vise.xsnow.http.ViseHttp;
+import com.vise.xsnow.http.callback.ACallback;
+import com.vise.xsnow.http.core.ApiTransformer;
+import com.vise.xsnow.http.subscriber.ApiCallbackSubscriber;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
+import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 import me.yokeyword.fragmentation.SupportFragment;
 
 public class EChartsBoardDelegate extends BaseBackDelegate {
     public static final int FIRST = 0;
 
     private static final String ARG_TITLE = "arg_type";
+    private static final String ARG_LineID = "lineId";
     @BindView(R2.id.fl_container)
     public FrameLayout flContainer;
     @BindView(R2.id.id_tablayout)
@@ -33,18 +47,24 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
 
     @BindView(R2.id.id_material_number_tv)
     TextView material_number_tv;
+
     @BindView(R2.id.id_upm_tv)
-    TextView upm_tv;
+    TextView idUpmTv;
 
 
     private int mCurrentFragmentPostion = 0;
     private SupportFragment mCurrentFragment;
     private SupportFragment mFragment;
+    private String lineId; //线体id
+    private String accid; //工厂id
+    private String sid;// 服务器id
 
-    public static EChartsBoardDelegate newInstance(String title) {
+
+    public static EChartsBoardDelegate newInstance(String title, String lineId) {
 
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
+        args.putString(ARG_LineID, lineId);
         EChartsBoardDelegate fragment = new EChartsBoardDelegate();
         fragment.setArguments(args);
         return fragment;
@@ -55,14 +75,37 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
         Bundle bundle = getArguments();
         if (bundle != null) {
             String mTitle = bundle.getString(ARG_TITLE);
+            lineId = bundle.getString(ARG_LineID);
             super.mToolbar.setTitle(mTitle);
         }
-        marqueeTextView.setText("WBJ7941279124, WBJ53823902, WBJ8085340, WBJ9829202");
-        material_number_marqueenview.setText("     P23-324657M78S6, P23-324657M79S6, P23-324657M78S7");
-        mCurrentFragment = EChartContainerDelegate.newInstance("");
+        getData();
+        mCurrentFragment = EChartContainerDelegate.newInstance(lineId);
         mFragment = EChart_WIP_Tj_Delegate.newInstance("");
-        loadMultipleRootFragment(R.id.fl_container, 0, mCurrentFragment, mFragment );
+        //加载chart图表和wip统计两个fragment
+        loadMultipleRootFragment(R.id.fl_container, 0, mCurrentFragment, mFragment);
 
+    }
+
+    private void getData() {
+        ViseHttp.RETROFIT()
+                .create(WebApiServices.class)
+                .GetNbrInfo(sid, lineId, accid)
+                .compose(ApiTransformer.<GetNbrInfoResponse>norTransformer())
+                .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetNbrInfoResponse>() {
+                    @Override
+                    public void onSuccess(GetNbrInfoResponse data) {
+                        if (data.getStatus().equals("OK") || data.getContent().size() > 0) {
+                            marqueeTextView.setText(data.getContent().get(0).getOtpt_wo_nbr());
+                            material_number_marqueenview.setText(data.getContent().get(0).getOtpt_part());
+                            idUpmTv.setText("UPM: " + data.getContent().get(0).getUpm());
+                        }
+                    }
+
+                    @Override
+                    public void onFail(int errCode, String errMsg) {
+                        ToastUtils.showShort(errMsg);
+                    }
+                }));
     }
 
 
@@ -87,10 +130,8 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
                 if (tab.getPosition() != mCurrentFragmentPostion) {
                     switch (tab.getPosition()) {
                         case 0:
-
                             showHideFragment(mCurrentFragment, mFragment);
                             ((EChartContainerDelegate) mCurrentFragment).loadZhiTongLvChart();
-
                             break;
                         case 1:
                             showHideFragment(mCurrentFragment, mFragment);
@@ -127,4 +168,22 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     }
 
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onEvent(HomePageItemEntity homePageItemEntity) {
+        sid = homePageItemEntity.sid;
+        accid = homePageItemEntity.accid;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        EventBusActivityScope.getDefault(_mActivity).register(this);
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        EventBusActivityScope.getDefault(_mActivity).unregister(this);
+        super.onDestroyView();
+    }
 }

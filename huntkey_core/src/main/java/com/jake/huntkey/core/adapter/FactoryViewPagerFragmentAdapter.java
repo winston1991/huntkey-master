@@ -14,16 +14,18 @@ import me.yokeyword.fragmentation.SupportFragment;
 public class FactoryViewPagerFragmentAdapter extends FragmentPagerAdapter {
 
     String[] items;
+    String factoryName;
 
-    public FactoryViewPagerFragmentAdapter(FragmentManager fm, String[] items) {
+    public FactoryViewPagerFragmentAdapter(FragmentManager fm, String[] items, String factoryName) {
         super(fm);
         this.items = items;
+        this.factoryName = factoryName;
     }
 
     @Override
     public SupportFragment getItem(int position) {
         if (position == 0) {
-            return ProductionLineListViewDelegate.newInstance("");
+            return ProductionLineListViewDelegate.newInstance(factoryName);
         } else {
             return DebugPagerFragment.newInstance(items[position]);
         }

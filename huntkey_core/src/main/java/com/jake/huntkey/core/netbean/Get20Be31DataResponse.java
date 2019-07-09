@@ -17,6 +17,15 @@ public class Get20Be31DataResponse {
     private String Status;
     private List<Content> Content;
 
+    @Override
+    public String toString() {
+        return "Get20Be31DataResponse{" +
+                "ErrorMsg='" + ErrorMsg + '\'' +
+                ", Status='" + Status + '\'' +
+                ", Content=" + Content +
+                '}';
+    }
+
     public void setErrorMsg(String ErrorMsg) {
         this.ErrorMsg = ErrorMsg;
     }

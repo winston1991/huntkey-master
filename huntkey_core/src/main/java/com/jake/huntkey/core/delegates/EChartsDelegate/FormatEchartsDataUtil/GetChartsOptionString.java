@@ -24,66 +24,68 @@ import com.github.abel533.echarts.series.Series;
 import com.github.abel533.echarts.series.SeriesFactory;
 import com.github.abel533.echarts.series.gauge.Detail;
 
+import java.util.ArrayList;
+
 public class GetChartsOptionString {
 
-    public static String getZhiTongLvGauge1() {
+    public static String getZhiTongLvGauge1(String rate) {
         GsonOption option = new GsonOption();
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         Gauge gauge = new Gauge();
         gauge.name("直通率");
         gauge.detail(new Detail().formatter("{value}%"));
-        gauge.data(new Data().setValue(99).setName("直通率"));
+        gauge.data(new Data().setValue(rate).setName("直通率"));
         option.series(gauge);
         return option.toString();
     }
 
-    public static String getZhiTongLvBarOptions2() {
+    public static String getZhiTongLvBarOptions2(ArrayList<String> axis, ArrayList<String> data) {
         GsonOption option = new GsonOption();
-        option.setLegend(new Legend().data("近7天直通率"));
+        option.setLegend(new Legend().data("近7天直通率").top("5%"));
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         AxisLabel axisLabel = new AxisLabel();
         axisLabel.setInterval(0);
         axisLabel.setRotate(45);
-        option.xAxis(new CategoryAxis().data("06月23", "06月24", "06月25", "06月26", "06月27", "06月28", "06月30").axisLabel(axisLabel));
+        option.xAxis(new CategoryAxis().data(axis.toArray()).axisLabel(axisLabel));
         CategoryAxis categoryAxis = new CategoryAxis();
         option.yAxis(categoryAxis.type(AxisType.value));
         Bar bar = new Bar("近7天直通率");
-        bar.data(89, 99, 96, 95, 91, 85, 87);
+        bar.data(data.toArray());
         bar.label().normal().show(true).position(Position.inside);
         option.series(bar);
         return option.toString();
     }
 
-    public static String getZhiTongLvBarOptions3() {
+    public static String getZhiTongLvBarOptions3(ArrayList<String> axis, ArrayList<String> data) {
         GsonOption option = new GsonOption();
-        option.setLegend(new Legend().data("直通率Tops5"));
+        option.setLegend(new Legend().data("直通率Tops5").top("10%"));
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         AxisLabel axisLabel = new AxisLabel();
         axisLabel.setInterval(0);
         axisLabel.setRotate(45);
-        option.xAxis(new CategoryAxis().data("镭雕外观检测", "共模测试", "预功能测试", "高压测试", "功能测试").axisLabel(axisLabel));
+        option.xAxis(new CategoryAxis().data(axis.toArray()).axisLabel(axisLabel));
         CategoryAxis categoryAxis = new CategoryAxis();
         option.yAxis(categoryAxis.type(AxisType.value));
         Bar bar = new Bar("直通率Tops5");
-        bar.data(89, 96, 95, 91, 85).itemStyle().normal().color("#00ff00");
+        bar.data(data.toArray()).itemStyle().normal().color("#E6B600");
         bar.label().normal().show(true).position(Position.inside);
         option.series(bar);
         return option.toString();
     }
 
 
-    public static String getZhiTongLvBarOptions4() {
+    public static String getZhiTongLvBarOptions4(ArrayList<String> axis, ArrayList<String> data) {
         GsonOption option = new GsonOption();
-        option.setLegend(new Legend().data("损失率Top5"));
+        option.setLegend(new Legend().data("损失率Top5").top("10%"));
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         AxisLabel axisLabel = new AxisLabel();
         axisLabel.setInterval(0);
         axisLabel.setRotate(45);
-        option.xAxis(new CategoryAxis().data("AOI测试", "功能测试", "条码绑定", "镭雕外观检测", "功能终测").axisLabel(axisLabel));
+        option.xAxis(new CategoryAxis().data(axis.toArray()).axisLabel(axisLabel));
         CategoryAxis categoryAxis = new CategoryAxis();
         option.yAxis(categoryAxis.type(AxisType.value));
         Bar bar = new Bar("损失率Top5");
-        bar.data(8.9, 9.9, 9.6, 9.52, 9.12).itemStyle().normal().color("#0033ff");
+        bar.data(data.toArray()).itemStyle().normal().color("#0098D9");
         bar.label().normal().show(true).position(Position.inside);
         option.series(bar);
         return option.toString();
@@ -109,7 +111,7 @@ public class GetChartsOptionString {
         axisPointer.setType(PointerType.cross);
         tooltip.axisPointer(axisPointer);
         option.setTooltip(tooltip);
-        option.legend().data("计划产能", "实际产能");
+        option.legend().data("计划产能", "实际产能").top("10%");
 
         CategoryAxis categoryAxisX = new CategoryAxis();
         categoryAxisX.setAxisTick(new AxisTick().show(true));
@@ -125,7 +127,7 @@ public class GetChartsOptionString {
 
         DataZoom dataZoom = new DataZoom();
         dataZoom.setType(DataZoomType.slider);
-        dataZoom.start(0).end(100).bottom("10%");
+        dataZoom.start(0).end(50).bottom("2%");
         option.dataZoom(dataZoom);
 
         SeriesFactory seriesFactory = new SeriesFactory();
@@ -169,7 +171,7 @@ public class GetChartsOptionString {
 
         DataZoom dataZoom = new DataZoom();
         dataZoom.setType(DataZoomType.slider);
-        dataZoom.start(0).end(100).bottom("10%");
+        dataZoom.start(0).end(50).bottom("2%");
         option.dataZoom(dataZoom);
 
         SeriesFactory seriesFactory = new SeriesFactory();
@@ -314,7 +316,7 @@ public class GetChartsOptionString {
 
         DataZoom dataZoom = new DataZoom();
         dataZoom.setType(DataZoomType.slider);
-        dataZoom.start(0).end(100).bottom("10%");
+        dataZoom.start(0).end(100).bottom("2%");
         option.dataZoom(dataZoom);
 
         SeriesFactory seriesFactory = new SeriesFactory();
@@ -371,7 +373,7 @@ public class GetChartsOptionString {
 
         DataZoom dataZoom = new DataZoom();
         dataZoom.setType(DataZoomType.slider);
-        dataZoom.start(0).end(100).bottom("10%");
+        dataZoom.start(0).end(50).bottom("2%");
         option.dataZoom(dataZoom);
 
         SeriesFactory seriesFactory = new SeriesFactory();
@@ -405,7 +407,7 @@ public class GetChartsOptionString {
         axisPointer.setType(PointerType.cross);
         tooltip.axisPointer(axisPointer);
         option.setTooltip(tooltip);
-        option.legend().data("在职人数", "实际出勤人数", "实际出勤率");
+        option.legend().data("在职人数", "实际出勤人数", "实际出勤率").top("10%");
 
         CategoryAxis categoryAxisX = new CategoryAxis();
         categoryAxisX.setAxisTick(new AxisTick().show(true));
@@ -424,7 +426,7 @@ public class GetChartsOptionString {
 
         DataZoom dataZoom = new DataZoom();
         dataZoom.setType(DataZoomType.slider);
-        dataZoom.start(0).end(100).bottom("10%");
+        dataZoom.start(0).end(50).bottom("2%");
         option.dataZoom(dataZoom);
 
         SeriesFactory seriesFactory = new SeriesFactory();

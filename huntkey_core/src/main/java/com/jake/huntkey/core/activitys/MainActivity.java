@@ -71,7 +71,7 @@ public class MainActivity extends BaseActivity implements MainBackPressDelegate.
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onEvent(List<LoginResponse.Factorys> factorys) {
 
-        EventBusActivityScope.getDefault(MainActivity.this).postSticky(getTestData());
+        EventBusActivityScope.getDefault(MainActivity.this).postSticky(factorys);
     }
 
 

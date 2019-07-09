@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
+import com.jake.huntkey.core.adapter.HomePageRecyclerViewAdapter;
 import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.delegates.EChartsDelegate.EChartsBoardDelegate;
 import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
@@ -28,6 +29,8 @@ import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.entity.ProductionLineEntity;
 import com.jake.huntkey.core.net.WebApiServices;
 import com.jake.huntkey.core.netbean.Get20Be31DataResponse;
+import com.jake.huntkey.core.netbean.LoginResponse;
+import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
 import com.vise.utils.assist.JSONUtil;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.callback.ACallback;
@@ -44,6 +47,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import butterknife.BindView;
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 import me.yokeyword.fragmentation.SupportFragment;
@@ -59,6 +63,7 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
     private String accid; //工厂id
     ArrayList<Column> colums;
     ArrayList<ProductionLineEntity> tableDatas;
+    private String mTitle;  //工厂名
 
     public static ProductionLineListViewDelegate newInstance(String title) {
         Bundle args = new Bundle();
@@ -87,6 +92,7 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
 
     protected void initView(View view) {
 
+        mTitle = getArguments().getString(ARG_TYPE);
         idSmartTable.getConfig().setShowYSequence(false);
         idSmartTable.getConfig().setShowTableTitle(false);
         idSmartTable.getConfig().setShowXSequence(false);
@@ -94,31 +100,26 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
         idSmartTable.getConfig().setColumnTitleHorizontalPadding(17);
         idSmartTable.getConfig().setMinTableWidth(ScreenUtils.getScreenWidth());
         FontStyle fontStyle = new FontStyle();
-        fontStyle.setTextColor(Color.parseColor("#ffffff"));
+        fontStyle.setTextColor(Color.WHITE);
         idSmartTable.getConfig().setColumnTitleStyle(fontStyle);
-        idSmartTable.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.BLUE));
-        // loadNetData();
+        idSmartTable.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(0, 152, 217)));
+        loadNetData();
 
-        getTableColums(getdatas().getContent().get(0).getTitles());
-        try {
-            getTableData(getdatas().getContent().get(0).getData());
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        TableData<ProductionLineEntity> tableData = new TableData<ProductionLineEntity>("", tableDatas, colums);
-        idSmartTable.setTableData(tableData);
-        idSmartTable.getTableData().setOnItemClickListener(new TableData.OnItemClickListener() {
-            @Override
-            public void onClick(Column column, String value, Object o, int col, int row) {
-                ToastUtils.showShort("col:" + col + "   row:" + row + "    postion:");
-                ((SupportFragment)getParentFragment()).start(EChartsBoardDelegate.newInstance("看板"));
-            }
-        });
+//        getTableColums(getdatas().getContent().get(0).getTitles());
+//        try {
+//            getTableData(getdatas().getContent().get(0).getData());
+//        } catch (NoSuchFieldException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
+//        TableData<ProductionLineEntity> tableData = new TableData<ProductionLineEntity>("", tableDatas, colums);
+//        idSmartTable.setTableData(tableData);
+
     }
 
     private void loadNetData() {
+        DialogLoaderManager.showLoading(_mActivity);
         String deptCode = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_DEPTCODE_NAME);
         ViseHttp.RETROFIT()
                 .create(WebApiServices.class)
@@ -127,57 +128,78 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                 .subscribe(new ApiCallbackSubscriber<>(new ACallback<Get20Be31DataResponse>() {
                     @Override
                     public void onSuccess(Get20Be31DataResponse data) {
-                        getTableColums(data.getContent().get(0).getTitles());
-                        try {
+                        if (data.getStatus().equals("OK") && data.getContent().size() > 0) {
+                            getTableColums(data.getContent().get(0).getTitles());
                             getTableData(data.getContent().get(0).getData());
-                        } catch (NoSuchFieldException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
                         }
-                        TableData<ProductionLineEntity> tableData = new TableData<ProductionLineEntity>("", tableDatas, colums);
-//                        ProductionLineListViewAdapter adapter = new ProductionLineListViewAdapter(ProductionLineListViewDelegate.this, getdatas(), colums);
-//                        listView.setAdapter(adapter);
-                        idSmartTable.setTableData(tableData);
-                        ToastUtils.showShort(data.toString());
+                        DialogLoaderManager.stopLoading();
                     }
 
 
                     @Override
                     public void onFail(int errCode, String errMsg) {
                         ToastUtils.showShort(errCode);
+                        DialogLoaderManager.stopLoading();
                     }
                 }));
     }
 
 
-    private void getTableData(List<List<String>> data) throws NoSuchFieldException, IllegalAccessException {
-        tableDatas = new ArrayList<>();
-        ProductionLineEntity productionLineEntity;
-        for (int i = 1; i <= data.size(); i++) {
-            productionLineEntity = new ProductionLineEntity();
-            for (int j = 1; j <= data.get(i - 1).size(); j++) {
-                Field field = productionLineEntity.getClass().getDeclaredField("item" + j);
-                field.setAccessible(true);
-                field.set(productionLineEntity, data.get(i - 1).get(j - 1));
+    private void getTableData(final List<List<String>> data) {
+        if (data.size() > 0) {
+            tableDatas = new ArrayList<>();
+            ProductionLineEntity productionLineEntity;
+            for (int i = 1; i <= data.size(); i++) {
+                productionLineEntity = new ProductionLineEntity();
+                for (int j = 2; j <= data.get(i - 1).size(); j++) {
+                    try {
+                        Field field = productionLineEntity.getClass().getDeclaredField("item" + (j - 1));
+                        field.setAccessible(true);
+                        field.set(productionLineEntity, data.get(i - 1).get(j - 1));
+                    } catch (Exception e) {
+                        ToastUtils.showShort(e.toString());
+                    }
+                }
+                tableDatas.add(productionLineEntity);
             }
-            tableDatas.add(productionLineEntity);
+            TableData<ProductionLineEntity> tableData = new TableData<ProductionLineEntity>("", tableDatas, colums);
+            idSmartTable.setTableData(tableData);
+            idSmartTable.getTableData().setOnItemClickListener(new TableData.OnItemClickListener() {
+                @Override
+                public void onClick(Column column, String value, Object o, int col, int row) {
+                    int tmp = 1;
+                    String lineId, lineName;
+                    //判断点击的是哪一个产线
+                    if (col == 0) {
+                        tmp = tmp * row;
+                        lineId = data.get(tmp).get(0);
+                        lineName = data.get(tmp).get(1);
+                    } else {
+                        tmp = row / 3;
+                        lineId = data.get(tmp * 3).get(0);
+                        lineName = data.get(tmp * 3).get(1);
+                    }
+                    ToastUtils.showShort(lineName);
+                    ((SupportFragment) getParentFragment()).start(EChartsBoardDelegate.newInstance(mTitle + lineName + "看板", lineId));
+                }
+            });
         }
     }
 
     private void getTableColums(List<String> Titles) {
         //创建表实体
-        colums = new ArrayList<>();
-        Column item = null;
-        for (int i = 1; i <= Titles.size(); i++) {
-            String tmp = "item" + i;
-            item = new Column(Titles.get(i - 1), tmp);
-            if (i == 1) {
-                item.setAutoMerge(true);
+        if (Titles.size() > 0) {
+            colums = new ArrayList<>();
+            Column item = null;
+            for (int i = 2; i <= Titles.size(); i++) {
+                String tmp = "item" + (i - 1);
+                item = new Column(Titles.get(i - 1), tmp);
+                if (i == 2) {
+                    item.setAutoMerge(true);
+                }
+                colums.add(item);
             }
-            colums.add(item);
         }
-
     }
 
 
@@ -208,8 +230,8 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
         ToastUtils.showShort(homePageItemEntity.sid);
         sid = homePageItemEntity.sid;
         accid = homePageItemEntity.accid;
-
     }
+
 
     @Nullable
     @Override
