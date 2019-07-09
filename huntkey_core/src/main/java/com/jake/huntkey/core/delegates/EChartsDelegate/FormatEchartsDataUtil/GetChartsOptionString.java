@@ -402,6 +402,8 @@ public class GetChartsOptionString {
     public static String getChuQinLvBarOptions4() {
         GsonOption option = new GsonOption();
         Tooltip tooltip = new Tooltip();
+
+        tooltip.position(new String[]{"25%", "25%"});
         tooltip.setTrigger(Trigger.axis);
         AxisPointer axisPointer = new AxisPointer();
         axisPointer.setType(PointerType.cross);
