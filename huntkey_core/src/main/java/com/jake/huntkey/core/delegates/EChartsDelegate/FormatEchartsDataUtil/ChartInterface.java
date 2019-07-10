@@ -23,6 +23,7 @@ import com.github.abel533.echarts.series.SeriesFactory;
 import com.github.abel533.echarts.series.gauge.Detail;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 注入到JS里的对象接口
@@ -36,73 +37,73 @@ public class ChartInterface {
     }
 
     @JavascriptInterface
-    public String getZhiTongLvLvOptions2(ArrayList<String> axis, ArrayList<String> data) {
+    public String getZhiTongLvLvOptions2(List<String> axis, List<String> data) {
         return GetChartsOptionString.getZhiTongLvBarOptions2(axis, data);
     }
 
     @JavascriptInterface
-    public String getZhiTongLvLvOptions3(ArrayList<String> axis, ArrayList<String> data) {
+    public String getZhiTongLvLvOptions3(List<String> axis, List<String> data) {
         return GetChartsOptionString.getZhiTongLvBarOptions3(axis, data);
     }
 
     @JavascriptInterface
-    public String getZhiTongLvLvOptions4(ArrayList<String> axis, ArrayList<String> data) {
+    public String getZhiTongLvLvOptions4(List<String> axis, List<String> data) {
         return GetChartsOptionString.getZhiTongLvBarOptions4(axis, data);
     }
 
     @JavascriptInterface
-    public String getDaChengLvOptions1() {
-        return GetChartsOptionString.getDaChengLvGaugeChartOptions();
+    public String getDaChengLvOptions1(String rate) {
+        return GetChartsOptionString.getDaChengLvGaugeChartOptions(rate);
     }
 
 
     @JavascriptInterface
-    public String getDaChengLvOptions2() {
-        return GetChartsOptionString.getDaChengLvDoubleAxisBarLineOptions();
+    public String getDaChengLvOptions2(List<String> axis, List<String> list1, List<String> list2, List<String> list3, List<String> list4, List<String> list5) {
+        return GetChartsOptionString.getDaChengLvDoubleAxisBarLineOptions(axis, list1, list2, list3, list4, list5);
     }
 
     @JavascriptInterface
-    public String getDaChengLvOptions3() {
-        return GetChartsOptionString.getDaChengLvBarChartOptions();
+    public String getDaChengLvOptions3(List<String> axis, List<String> list1, List<String> list2) {
+        return GetChartsOptionString.getDaChengLvBarChartOptions(axis, list1, list2);
     }
 
     @JavascriptInterface
-    public String getJiaDongLvOptions1() {
-        return GetChartsOptionString.getJiaDOngLvGaugeOptions1();
+    public String getJiaDongLvOptions1(String rate) {
+        return GetChartsOptionString.getJiaDOngLvGaugeOptions1(rate);
     }
 
     @JavascriptInterface
-    public String getJiaDongLvOptions2() {
-        return GetChartsOptionString.getJiaDOngLvBarOptions2();
+    public String getJiaDongLvOptions2(List<String> axisX, List<String> axisY) {
+        return GetChartsOptionString.getJiaDOngLvBarOptions2(axisX, axisY);
     }
 
     @JavascriptInterface
-    public String getJiaDongLvOptions3() {
-        return GetChartsOptionString.getJiaDOngLvBarOptions3();
+    public String getJiaDongLvOptions3(List<String> axisX, List<String> axisY) {
+        return GetChartsOptionString.getJiaDOngLvBarOptions3(axisX, axisY);
     }
 
     @JavascriptInterface
-    public String getJiaDongLvOptions4() {
-        return GetChartsOptionString.getJiaDOngLvBarOptions4();
+    public String getJiaDongLvOptions4(List<String> axisX, List<String> axisY) {
+        return GetChartsOptionString.getJiaDOngLvBarOptions4(axisX, axisY);
     }
 
     @JavascriptInterface
-    public String getChuQinLvOptions1() {
-        return GetChartsOptionString.getChuQinLvGaugeOptions1();
+    public String getChuQinLvOptions1(String rate) {
+        return GetChartsOptionString.getChuQinLvGaugeOptions1(rate);
     }
 
     @JavascriptInterface
-    public String getChuQinLvOptions2() {
-        return GetChartsOptionString.getChuQinLvBarOptions2();
+    public String getChuQinLvOptions2(List<String>... list) {
+        return GetChartsOptionString.getChuQinLvBarOptions2(list);
     }
 
     @JavascriptInterface
-    public String getChuQinLvOptions3() {
-        return GetChartsOptionString.getChuQinLvBarOptions3();
+    public String getChuQinLvOptions3(List<String>... lists) {
+        return GetChartsOptionString.getChuQinLvBarOptions3(lists);
     }
 
     @JavascriptInterface
-    public String getChuQinLvOptions4() {
-        return GetChartsOptionString.getChuQinLvBarOptions4();
+    public String getChuQinLvOptions4(List<String>... lists) {
+        return GetChartsOptionString.getChuQinLvBarOptions4(lists);
     }
 }

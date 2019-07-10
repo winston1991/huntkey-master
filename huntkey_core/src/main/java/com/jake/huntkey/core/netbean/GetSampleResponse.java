@@ -42,7 +42,7 @@ public class GetSampleResponse {
         private String sapm_wo_nbr;
         private String sapm_act_qty;
         private String code_name;
-        private String sapm_remark;
+        private String sapm_remark = "-";
         public void setSapm_lot(String sapm_lot) {
             this.sapm_lot = sapm_lot;
         }

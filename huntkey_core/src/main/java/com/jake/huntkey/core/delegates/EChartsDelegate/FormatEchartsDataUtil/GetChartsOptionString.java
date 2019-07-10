@@ -25,6 +25,7 @@ import com.github.abel533.echarts.series.SeriesFactory;
 import com.github.abel533.echarts.series.gauge.Detail;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GetChartsOptionString {
 
@@ -39,7 +40,7 @@ public class GetChartsOptionString {
         return option.toString();
     }
 
-    public static String getZhiTongLvBarOptions2(ArrayList<String> axis, ArrayList<String> data) {
+    public static String getZhiTongLvBarOptions2(List<String> axis, List<String> data) {
         GsonOption option = new GsonOption();
         option.setLegend(new Legend().data("近7天直通率").top("5%"));
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
@@ -56,7 +57,7 @@ public class GetChartsOptionString {
         return option.toString();
     }
 
-    public static String getZhiTongLvBarOptions3(ArrayList<String> axis, ArrayList<String> data) {
+    public static String getZhiTongLvBarOptions3(List<String> axis, List<String> data) {
         GsonOption option = new GsonOption();
         option.setLegend(new Legend().data("直通率Tops5").top("10%"));
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
@@ -74,7 +75,7 @@ public class GetChartsOptionString {
     }
 
 
-    public static String getZhiTongLvBarOptions4(ArrayList<String> axis, ArrayList<String> data) {
+    public static String getZhiTongLvBarOptions4(List<String> axis, List<String> data) {
         GsonOption option = new GsonOption();
         option.setLegend(new Legend().data("损失率Top5").top("10%"));
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
@@ -92,18 +93,24 @@ public class GetChartsOptionString {
     }
 
 
-    public static String getDaChengLvGaugeChartOptions() {
+    public static String getDaChengLvGaugeChartOptions(String rate) {
         GsonOption option = new GsonOption();
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         Gauge gauge = new Gauge();
         gauge.name("达成率");
         gauge.detail(new Detail().formatter("{value}%"));
-        gauge.data(new Data().setValue(89).setName("达成率"));
+        gauge.data(new Data().setValue(rate).setName("达成率"));
         option.series(gauge);
         return option.toString();
     }
 
-    public static String getDaChengLvBarChartOptions() {
+    /**
+     * @param axis
+     * @param list1 计划产能
+     * @param list2 实际产能
+     * @return
+     */
+    public static String getDaChengLvBarChartOptions(List<String> axis, List<String> list1, List<String> list2) {
         GsonOption option = new GsonOption();
         Tooltip tooltip = new Tooltip();
         tooltip.setTrigger(Trigger.axis);
@@ -115,7 +122,7 @@ public class GetChartsOptionString {
 
         CategoryAxis categoryAxisX = new CategoryAxis();
         categoryAxisX.setAxisTick(new AxisTick().show(true));
-        categoryAxisX.data("08点", "09点", "10点", "11点", "12点", "13点", "14点", "15点", "16点");
+        categoryAxisX.data(axis.toArray());
         option.xAxis(categoryAxisX);
 
         //Y轴
@@ -133,17 +140,25 @@ public class GetChartsOptionString {
         SeriesFactory seriesFactory = new SeriesFactory();
         Bar bar1 = SeriesFactory.newBar("计划产能");
         bar1.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar1.data(1239, 1234, 2394, 1003, 998, 1200, 1029, 1204);
+        bar1.data(list1.toArray());
         Bar bar2 = SeriesFactory.newBar("实际产能");
         bar2.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar2.data(1390, 1345, 949, 1023, 898, 710, 600, 300);
+        bar2.data(list2.toArray());
         option.grid().top("20%").containLabel(false);
         option.series(bar1, bar2);
         return option.toString();
     }
 
-    //
-    public static String getDaChengLvDoubleAxisBarLineOptions() {
+    /**
+     * @param axis  x抽坐标
+     * @param list1 计划数量
+     * @param list2 A班完成
+     * @param list3 A班达成率
+     * @param list4 B班完成
+     * @param list5 B班达成率
+     * @return
+     */
+    public static String getDaChengLvDoubleAxisBarLineOptions(List<String> axis, List<String> list1, List<String> list2, List<String> list3, List<String> list4, List<String> list5) {
         GsonOption option = new GsonOption();
         Tooltip tooltip = new Tooltip();
         tooltip.setTrigger(Trigger.axis);
@@ -151,11 +166,11 @@ public class GetChartsOptionString {
         axisPointer.setType(PointerType.cross);
         tooltip.axisPointer(axisPointer);
         option.setTooltip(tooltip);
-        option.legend().data("计划数量", "A班完成数量", "B班完成数量", "A班达成率", "B班达成率");
+        option.legend().data("计划数量", "A班完成数", "A班达成率", "B班完成数", "B班达成率");
 
         CategoryAxis categoryAxisX = new CategoryAxis();
         categoryAxisX.setAxisTick(new AxisTick().show(true));
-        categoryAxisX.data("06月24", "06月25", "06月26", "06月27", "06月28");
+        categoryAxisX.data(axis.toArray());
         option.xAxis(categoryAxisX);
 
         //Y轴
@@ -177,22 +192,22 @@ public class GetChartsOptionString {
         SeriesFactory seriesFactory = new SeriesFactory();
         Bar bar1 = SeriesFactory.newBar("计划数量");
         bar1.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar1.data(12390, 12345, 23949, 10023, 9898);
+        bar1.data(list1.toArray());
         Bar bar2 = SeriesFactory.newBar("A班完成数量");
         bar2.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar2.data(2390, 2345, 3949, 1023, 898);
+        bar2.data(list2.toArray());
         Bar bar3 = SeriesFactory.newBar("B班完成数量");
         bar3.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar3.data(10390, 10345, 20949, 10000, 7000);
+        bar3.data(list4.toArray());
 
 
         Line line1 = seriesFactory.newLine("A班达成率");
         line1.yAxisIndex(1).label().normal().show(true).position(Position.top);
-        line1.data(70, 80, 90, 78, 94);
+        line1.data(list3.toArray());
 
         Line line2 = seriesFactory.newLine("B班达成率");
         line2.yAxisIndex(1).label().normal().show(true).position(Position.top);
-        line2.data(80, 90, 70, 98, 99);
+        line2.data(list5.toArray());
 
         option.grid().top("20%").containLabel(false);
         option.series(bar1, bar2, bar3, line1, line2);
@@ -203,23 +218,23 @@ public class GetChartsOptionString {
 
 
     @JavascriptInterface
-    public static String getJiaDOngLvGaugeOptions1() {
+    public static String getJiaDOngLvGaugeOptions1(String rate) {
         GsonOption option = new GsonOption();
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         Gauge gauge = new Gauge();
         gauge.name("设备稼动率");
         gauge.detail(new Detail().formatter("{value}%"));
-        gauge.data(new Data().setValue(90).setName("稼动率"));
+        gauge.data(new Data().setValue(rate).setName("稼动率"));
         option.series(gauge);
         return option.toString();
     }
 
     @JavascriptInterface
-    public static String getJiaDOngLvBarOptions2() {
+    public static String getJiaDOngLvBarOptions2(List<String> axisX, List<String> axisY) {
         GsonOption option = new GsonOption();
         option.setLegend(new Legend().data("近7天稼动率"));
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}"));
-        option.xAxis(new CategoryAxis().data("06-29", "06-30", "06-31", "07-1", "07-2", "07-3", "07-4"));
+        option.xAxis(new CategoryAxis().data(axisX.toArray()));
         CategoryAxis categoryAxis = new CategoryAxis();
         option.yAxis(categoryAxis.type(AxisType.value));
         DataZoom dataZoom = new DataZoom();
@@ -228,20 +243,20 @@ public class GetChartsOptionString {
         dataZoom.setEnd(100);
         option.dataZoom(dataZoom);
         Bar bar = new Bar("近7天稼动率");
-        bar.data(5, 20, 36, 10, 10, 20, 5);
+        bar.data(axisY.toArray());
         option.series(bar);
         return option.toString();
     }
 
     @JavascriptInterface
-    public static String getJiaDOngLvBarOptions3() {
+    public static String getJiaDOngLvBarOptions3(List<String> axisX, List<String> axisY) {
         GsonOption option = new GsonOption();
         option.setLegend(new Legend().data("稼动率Top5"));
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}"));
         AxisLabel axisLabel = new AxisLabel();
         axisLabel.setInterval(0);
         axisLabel.setRotate(45);
-        option.xAxis(new CategoryAxis().data("产品外观检查", "包装扫描", "工单投入入", "插件AOI测试", "共模测试", "超声波", "条码转换", "条码绑定", "功能终测", "条码替换", "AOI测试", "高压测试", "镭雕外观检测", "功能初测", "预功能测试").axisLabel(axisLabel));
+        option.xAxis(new CategoryAxis().data(axisX.toArray()).axisLabel(axisLabel));
         CategoryAxis categoryAxis = new CategoryAxis();
         option.yAxis(categoryAxis.type(AxisType.value));
         DataZoom dataZoom = new DataZoom();
@@ -250,17 +265,17 @@ public class GetChartsOptionString {
         dataZoom.setEnd(100);
         option.dataZoom(dataZoom);
         Bar bar = new Bar("稼动率Top5");
-        bar.data(5, 20, 36, 10, 10, 20, 5, 20, 36, 10, 10, 20, 2, 8, 10);
+        bar.data(axisY.toArray());
         option.series(bar);
         return option.toString();
     }
 
     @JavascriptInterface
-    public static String getJiaDOngLvBarOptions4() {
+    public static String getJiaDOngLvBarOptions4(List<String> axisX, List<String> axisY) {
         GsonOption option = new GsonOption();
         option.setLegend(new Legend().data("停工线时"));
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}h"));
-        option.xAxis(new CategoryAxis().data("包装扫描", "条码转换", "AOI测试", "条码绑定", "超声波"));
+        option.xAxis(new CategoryAxis().data(axisX.toArray()));
         CategoryAxis categoryAxis = new CategoryAxis();
         option.yAxis(categoryAxis.type(AxisType.value));
         DataZoom dataZoom = new DataZoom();
@@ -269,26 +284,26 @@ public class GetChartsOptionString {
         dataZoom.setEnd(100);
         option.dataZoom(dataZoom);
         Bar bar = new Bar("停工线时");
-        bar.data(2, 2, 3.6, 1, 0.8);
+        bar.data(axisY.toArray());
         option.series(bar);
         return option.toString();
     }
 
     @JavascriptInterface
-    public static String getChuQinLvGaugeOptions1() {
+    public static String getChuQinLvGaugeOptions1(String rate) {
         GsonOption option = new GsonOption();
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         Gauge gauge = new Gauge();
         gauge.name("出勤率");
         gauge.detail(new Detail().formatter("{value}%"));
-        gauge.data(new Data().setValue(100).setName("出勤率"));
+        gauge.data(new Data().setValue(rate).setName("出勤率"));
         option.series(gauge);
         return option.toString();
     }
 
 
     @JavascriptInterface
-    public static String getChuQinLvBarOptions2() {
+    public static String getChuQinLvBarOptions2(List<String>... list) {
         GsonOption option = new GsonOption();
         Tooltip tooltip = new Tooltip();
         tooltip.setTrigger(Trigger.axis);
@@ -300,7 +315,7 @@ public class GetChartsOptionString {
 
         CategoryAxis categoryAxisX = new CategoryAxis();
         categoryAxisX.setAxisTick(new AxisTick().show(true));
-        categoryAxisX.data("06月24", "06月25", "06月26", "06月27", "06月28", "06月29", "06月30");
+        categoryAxisX.data(list[0].toArray());
         option.xAxis(categoryAxisX);
 
         //Y轴
@@ -316,28 +331,28 @@ public class GetChartsOptionString {
 
         DataZoom dataZoom = new DataZoom();
         dataZoom.setType(DataZoomType.slider);
-        dataZoom.start(0).end(100).bottom("2%");
+        dataZoom.start(0).end(50).bottom("2%");
         option.dataZoom(dataZoom);
 
         SeriesFactory seriesFactory = new SeriesFactory();
         Bar bar1 = SeriesFactory.newBar("在职人数");
         bar1.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar1.data(890, 845, 890, 890, 890, 890, 890);
+        bar1.data(list[1].toArray());
         Bar bar2 = SeriesFactory.newBar("A班出勤人数");
         bar2.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar2.data(390, 345, 349, 123, 298, 400, 320);
+        bar2.data(list[2].toArray());
         Bar bar3 = SeriesFactory.newBar("B班出勤人数");
         bar3.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar3.data(500, 500, 249, 730, 560, 590, 540);
+        bar3.data(list[4].toArray());
 
 
         Line line1 = seriesFactory.newLine("A班出勤率");
         line1.yAxisIndex(1).label().normal().show(true).position(Position.top);
-        line1.data(70, 80, 90, 78, 94, 80, 70);
+        line1.data(list[3].toArray());
 
         Line line2 = seriesFactory.newLine("B班出勤率");
         line2.yAxisIndex(1).label().normal().show(true).position(Position.top);
-        line2.data(80, 90, 70, 98, 99, 89, 99);
+        line2.data(list[5].toArray());
 
         option.grid().top("20%").containLabel(false);
         option.series(bar1, bar2, bar3, line1, line2);
@@ -346,7 +361,7 @@ public class GetChartsOptionString {
 
 
     @JavascriptInterface
-    public static String getChuQinLvBarOptions3() {
+    public static String getChuQinLvBarOptions3(List<String>... lists) {
         GsonOption option = new GsonOption();
         Tooltip tooltip = new Tooltip();
         tooltip.setTrigger(Trigger.axis);
@@ -358,7 +373,7 @@ public class GetChartsOptionString {
 
         CategoryAxis categoryAxisX = new CategoryAxis();
         categoryAxisX.setAxisTick(new AxisTick().show(true));
-        categoryAxisX.data("上周", "本周");
+        categoryAxisX.data(lists[0].toArray());
         option.xAxis(categoryAxisX);
 
         //Y轴
@@ -379,19 +394,19 @@ public class GetChartsOptionString {
         SeriesFactory seriesFactory = new SeriesFactory();
         Bar bar1 = SeriesFactory.newBar("在职人数");
         bar1.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar1.data(890, 845);
+        bar1.data(lists[1].toArray());
         Bar bar2 = SeriesFactory.newBar("A班出勤人数");
         bar2.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar2.data(390, 345);
+        bar2.data(lists[2].toArray());
         Bar bar3 = SeriesFactory.newBar("B班出勤人数");
         bar3.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar3.data(500, 500);
+        bar3.data(lists[4].toArray());
         Line line1 = seriesFactory.newLine("A班出勤率");
         line1.yAxisIndex(1).label().normal().show(true).position(Position.top);
-        line1.data(70, 80);
+        line1.data(lists[3].toArray());
         Line line2 = seriesFactory.newLine("B班出勤率");
         line2.yAxisIndex(1).label().normal().show(true).position(Position.top);
-        line2.data(80, 90);
+        line2.data(lists[5].toArray());
         option.grid().top("20%").containLabel(false);
         option.series(bar1, bar2, bar3, line1, line2);
         return option.toString();
@@ -399,7 +414,7 @@ public class GetChartsOptionString {
 
 
     @JavascriptInterface
-    public static String getChuQinLvBarOptions4() {
+    public static String getChuQinLvBarOptions4(List<String>... lists) {
         GsonOption option = new GsonOption();
         Tooltip tooltip = new Tooltip();
 
@@ -409,11 +424,11 @@ public class GetChartsOptionString {
         axisPointer.setType(PointerType.cross);
         tooltip.axisPointer(axisPointer);
         option.setTooltip(tooltip);
-        option.legend().data("在职人数", "实际出勤人数", "实际出勤率").top("10%");
+        option.legend().data("在职人数", "实际出勤人数", "实际出勤率").top("5%");
 
         CategoryAxis categoryAxisX = new CategoryAxis();
         categoryAxisX.setAxisTick(new AxisTick().show(true));
-        categoryAxisX.data("航嘉股份.IT.BG.ITBG制造部.IT制造处A班", "航嘉股份.IT.BG.ITBG制造部.IT制造处B班");
+        categoryAxisX.data(lists[0].toArray());
         option.xAxis(categoryAxisX);
 
         //Y轴
@@ -434,14 +449,14 @@ public class GetChartsOptionString {
         SeriesFactory seriesFactory = new SeriesFactory();
         Bar bar1 = SeriesFactory.newBar("在职人数");
         bar1.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar1.data(890, 845);
+        bar1.data(lists[1].toArray());
         Bar bar2 = SeriesFactory.newBar("实际出勤人数");
         bar2.yAxisIndex(0).label().normal().show(true).position(Position.top);
-        bar2.data(390, 345);
+        bar2.data(lists[2].toArray());
 
         Line line1 = seriesFactory.newLine("实际出勤率");
         line1.yAxisIndex(1).label().normal().show(true).position(Position.top);
-        line1.data(70, 80);
+        line1.data(lists[3].toArray());
 
         option.grid().top("20%").containLabel(false);
         option.series(bar1, bar2, line1);

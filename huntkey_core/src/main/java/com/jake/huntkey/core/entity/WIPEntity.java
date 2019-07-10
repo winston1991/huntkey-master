@@ -17,7 +17,7 @@ public class WIPEntity {
     @SmartColumn(id =5,name = "抽检结果")
     private String  samplingResult;
     @SmartColumn(id =6,name = "NG信息")
-    private String  nGInfo;
+    private String  nGInfo = "-";
     public String getId() {
         return id;
     }

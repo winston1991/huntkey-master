@@ -11,13 +11,19 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
+import com.jake.huntkey.core.app.ConfigKeys;
 import com.jake.huntkey.core.app.Consts;
+import com.jake.huntkey.core.app.HkEngine;
+import com.jake.huntkey.core.entity.CustomUpdateParser;
 import com.jake.huntkey.core.netbean.LoginResponse;
 import com.jake.huntkey.core.ui.icon.HKIcons;
 import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
 import com.joanzapata.iconify.IconDrawable;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.callback.ACallback;
+import com.xuexiang.xupdate.XUpdate;
+import com.xuexiang.xupdate.entity.UpdateEntity;
+import com.xuexiang.xupdate.proxy.IUpdateParser;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
@@ -30,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.Toolbar;
+
 import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
@@ -69,7 +76,6 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         userName.setSelection(userName.getText().toString().length());
-
         Drawable drawableUser = new IconDrawable(this, HKIcons.icon_user);
         Drawable drawablePasswd = new IconDrawable(this, HKIcons.icon_password);
         idImgUser.setImageDrawable(drawableUser);
@@ -81,6 +87,16 @@ public class LoginActivity extends BaseActivity {
                 login();
             }
         });
+        checkVersion();
+
+    }
+
+    private void checkVersion() {
+        String url = (String) HkEngine.getConfiguration(ConfigKeys.API_HOST);
+        XUpdate.newBuild(this)
+                .updateUrl(url + "api/Home/CheckVersion")
+                .updateParser(new CustomUpdateParser()) //设置自定义的版本更新解析器
+                .update();
 
     }
 
@@ -89,14 +105,13 @@ public class LoginActivity extends BaseActivity {
         map.put("i_emp", userName.getText().toString());
         map.put("i_pwd", passwd.getText().toString());
         JSONObject jsonObject = new JSONObject(map);
-
         DialogLoaderManager.showLoading(this);
         ViseHttp.POST("api/Home/Login")
                 .setJson(jsonObject.toString())
                 .request(new ACallback<LoginResponse>() {
                     @Override
                     public void onSuccess(LoginResponse data) {
-                        if (data != null && data.getContent().size() > 0) {
+                        if (data != null && data.getStatus().equals("OK") && data.getContent() != null && data.getContent().size() > 0) {
                             if (data.getContent().get(0).getResult().equals("1")) {
                                 finish();
                                 //给网络请求设置全局的请求头部  添加token
@@ -104,9 +119,8 @@ public class LoginActivity extends BaseActivity {
                                 map.put("Authorization", "Bearer " + data.getContent().get(0).getToken());
                                 map.put("Content-Type", "application/json;charset=utf-8");
                                 saveLoginInfo(data);
-
                                 ViseHttp.CONFIG().globalHeaders(map);//设置全局请求头
-                                ActivityUtils.startActivity( MainActivity.class);
+                                ActivityUtils.startActivity(MainActivity.class);
                                 //发送工厂对象实体
                                 EventBus.getDefault().postSticky(data.getContent().get(0).getFactorys());
                                 ToastUtils.showShort("登录成功");

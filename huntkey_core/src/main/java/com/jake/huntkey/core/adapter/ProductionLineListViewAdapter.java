@@ -89,7 +89,7 @@ public class ProductionLineListViewAdapter extends BaseAdapter {
             @Override
             public void onClick(Column column, String value, Object o, int col, int row) {
                 ToastUtils.showShort("col:" + col + "   row:" + row + "    postion:" + position);
-                ((SupportFragment) supportFragment.getParentFragment()).start(EChartsBoardDelegate.newInstance("看板",""));
+                ((SupportFragment) supportFragment.getParentFragment()).start(EChartsBoardDelegate.newInstance("看板","", ""));
             }
         });
         return convertView;

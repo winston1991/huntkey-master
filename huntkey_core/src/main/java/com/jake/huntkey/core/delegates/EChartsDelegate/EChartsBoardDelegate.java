@@ -36,6 +36,7 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
 
     private static final String ARG_TITLE = "arg_type";
     private static final String ARG_LineID = "lineId";
+    private static final String ARG_DeptCode = "DeptCode";
     @BindView(R2.id.fl_container)
     public FrameLayout flContainer;
     @BindView(R2.id.id_tablayout)
@@ -58,13 +59,15 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     private String lineId; //线体id
     private String accid; //工厂id
     private String sid;// 服务器id
+    private String deptCode;  //部门code
 
 
-    public static EChartsBoardDelegate newInstance(String title, String lineId) {
+    public static EChartsBoardDelegate newInstance(String title, String lineId, String deptCode) {
 
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
         args.putString(ARG_LineID, lineId);
+        args.putString(ARG_DeptCode, deptCode);
         EChartsBoardDelegate fragment = new EChartsBoardDelegate();
         fragment.setArguments(args);
         return fragment;
@@ -76,11 +79,12 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
         if (bundle != null) {
             String mTitle = bundle.getString(ARG_TITLE);
             lineId = bundle.getString(ARG_LineID);
+            deptCode = bundle.getString(ARG_DeptCode);
             super.mToolbar.setTitle(mTitle);
         }
         getData();
-        mCurrentFragment = EChartContainerDelegate.newInstance(lineId);
-        mFragment = EChart_WIP_Tj_Delegate.newInstance("");
+        mCurrentFragment = EChartContainerDelegate.newInstance(lineId, deptCode);
+        mFragment = EChart_WIP_Tj_Delegate.newInstance(lineId);
         //加载chart图表和wip统计两个fragment
         loadMultipleRootFragment(R.id.fl_container, 0, mCurrentFragment, mFragment);
 
@@ -94,7 +98,7 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
                 .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetNbrInfoResponse>() {
                     @Override
                     public void onSuccess(GetNbrInfoResponse data) {
-                        if (data.getStatus().equals("OK") || data.getContent().size() > 0) {
+                        if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
                             marqueeTextView.setText(data.getContent().get(0).getOtpt_wo_nbr());
                             material_number_marqueenview.setText(data.getContent().get(0).getOtpt_part());
                             idUpmTv.setText("UPM: " + data.getContent().get(0).getUpm());

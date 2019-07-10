@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Handler;
 
+import androidx.annotation.NonNull;
+
+import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
+import com.jake.huntkey.core.net.OKHttpUpdateHttpService;
 import com.joanzapata.iconify.IconFontDescriptor;
 import com.joanzapata.iconify.Iconify;
 import com.orhanobut.logger.AndroidLogAdapter;
@@ -14,10 +18,17 @@ import com.vise.log.inner.LogcatTree;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.interceptor.HttpLogInterceptor;
 import com.xuexiang.xui.XUI;
+import com.xuexiang.xupdate.XUpdate;
+import com.xuexiang.xupdate.entity.UpdateError;
+import com.xuexiang.xupdate.listener.OnUpdateFailureListener;
+import com.xuexiang.xupdate.logs.LogcatLogger;
+import com.xuexiang.xupdate.proxy.IUpdateHttpService;
+import com.xuexiang.xupdate.utils.UpdateUtils;
 
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
@@ -66,6 +77,22 @@ public final class Configurator {
                 //配置日志拦截器
                 .interceptor(new HttpLogInterceptor()
                         .setLevel(HttpLogInterceptor.Level.BODY));
+
+
+        XUpdate.get()
+                .setILogger(new LogcatLogger())
+                .isGet(true)
+                //默认设置使用get请求检查版本
+                .param("client", "EMS")         //设置默认公共请求参数
+                .setOnUpdateFailureListener(new OnUpdateFailureListener() {  //设置版本更新出错的监听
+                    @Override
+                    public void onFailure(UpdateError error) {
+                    }
+                })
+                .setIUpdateHttpService(new OKHttpUpdateHttpService())           //这个必须设置！实现网络请求功能。
+                .init((Application) HkEngine.getApplicationContext());
+
+
     }
 
     public final Configurator withApiHost(String host) {

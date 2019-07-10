@@ -120,10 +120,10 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
 
     private void loadNetData() {
         DialogLoaderManager.showLoading(_mActivity);
-        String deptCode = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_DEPTCODE_NAME);
+        String deptCodes = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_DEPTCODE_NAME);
         ViseHttp.RETROFIT()
                 .create(WebApiServices.class)
-                .Get20Be31Data(sid, deptCode, accid)
+                .Get20Be31Data(sid, deptCodes, accid)
                 .compose(ApiTransformer.<Get20Be31DataResponse>norTransformer())
                 .subscribe(new ApiCallbackSubscriber<>(new ACallback<Get20Be31DataResponse>() {
                     @Override
@@ -134,7 +134,6 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                         }
                         DialogLoaderManager.stopLoading();
                     }
-
 
                     @Override
                     public void onFail(int errCode, String errMsg) {
@@ -151,9 +150,9 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
             ProductionLineEntity productionLineEntity;
             for (int i = 1; i <= data.size(); i++) {
                 productionLineEntity = new ProductionLineEntity();
-                for (int j = 2; j <= data.get(i - 1).size(); j++) {
+                for (int j = 3; j <= data.get(i - 1).size(); j++) {
                     try {
-                        Field field = productionLineEntity.getClass().getDeclaredField("item" + (j - 1));
+                        Field field = productionLineEntity.getClass().getDeclaredField("item" + (j - 2));
                         field.setAccessible(true);
                         field.set(productionLineEntity, data.get(i - 1).get(j - 1));
                     } catch (Exception e) {
@@ -168,19 +167,22 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                 @Override
                 public void onClick(Column column, String value, Object o, int col, int row) {
                     int tmp = 1;
-                    String lineId, lineName;
+                    String lineId, lineName , deptCode;
                     //判断点击的是哪一个产线
                     if (col == 0) {
                         tmp = tmp * row;
                         lineId = data.get(tmp).get(0);
-                        lineName = data.get(tmp).get(1);
+                        deptCode = data.get(tmp).get(1);
+                        lineName = data.get(tmp).get(2);
+
                     } else {
                         tmp = row / 3;
                         lineId = data.get(tmp * 3).get(0);
-                        lineName = data.get(tmp * 3).get(1);
+                        deptCode = data.get(tmp * 3).get(1);
+                        lineName = data.get(tmp * 3).get(2);
                     }
                     ToastUtils.showShort(lineName);
-                    ((SupportFragment) getParentFragment()).start(EChartsBoardDelegate.newInstance(mTitle + lineName + "看板", lineId));
+                    ((SupportFragment) getParentFragment()).start(EChartsBoardDelegate.newInstance(mTitle + lineName + "看板", lineId, deptCode));
                 }
             });
         }
@@ -191,10 +193,10 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
         if (Titles.size() > 0) {
             colums = new ArrayList<>();
             Column item = null;
-            for (int i = 2; i <= Titles.size(); i++) {
-                String tmp = "item" + (i - 1);
+            for (int i = 3; i <= Titles.size(); i++) {
+                String tmp = "item" + (i - 2);
                 item = new Column(Titles.get(i - 1), tmp);
-                if (i == 2) {
+                if (i == 3) {
                     item.setAutoMerge(true);
                 }
                 colums.add(item);

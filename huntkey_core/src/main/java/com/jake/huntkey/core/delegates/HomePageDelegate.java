@@ -94,15 +94,7 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         IconTextView iconTextView = view.findViewById(R.id.item_icon);
         TextView textView = view.findViewById(R.id.item_name);
-        if (position == 4) {
-            ((SupportFragment) getParentFragment()).start(FactoryWorkShopContainerDelegate.newInstance(((List<HomePageItemEntity>) adapter.getData()).get(position).name));
-        } else if (position == 1) {
-
-            test();
-            ((SupportFragment) getParentFragment()).start(DebugPagerFragment.newInstance(position + ""));
-        } else {
-            ((SupportFragment) getParentFragment()).start(DebugPagerFragment.newInstance(position + ""));
-        }
+        ((SupportFragment) getParentFragment()).start(FactoryWorkShopContainerDelegate.newInstance(((List<HomePageItemEntity>) adapter.getData()).get(position).name));
         ToastUtils.showShort(((List<HomePageItemEntity>) adapter.getData()).get(position).toString());
         EventBusActivityScope.getDefault(_mActivity).postSticky(((List<HomePageItemEntity>) adapter.getData()).get(position));
 

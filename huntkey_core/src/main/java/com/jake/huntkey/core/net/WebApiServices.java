@@ -9,8 +9,10 @@ import com.jake.huntkey.core.netbean.Get7DayJdRateResponse;
 import com.jake.huntkey.core.netbean.Get7DayTcrRateResponse;
 import com.jake.huntkey.core.netbean.GetAttendanceRateResponse;
 import com.jake.huntkey.core.netbean.GetDtInfoResponse;
+import com.jake.huntkey.core.netbean.GetEmpRateResponse;
 import com.jake.huntkey.core.netbean.GetFpyRateResponse;
 import com.jake.huntkey.core.netbean.GetFtyInfoResponse;
+import com.jake.huntkey.core.netbean.GetJdRateResponse;
 import com.jake.huntkey.core.netbean.GetJdTop5Response;
 import com.jake.huntkey.core.netbean.GetJiePaiResponse;
 import com.jake.huntkey.core.netbean.GetLineEmpRateResponse;
@@ -23,7 +25,9 @@ import com.jake.huntkey.core.netbean.GetQueryRouteResponse;
 import com.jake.huntkey.core.netbean.GetQueryWarnResponse;
 import com.jake.huntkey.core.netbean.GetRateResponse;
 import com.jake.huntkey.core.netbean.GetSampleResponse;
+import com.jake.huntkey.core.netbean.GetTcrRateResponse;
 import com.jake.huntkey.core.netbean.GetWeekEmpRateResponse;
+import com.jake.huntkey.core.netbean.GetWipDataResponse;
 import com.jake.huntkey.core.netbean.GetWipHeadResponse;
 import com.jake.huntkey.core.netbean.GetWipResponse;
 
@@ -267,13 +271,48 @@ public interface WebApiServices {
 
 
     /**
-     * @param sid      服务器ID
-     * @param deptCode 部门ID
-     * @param acctId   工厂ID
+     * @param sid       服务器ID
+     * @param deptCodes 部门ID
+     * @param acctId    工厂ID
      * @return 统计32天的直通率，损失率，综合率
      */
     @GET("api/Report/Get20Be31Data")
-    Observable<Get20Be31DataResponse> Get20Be31Data(@Query("sid") String sid, @Query("deptCode") String deptCode, @Query("acctId") String acctId);
+    Observable<Get20Be31DataResponse> Get20Be31Data(@Query("sid") String sid, @Query("deptCodes") String deptCodes, @Query("acctId") String acctId);
 
+
+    /**
+     * @param sid    服务器ID
+     * @param lineId 线体ID
+     * @param acctId 工厂ID
+     * @return 获取达成率图表数据
+     */
+    @GET("api/Report/GetTcrRate")
+    Observable<GetTcrRateResponse> GetTcrRate(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
+
+
+    /**
+     * @param sid    服务器ID
+     * @param lineId 线体ID
+     * @param acctId 工厂ID
+     * @return 获取稼动率图表数据
+     */
+    @GET("api/Report/GetJdRate")
+    Observable<GetJdRateResponse> GetJdRate(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
+
+
+    /**
+     * @param deptCode  部门ID
+     * @param deptCodes 多个部门ID
+     * @return 获取出勤率图表数据
+     */
+    @GET("api/Report/GetEmpRate")
+    Observable<GetEmpRateResponse> GetEmpRate(@Query("deptCode") String deptCode, @Query("deptCodes") String deptCodes);
+
+
+    /**
+     * @return 获取Wip表格数据
+     */
+    @GET("api/Report/GetWipData")
+    Observable<GetWipDataResponse> GetWipData(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
 
 }

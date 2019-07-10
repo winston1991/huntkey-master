@@ -69,4 +69,5 @@ dependencies {
    // api 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-3'
 
     api 'com.github.xuexiangjys:XUpdate:1.0.9'
+    api 'com.zhy:okhttputils:2.6.2'
 }
