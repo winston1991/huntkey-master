@@ -11,27 +11,9 @@ import java.util.List;
  * @author bejson.com (i@bejson.com)
  * @website http://www.bejson.com/java2pojo/
  */
-public class GetEmpRateResponse {
+public class GetEmpRateResponse extends BaseResponse {
 
-    private String ErrorMsg;
-    private String Status;
     private List<Content> Content;
-
-    public void setErrorMsg(String ErrorMsg) {
-        this.ErrorMsg = ErrorMsg;
-    }
-
-    public String getErrorMsg() {
-        return ErrorMsg;
-    }
-
-    public void setStatus(String Status) {
-        this.Status = Status;
-    }
-
-    public String getStatus() {
-        return Status;
-    }
 
     public void setContent(List<Content> Content) {
         this.Content = Content;

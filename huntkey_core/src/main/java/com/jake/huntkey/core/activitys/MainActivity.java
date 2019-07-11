@@ -68,6 +68,11 @@ public class MainActivity extends BaseActivity implements MainBackPressDelegate.
         super.onDestroy();
     }
 
+    /**
+     * 接收从LoginActivity发送来的信息
+     *
+     * @param factorys
+     */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onEvent(List<LoginResponse.Factorys> factorys) {
 

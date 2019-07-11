@@ -2,6 +2,7 @@ package com.jake.huntkey.core.activitys;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -47,20 +48,16 @@ public class LoginActivity extends BaseActivity {
 
     @BindView(R2.id.id_edt_username)
     protected AppCompatEditText userName;
-
     @BindView(R2.id.id_edt_passwd)
     protected AppCompatEditText passwd;
-
     @BindView(R2.id.id_btn_login)
     protected Button login_btn;
-
     @BindView(R2.id.toolbar)
     protected Toolbar toolbar;
     @BindView(R2.id.id_img_user)
     ImageView idImgUser;
     @BindView(R2.id.id_img_passwd)
     ImageView idImgPasswd;
-
 
     @Override
     protected int setLayoutId() {
@@ -101,44 +98,45 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void login() {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("i_emp", userName.getText().toString());
-        map.put("i_pwd", passwd.getText().toString());
-        JSONObject jsonObject = new JSONObject(map);
-        DialogLoaderManager.showLoading(this);
-        ViseHttp.POST("api/Home/Login")
-                .setJson(jsonObject.toString())
-                .request(new ACallback<LoginResponse>() {
-                    @Override
-                    public void onSuccess(LoginResponse data) {
-                        if (data != null && data.getStatus().equals("OK") && data.getContent() != null && data.getContent().size() > 0) {
-                            if (data.getContent().get(0).getResult().equals("1")) {
-                                finish();
-                                //给网络请求设置全局的请求头部  添加token
-                                HashMap<String, String> map = new HashMap<>();
-                                map.put("Authorization", "Bearer " + data.getContent().get(0).getToken());
-                                map.put("Content-Type", "application/json;charset=utf-8");
-                                saveLoginInfo(data);
-                                ViseHttp.CONFIG().globalHeaders(map);//设置全局请求头
-                                ActivityUtils.startActivity(MainActivity.class);
-                                //发送工厂对象实体
-                                EventBus.getDefault().postSticky(data.getContent().get(0).getFactorys());
-                                ToastUtils.showShort("登录成功");
+        if (checkForm()) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("i_emp", userName.getText().toString());
+            map.put("i_pwd", passwd.getText().toString());
+            JSONObject jsonObject = new JSONObject(map);
+            DialogLoaderManager.showLoading(this);
+            ViseHttp.POST("api/Home/Login")
+                    .setJson(jsonObject.toString())
+                    .request(new ACallback<LoginResponse>() {
+                        @Override
+                        public void onSuccess(LoginResponse data) {
+                            if (data != null && data.getStatus().equals("OK") && data.getContent() != null && data.getContent().size() > 0) {
+                                if (data.getContent().get(0).getResult().equals("1")) {
+                                    finish();
+                                    //给网络请求设置全局的请求头部  添加token
+                                    HashMap<String, String> map = new HashMap<>();
+                                    map.put("Authorization", "Bearer " + data.getContent().get(0).getToken());
+                                    map.put("Content-Type", "application/json;charset=utf-8");
+                                    saveLoginInfo(data);
+                                    ViseHttp.CONFIG().globalHeaders(map);//设置全局请求头
+                                    ActivityUtils.startActivity(MainActivity.class);
+                                    //发送工厂对象实体
+                                    EventBus.getDefault().postSticky(data.getContent().get(0).getFactorys());
+                                    ToastUtils.showShort("登录成功");
+                                } else {
+                                    ToastUtils.showShort(data.getContent().get(0).getMessage());
+                                }
                             } else {
-                                ToastUtils.showShort(data.getContent().get(0).getMessage());
+                                ToastUtils.showShort("登录失败");
                             }
-                        } else {
-                            ToastUtils.showShort("登录失败");
+                            DialogLoaderManager.stopLoading();
                         }
-                        DialogLoaderManager.stopLoading();
-                    }
-
-                    @Override
-                    public void onFail(int errCode, String errMsg) {
-                        ToastUtils.showShort(errMsg);
-                        DialogLoaderManager.stopLoading();
-                    }
-                });
+                        @Override
+                        public void onFail(int errCode, String errMsg) {
+                            ToastUtils.showShort(errMsg);
+                            DialogLoaderManager.stopLoading();
+                        }
+                    });
+        }
     }
 
     private void saveLoginInfo(LoginResponse data) {
@@ -153,8 +151,6 @@ public class LoginActivity extends BaseActivity {
         Observable.timer(2, TimeUnit.SECONDS).subscribe(new Consumer<Long>() {
             @Override
             public void accept(Long aLong) throws Exception {
-
-
                 ActivityUtils.startActivity(MainActivity.class);
                 ToastUtils.showShort("登录成功");
                 EventBus.getDefault().postSticky(getTestData());
@@ -177,6 +173,24 @@ public class LoginActivity extends BaseActivity {
             arrayList.add(factorys);
         }
         return arrayList;
+    }
+
+
+    private boolean checkForm() {
+        boolean isPass = true;
+        if (userName.getText().toString().isEmpty()) {
+            userName.setError("用户名不能为空");
+            isPass = false;
+        } else {
+            userName.setError(null);
+        }
+        if (passwd.getText().toString().isEmpty()) {
+            passwd.setError("密码不能为空");
+            isPass = false;
+        } else {
+            passwd.setError(null);
+        }
+        return isPass;
     }
 
 }

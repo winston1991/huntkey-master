@@ -232,7 +232,7 @@ public class GetChartsOptionString {
     @JavascriptInterface
     public static String getJiaDOngLvBarOptions2(List<String> axisX, List<String> axisY) {
         GsonOption option = new GsonOption();
-        option.setLegend(new Legend().data("近7天稼动率"));
+        option.setLegend(new Legend().data("近7天稼动率").top("10%"));
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}"));
         option.xAxis(new CategoryAxis().data(axisX.toArray()));
         CategoryAxis categoryAxis = new CategoryAxis();
@@ -251,7 +251,7 @@ public class GetChartsOptionString {
     @JavascriptInterface
     public static String getJiaDOngLvBarOptions3(List<String> axisX, List<String> axisY) {
         GsonOption option = new GsonOption();
-        option.setLegend(new Legend().data("稼动率Top5"));
+        option.setLegend(new Legend().data("稼动率Top5").top("10%"));
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}"));
         AxisLabel axisLabel = new AxisLabel();
         axisLabel.setInterval(0);
@@ -273,7 +273,7 @@ public class GetChartsOptionString {
     @JavascriptInterface
     public static String getJiaDOngLvBarOptions4(List<String> axisX, List<String> axisY) {
         GsonOption option = new GsonOption();
-        option.setLegend(new Legend().data("停工线时"));
+        option.setLegend(new Legend().data("停工线时").top("10%"));
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}h"));
         option.xAxis(new CategoryAxis().data(axisX.toArray()));
         CategoryAxis categoryAxis = new CategoryAxis();

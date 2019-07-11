@@ -15,28 +15,9 @@ import java.util.List;
  */
 
 
-public class LoginResponse {
+public class LoginResponse extends BaseResponse {
 
-    private String ErrorMsg;
-    private String Status;
     private List<Content> Content;
-
-    public void setErrorMsg(String ErrorMsg) {
-        this.ErrorMsg = ErrorMsg;
-    }
-
-    public String getErrorMsg() {
-        return ErrorMsg;
-    }
-
-    public void setStatus(String Status) {
-        this.Status = Status;
-    }
-
-    public String getStatus() {
-        return Status;
-    }
-
     public void setContent(List<Content> Content) {
         this.Content = Content;
     }
@@ -61,6 +42,7 @@ public class LoginResponse {
         }
 
         private String DeptAuthority;
+
         public String getMessage() {
             return Message;
         }
@@ -70,6 +52,7 @@ public class LoginResponse {
         }
 
         private String Message;
+
         @Override
         public String toString() {
             return "LoginResponse{" +

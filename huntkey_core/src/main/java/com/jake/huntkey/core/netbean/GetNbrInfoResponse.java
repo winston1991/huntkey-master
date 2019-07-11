@@ -10,34 +10,10 @@ import java.util.List;
  * @author bejson.com (i@bejson.com)
  * @website http://www.bejson.com/java2pojo/
  */
-public class GetNbrInfoResponse {
+public class GetNbrInfoResponse extends  BaseResponse{
 
-    private String ErrorMsg;
-    private String Status;
-
-    @Override
-    public String toString() {
-        return "GetNbrInfoResponse{" +
-                "ErrorMsg='" + ErrorMsg + '\'' +
-                ", Status='" + Status + '\'' +
-                ", Content=" + Content +
-                '}';
-    }
 
     private List<Content> Content;
-    public void setErrorMsg(String ErrorMsg) {
-         this.ErrorMsg = ErrorMsg;
-     }
-     public String getErrorMsg() {
-         return ErrorMsg;
-     }
-
-    public void setStatus(String Status) {
-         this.Status = Status;
-     }
-     public String getStatus() {
-         return Status;
-     }
 
     public void setContent(List<Content> Content) {
          this.Content = Content;

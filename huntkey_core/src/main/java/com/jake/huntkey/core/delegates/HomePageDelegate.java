@@ -95,7 +95,6 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
         IconTextView iconTextView = view.findViewById(R.id.item_icon);
         TextView textView = view.findViewById(R.id.item_name);
         ((SupportFragment) getParentFragment()).start(FactoryWorkShopContainerDelegate.newInstance(((List<HomePageItemEntity>) adapter.getData()).get(position).name));
-        ToastUtils.showShort(((List<HomePageItemEntity>) adapter.getData()).get(position).toString());
         EventBusActivityScope.getDefault(_mActivity).postSticky(((List<HomePageItemEntity>) adapter.getData()).get(position));
 
     }

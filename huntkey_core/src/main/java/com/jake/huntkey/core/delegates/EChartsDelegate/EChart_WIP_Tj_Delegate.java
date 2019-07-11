@@ -97,7 +97,7 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         smartTable1.getConfig().setShowYSequence(false);
         smartTable1.getConfig().setShowTableTitle(false);
         // smartTable1.setData(getData());
-        FontStyle fontStyle = new FontStyle();
+              FontStyle fontStyle = new FontStyle();
         fontStyle.setTextColor(Color.WHITE);
         smartTable1.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(0, 152, 217)));
         smartTable1.getConfig().setColumnTitleStyle(fontStyle);
@@ -151,6 +151,9 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
             for (int i = 1; i <= Titles.size(); i++) {
                 String tmp = "item" + (i);
                 item = new Column(Titles.get(i - 1), tmp);
+                if (i == 1) {
+                    item.setFixed(true);
+                }
                 colums.add(item);
             }
         }
@@ -178,10 +181,7 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
                 TableData<ProductionLineEntity> tableData = new TableData<ProductionLineEntity>("", tableDatas, colums);
                 smartTable2.setTableData(tableData);
             }
-
         }
-
-
     }
 
     //获取抽样表数据

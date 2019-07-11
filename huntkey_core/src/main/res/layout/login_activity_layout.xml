@@ -42,7 +42,7 @@
                 android:layout_marginLeft="10dp"
                 android:background="@null"
                 android:hint="账号"
-                android:text="16100175"
+                android:text="18100474"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -68,7 +68,7 @@
                 android:gravity="left|center_vertical"
                 android:hint="密码"
                 android:inputType="textPassword"
-                android:text="Ly123456"
+                android:text="123123"
                 android:textSize="18sp" />
         </LinearLayout>
 

@@ -28,6 +28,8 @@ import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.entity.ProductionLineEntity;
 import com.jake.huntkey.core.net.WebApiServices;
+import com.jake.huntkey.core.net.callback.dealTokenExpire;
+import com.jake.huntkey.core.netbean.BaseResponse;
 import com.jake.huntkey.core.netbean.Get20Be31DataResponse;
 import com.jake.huntkey.core.netbean.LoginResponse;
 import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
@@ -100,9 +102,9 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
         idSmartTable.getConfig().setColumnTitleHorizontalPadding(17);
         idSmartTable.getConfig().setMinTableWidth(ScreenUtils.getScreenWidth());
         FontStyle fontStyle = new FontStyle();
-        fontStyle.setTextColor(Color.WHITE);
+        fontStyle.setTextColor(Color.BLACK);
         idSmartTable.getConfig().setColumnTitleStyle(fontStyle);
-        idSmartTable.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(0, 152, 217)));
+        idSmartTable.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(213, 213, 213)));
         loadNetData();
 
 //        getTableColums(getdatas().getContent().get(0).getTitles());
@@ -125,16 +127,16 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                 .create(WebApiServices.class)
                 .Get20Be31Data(sid, deptCodes, accid)
                 .compose(ApiTransformer.<Get20Be31DataResponse>norTransformer())
-                .subscribe(new ApiCallbackSubscriber<>(new ACallback<Get20Be31DataResponse>() {
+                .subscribe(new ApiCallbackSubscriber<>(new dealTokenExpire<Get20Be31DataResponse>(_mActivity) {
                     @Override
                     public void onSuccess(Get20Be31DataResponse data) {
+                        super.onSuccess(data);
                         if (data.getStatus().equals("OK") && data.getContent().size() > 0) {
                             getTableColums(data.getContent().get(0).getTitles());
                             getTableData(data.getContent().get(0).getData());
                         }
                         DialogLoaderManager.stopLoading();
                     }
-
                     @Override
                     public void onFail(int errCode, String errMsg) {
                         ToastUtils.showShort(errCode);
@@ -167,7 +169,7 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                 @Override
                 public void onClick(Column column, String value, Object o, int col, int row) {
                     int tmp = 1;
-                    String lineId, lineName , deptCode;
+                    String lineId, lineName, deptCode;
                     //判断点击的是哪一个产线
                     if (col == 0) {
                         tmp = tmp * row;
@@ -181,8 +183,7 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                         deptCode = data.get(tmp * 3).get(1);
                         lineName = data.get(tmp * 3).get(2);
                     }
-                    ToastUtils.showShort(lineName);
-                    ((SupportFragment) getParentFragment()).start(EChartsBoardDelegate.newInstance(mTitle + lineName + "看板", lineId, deptCode));
+                    ((SupportFragment) getParentFragment()).start(EChartsBoardDelegate.newInstance(mTitle + "-" + lineName + "看板", lineId, deptCode));
                 }
             });
         }
@@ -229,7 +230,6 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onEvent(HomePageItemEntity homePageItemEntity) {
-        ToastUtils.showShort(homePageItemEntity.sid);
         sid = homePageItemEntity.sid;
         accid = homePageItemEntity.accid;
     }

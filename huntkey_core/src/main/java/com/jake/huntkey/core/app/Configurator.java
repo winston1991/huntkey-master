@@ -82,14 +82,13 @@ public final class Configurator {
         XUpdate.get()
                 .setILogger(new LogcatLogger())
                 .isGet(true)
-                //默认设置使用get请求检查版本
                 .param("client", "EMS")         //设置默认公共请求参数
                 .setOnUpdateFailureListener(new OnUpdateFailureListener() {  //设置版本更新出错的监听
                     @Override
                     public void onFailure(UpdateError error) {
                     }
                 })
-                .setIUpdateHttpService(new OKHttpUpdateHttpService())           //这个必须设置！实现网络请求功能。
+                .setIUpdateHttpService(new OKHttpUpdateHttpService())
                 .init((Application) HkEngine.getApplicationContext());
 
 

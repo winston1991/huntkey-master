@@ -11,14 +11,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
+import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
+import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.net.WebApiServices;
+import com.jake.huntkey.core.netbean.GetEmpRateResponse;
+import com.jake.huntkey.core.netbean.GetFpyRateResponse;
+import com.jake.huntkey.core.netbean.GetJdRateResponse;
 import com.jake.huntkey.core.netbean.GetNbrInfoResponse;
+import com.jake.huntkey.core.netbean.GetTcrRateResponse;
+import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.callback.ACallback;
 import com.vise.xsnow.http.core.ApiTransformer;
@@ -28,11 +35,12 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 import me.yokeyword.fragmentation.SupportFragment;
 
 public class EChartsBoardDelegate extends BaseBackDelegate {
-    public static final int FIRST = 0;
 
     private static final String ARG_TITLE = "arg_type";
     private static final String ARG_LineID = "lineId";
@@ -45,10 +53,8 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     public AppCompatTextView marqueeTextView;
     @BindView(R2.id.id_marqueeview_material_number)
     public AppCompatTextView material_number_marqueenview;
-
     @BindView(R2.id.id_material_number_tv)
     TextView material_number_tv;
-
     @BindView(R2.id.id_upm_tv)
     TextView idUpmTv;
 
@@ -60,6 +66,9 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     private String accid; //工厂id
     private String sid;// 服务器id
     private String deptCode;  //部门code
+    private GetJdRateResponse mGetJdRateResponse;  //稼动率数据
+    private GetEmpRateResponse mGetEmpRateResponse; //出勤率数据
+    private GetTcrRateResponse mGetTcrRateResponse; //达成率数据
 
 
     public static EChartsBoardDelegate newInstance(String title, String lineId, String deptCode) {
@@ -83,6 +92,7 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
             super.mToolbar.setTitle(mTitle);
         }
         getData();
+        testMergeRequest();
         mCurrentFragment = EChartContainerDelegate.newInstance(lineId, deptCode);
         mFragment = EChart_WIP_Tj_Delegate.newInstance(lineId);
         //加载chart图表和wip统计两个fragment
@@ -99,8 +109,8 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
                     @Override
                     public void onSuccess(GetNbrInfoResponse data) {
                         if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
-                            marqueeTextView.setText(data.getContent().get(0).getOtpt_wo_nbr());
-                            material_number_marqueenview.setText(data.getContent().get(0).getOtpt_part());
+                            marqueeTextView.setText(data.getContent().get(0).getOtpt_wo_nbr());//设置工单
+                            material_number_marqueenview.setText(data.getContent().get(0).getOtpt_part());//设置料号
                             idUpmTv.setText("UPM: " + data.getContent().get(0).getUpm());
                         }
                     }
@@ -139,18 +149,15 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
                             break;
                         case 1:
                             showHideFragment(mCurrentFragment, mFragment);
-
-                            ((EChartContainerDelegate) mCurrentFragment).loadDaChengLvChart();
+                            ((EChartContainerDelegate) mCurrentFragment).loadDaChengLvChart(mGetTcrRateResponse);
                             break;
                         case 2:
                             showHideFragment(mCurrentFragment, mFragment);
-
-                            ((EChartContainerDelegate) mCurrentFragment).loadJiaDongLvChart();
+                            ((EChartContainerDelegate) mCurrentFragment).loadJiaDongLvChart(mGetJdRateResponse);
                             break;
                         case 3:
                             showHideFragment(mCurrentFragment, mFragment);
-
-                            ((EChartContainerDelegate) mCurrentFragment).loadChuQinLvChart();
+                            ((EChartContainerDelegate) mCurrentFragment).loadChuQinLvChart(mGetEmpRateResponse);
                             break;
                         case 4:
                             showHideFragment(mFragment, mCurrentFragment);
@@ -172,6 +179,11 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     }
 
 
+    /**
+     * 接收从HomePagerDelegate发送来的信息
+     *
+     * @param homePageItemEntity
+     */
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onEvent(HomePageItemEntity homePageItemEntity) {
         sid = homePageItemEntity.sid;
@@ -189,5 +201,32 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     public void onDestroyView() {
         EventBusActivityScope.getDefault(_mActivity).unregister(this);
         super.onDestroyView();
+    }
+
+
+    private void testMergeRequest() {
+        String deptCodes = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_DEPTCODE_NAME);
+        Observable<GetTcrRateResponse> observable2 = ViseHttp.RETROFIT().create(WebApiServices.class).GetTcrRate(sid, lineId, accid).subscribeOn(Schedulers.io());
+        Observable<GetJdRateResponse> observable3 = ViseHttp.RETROFIT().create(WebApiServices.class).GetJdRate(sid, lineId, accid).subscribeOn(Schedulers.io());
+        Observable<GetEmpRateResponse> observable4 = ViseHttp.RETROFIT().create(WebApiServices.class).GetEmpRate(deptCode, deptCodes).subscribeOn(Schedulers.io());
+
+
+        Observable.concat(observable2, observable3, observable4)
+                .subscribe(new ApiCallbackSubscriber<>(new ACallback<Object>() {
+                    @Override
+                    public void onSuccess(Object data) {
+                        if (data instanceof GetJdRateResponse) {
+                            mGetJdRateResponse = (GetJdRateResponse) data;
+                        } else if (data instanceof GetEmpRateResponse) {
+                            mGetEmpRateResponse = (GetEmpRateResponse) data;
+                        } else if (data instanceof GetTcrRateResponse) {
+                            mGetTcrRateResponse = (GetTcrRateResponse) data;
+                        }
+                    }
+                    @Override
+                    public void onFail(int errCode, String errMsg) {
+                    }
+                }));
+
     }
 }

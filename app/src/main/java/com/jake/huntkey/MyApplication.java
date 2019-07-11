@@ -10,11 +10,9 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         HkEngine.init(this)
                 .withIcon(new FontAwesomeModule())
                 .withIcon(new FontHkModule())
-                .withLoaderDelayed(1000)
-                .withApiHost("http://192.168.13.17:8033/").configure();
+                .withApiHost("http://mesapp.huntkey.com:2025/").configure();
     }
 }
