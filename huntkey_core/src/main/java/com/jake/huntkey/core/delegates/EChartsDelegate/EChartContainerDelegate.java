@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -25,6 +24,7 @@ import com.jake.huntkey.core.delegates.EChartsDelegate.FormatEchartsDataUtil.Cha
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.entity.ProductionLineEntity;
 import com.jake.huntkey.core.net.WebApiServices;
+import com.jake.huntkey.core.net.callback.dealTokenExpire;
 import com.jake.huntkey.core.netbean.GetEmpRateResponse;
 import com.jake.huntkey.core.netbean.GetFpyRateResponse;
 import com.jake.huntkey.core.netbean.GetJdRateResponse;
@@ -92,27 +92,29 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
     }
 
 
-    public void loadZhiTongLvChart( ) {
+    public void loadZhiTongLvChart() {
         idSmartTable1.setVisibility(View.GONE);
         mAgentWeb.getJsAccessEntrace().quickCallJs("clearChart");
         mAgentWeb.getJsAccessEntrace().quickCallJs("showDiv");
         getZhiTongLvData();
     }
 
-    public void getZhiTongLvData( ) {
+    public void getZhiTongLvData() {
         if (mGetFpyRateResponse == null) {
             DialogLoaderManager.showLoading(_mActivity);
             ViseHttp.RETROFIT()
                     .create(WebApiServices.class)
                     .GetFpyRate(sid, lineId, accid)
                     .compose(ApiTransformer.<GetFpyRateResponse>norTransformer())
-                    .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetFpyRateResponse>() {
+                    .subscribe(new ApiCallbackSubscriber<>(new dealTokenExpire<GetFpyRateResponse>(_mActivity) {
                         @Override
                         public void onSuccess(GetFpyRateResponse data) {
+                            super.onSuccess(data);
                             mGetFpyRateResponse = data;
                             dealGetFpyRateResponse(data);
                             DialogLoaderManager.stopLoading();
                         }
+
                         @Override
                         public void onFail(int errCode, String errMsg) {
                             DialogLoaderManager.stopLoading();
@@ -161,9 +163,10 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
                     .create(WebApiServices.class)
                     .GetTcrRate(sid, lineId, accid)
                     .compose(ApiTransformer.<GetTcrRateResponse>norTransformer())
-                    .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetTcrRateResponse>() {
+                    .subscribe(new ApiCallbackSubscriber<>(new dealTokenExpire<GetTcrRateResponse>(_mActivity) {
                         @Override
                         public void onSuccess(GetTcrRateResponse data) {
+                            super.onSuccess(data);
                             dealGetTcrRateResponse(data);
                             DialogLoaderManager.stopLoading();
                         }
@@ -203,13 +206,16 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
     }
 
     private void getTableColums(List<String> Titles) {
-        //创建表实体
+        //创建表头列
         if (Titles.size() > 0) {
             colums = new ArrayList<>();
             Column item = null;
             for (int i = 1; i <= Titles.size(); i++) {
                 String tmp = "item" + (i);
                 item = new Column(Titles.get(i - 1), tmp);
+                if (i == 1) {
+                    item.setFixed(true);
+                }
                 colums.add(item);
             }
         }
@@ -253,9 +259,10 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
                     .create(WebApiServices.class)
                     .GetJdRate(sid, lineId, accid)
                     .compose(ApiTransformer.<GetJdRateResponse>norTransformer())
-                    .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetJdRateResponse>() {
+                    .subscribe(new ApiCallbackSubscriber<>(new dealTokenExpire<GetJdRateResponse>(_mActivity) {
                         @Override
                         public void onSuccess(GetJdRateResponse data) {
+                            super.onSuccess(data);
                             dealGetJdRateResponse(data);
                             DialogLoaderManager.stopLoading();
                         }
@@ -305,9 +312,10 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
                     .create(WebApiServices.class)
                     .GetEmpRate(deptCode, deptCodes)
                     .compose(ApiTransformer.<GetEmpRateResponse>norTransformer())
-                    .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetEmpRateResponse>() {
+                    .subscribe(new ApiCallbackSubscriber<>(new dealTokenExpire<GetEmpRateResponse>(_mActivity) {
                         @Override
                         public void onSuccess(GetEmpRateResponse data) {
+                            super.onSuccess(data);
                             dealGetEmpRateResponse(data);
                             DialogLoaderManager.stopLoading();
                         }

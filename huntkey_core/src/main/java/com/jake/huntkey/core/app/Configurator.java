@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import me.yokeyword.fragmentation.Fragmentation;
+import me.yokeyword.fragmentation.helper.ExceptionHandler;
 import okhttp3.Interceptor;
 
 
@@ -79,6 +81,7 @@ public final class Configurator {
                         .setLevel(HttpLogInterceptor.Level.BODY));
 
 
+        //升级程序
         XUpdate.get()
                 .setILogger(new LogcatLogger())
                 .isGet(true)
@@ -91,6 +94,18 @@ public final class Configurator {
                 .setIUpdateHttpService(new OKHttpUpdateHttpService())
                 .init((Application) HkEngine.getApplicationContext());
 
+        Fragmentation.builder()
+                // 设置 栈视图 模式为 （默认）悬浮球模式   SHAKE: 摇一摇唤出  NONE：隐藏， 仅在Debug环境生效
+                //.stackViewMode(Fragmentation.BUBBLE)
+                //.debug(true) // 实际场景建议.debug(BuildConfig.DEBUG)
+                .handleException(new ExceptionHandler() {
+                    @Override
+                    public void onException(Exception e) {
+                        // 以Bugtags为例子: 把捕获到的 Exception 传到 Bugtags 后台。
+                        // Bugtags.sendException(e);
+                    }
+                })
+                .install();
 
     }
 

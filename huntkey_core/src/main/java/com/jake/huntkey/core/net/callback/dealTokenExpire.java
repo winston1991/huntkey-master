@@ -20,10 +20,12 @@ public abstract class dealTokenExpire<T extends BaseResponse> extends ACallback<
     public void onSuccess(T data) {
         if (data != null) {
             if (data.getStatus().equals("NG") && data.getErrorMsg().contains("Token")) {
-                ToastUtils.showShort("Token已经失效或过期,请重新登录");
-                ActivityUtils.startActivity(LoginActivity.class);
-                mActivity.finish();
-
+                if(mActivity != null)
+                {
+                    ToastUtils.showShort("Token已经失效或过期,请重新登录");
+                    ActivityUtils.startActivity(LoginActivity.class);
+                    mActivity.finish();
+                }
             }
         }
 

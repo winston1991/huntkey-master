@@ -96,8 +96,7 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         smartTable1.getConfig().setShowXSequence(false);
         smartTable1.getConfig().setShowYSequence(false);
         smartTable1.getConfig().setShowTableTitle(false);
-        // smartTable1.setData(getData());
-              FontStyle fontStyle = new FontStyle();
+        FontStyle fontStyle = new FontStyle();
         fontStyle.setTextColor(Color.WHITE);
         smartTable1.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(0, 152, 217)));
         smartTable1.getConfig().setColumnTitleStyle(fontStyle);
@@ -107,7 +106,6 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         smartTable2.getConfig().setShowXSequence(false);
         smartTable2.getConfig().setShowYSequence(false);
         smartTable2.getConfig().setShowTableTitle(false);
-//        smartTable2.setData(getData2());
         smartTable2.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(0, 152, 217)));
         smartTable2.getConfig().setColumnTitleStyle(fontStyle);
 
@@ -211,7 +209,6 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
                         }
 
                     }
-
                     @Override
                     public void onFail(int errCode, String errMsg) {
                         ToastUtils.showShort(errMsg);
@@ -224,47 +221,11 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         return R.layout.echarts_wip_tj_delegate_layout;
     }
 
-
     @Override
     protected void onBindView(Bundle savedInstanceState, View rootView) {
         initViews(rootView);
     }
 
-
-    private ArrayList<WIPEntity> getData() {
-        ArrayList datas = new ArrayList<WIPEntity>();
-        WIPEntity wipEntity;
-        for (int i = 0; i < 120; i++) {
-            wipEntity = new WIPEntity();
-            wipEntity.setId(i++ + "");
-            wipEntity.setMakeFlowNumber("WBJ33444" + i);
-            wipEntity.setnGInfo("NGInfo");
-            wipEntity.setQuantity(i + 100 + "");
-            wipEntity.setSamplingNumber("QE2-541549856" + i);
-            wipEntity.setSamplingResult("Pass");
-
-            datas.add(wipEntity);
-        }
-        return datas;
-    }
-
-
-    private ArrayList<StationSheetEntity> getData2() {
-        ArrayList datas = new ArrayList<StationSheetEntity>();
-        StationSheetEntity stationSheetEntity;
-        for (int i = 0; i < 22; i++) {
-            stationSheetEntity = new StationSheetEntity();
-            stationSheetEntity.setStationSheet("WBJ332" + i);
-            stationSheetEntity.setAoiTest("23");
-            stationSheetEntity.setBarCodeBinding("23" + i);
-            stationSheetEntity.setFunctionFinalTest("" + i);
-            stationSheetEntity.setPackingScan("2" + i);
-            stationSheetEntity.setHeightPressureTest("1" + i);
-            stationSheetEntity.setBarCodeTransformation("23" + i);
-            datas.add(stationSheetEntity);
-        }
-        return datas;
-    }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)

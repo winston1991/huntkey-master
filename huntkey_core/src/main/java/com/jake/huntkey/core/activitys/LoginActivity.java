@@ -77,7 +77,7 @@ public class LoginActivity extends BaseActivity {
         Drawable drawablePasswd = new IconDrawable(this, HKIcons.icon_password);
         idImgUser.setImageDrawable(drawableUser);
         idImgPasswd.setImageDrawable(drawablePasswd);
-        toolbar.setTitle("MES系统");
+        toolbar.setTitle(getResources().getString(R.string.app_name));
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,35 +145,6 @@ public class LoginActivity extends BaseActivity {
         spUtils.put(Consts.SP_ITEM_DEPTCODE_NAME, data.getContent().get(0).getDeptAuthority());
     }
 
-
-    private void testlogin() {
-        DialogLoaderManager.showLoading(this);
-        Observable.timer(2, TimeUnit.SECONDS).subscribe(new Consumer<Long>() {
-            @Override
-            public void accept(Long aLong) throws Exception {
-                ActivityUtils.startActivity(MainActivity.class);
-                ToastUtils.showShort("登录成功");
-                EventBus.getDefault().postSticky(getTestData());
-
-                finish();
-                DialogLoaderManager.stopLoading();
-            }
-        });
-    }
-
-    private List<LoginResponse.Factorys> getTestData() {
-
-        ArrayList<LoginResponse.Factorys> arrayList = new ArrayList<>();
-        LoginResponse.Factorys factorys;
-        for (int i = 0; i < 6; i++) {
-            factorys = new LoginResponse.Factorys();
-            factorys.setSid("" + i);
-            factorys.setAcctId("" + i);
-            factorys.setName("深圳电源" + i);
-            arrayList.add(factorys);
-        }
-        return arrayList;
-    }
 
 
     private boolean checkForm() {

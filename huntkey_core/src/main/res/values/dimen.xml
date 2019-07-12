@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--字体大小配置-->
+    <dimen name="table_title">20sp</dimen>
+
+    <dimen name="table_colum">18px</dimen>
+
+    <dimen name="table_content">15px</dimen>
+
+</resources>

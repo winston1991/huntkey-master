@@ -1,7 +1,11 @@
 <resources>
-    <string name="app_name">EMS系统</string>
+    <string name="app_name">EMS</string>
     <string name="tab_title_home">首页</string>
     <string name="tab_title_discovery">发现</string>
     <string name="tab_title_process">流程</string>
     <string name="tab_title_my">我的</string>
+    <string name="select_factory_workshop">选择工厂/车间</string>
+
+
+
 </resources>

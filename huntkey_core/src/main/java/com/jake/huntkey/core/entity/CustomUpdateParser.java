@@ -16,7 +16,7 @@ public class CustomUpdateParser implements IUpdateParser {
         CheckVersionResponse result = gson.fromJson(json, new TypeToken<CheckVersionResponse>() {
         }.getType());
         boolean flag = false;
-        if (AppUtils.getAppVersionName().compareTo(result.getContent().get(0).getVersion()) < 0) {
+        if (AppUtils.getAppVersionName().compareTo(result.getContent().get(0).getVersion().trim()) < 0) {
             flag = true;
         }
         if (result != null) {

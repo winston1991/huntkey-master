@@ -21,10 +21,9 @@ import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.net.WebApiServices;
-import com.jake.huntkey.core.netbean.Get7DayFpyRateResponse;
 import com.jake.huntkey.core.netbean.GetFpyRateResponse;
 import com.jake.huntkey.core.netbean.LoginResponse;
-import com.joanzapata.iconify.widget.IconTextView;
+
 import com.vise.log.ViseLog;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.callback.ACallback;
@@ -71,7 +70,7 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
 
     private void initToobar(View rootView) {
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        toolbar.setTitle("选择工厂/车间");
+        toolbar.setTitle(R.string.select_factory_workshop);
 
     }
 
@@ -92,8 +91,6 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-        IconTextView iconTextView = view.findViewById(R.id.item_icon);
-        TextView textView = view.findViewById(R.id.item_name);
         ((SupportFragment) getParentFragment()).start(FactoryWorkShopContainerDelegate.newInstance(((List<HomePageItemEntity>) adapter.getData()).get(position).name));
         EventBusActivityScope.getDefault(_mActivity).postSticky(((List<HomePageItemEntity>) adapter.getData()).get(position));
 

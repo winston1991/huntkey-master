@@ -80,17 +80,5 @@ public class MainActivity extends BaseActivity implements MainBackPressDelegate.
     }
 
 
-    private List<LoginResponse.Factorys> getTestData() {
 
-        ArrayList<LoginResponse.Factorys> arrayList = new ArrayList<>();
-        LoginResponse.Factorys factorys;
-        for (int i = 0; i < 6; i++) {
-            factorys = new LoginResponse.Factorys();
-            factorys.setSid("" + i);
-            factorys.setAcctId("" + i);
-            factorys.setName("深圳电源" + i);
-            arrayList.add(factorys);
-        }
-        return arrayList;
-    }
 }

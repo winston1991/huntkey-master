@@ -21,11 +21,9 @@ import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.net.WebApiServices;
 import com.jake.huntkey.core.netbean.GetEmpRateResponse;
-import com.jake.huntkey.core.netbean.GetFpyRateResponse;
 import com.jake.huntkey.core.netbean.GetJdRateResponse;
 import com.jake.huntkey.core.netbean.GetNbrInfoResponse;
 import com.jake.huntkey.core.netbean.GetTcrRateResponse;
-import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.callback.ACallback;
 import com.vise.xsnow.http.core.ApiTransformer;
@@ -92,7 +90,8 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
             super.mToolbar.setTitle(mTitle);
         }
         getData();
-        testMergeRequest();
+        MergeRequest();
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         mCurrentFragment = EChartContainerDelegate.newInstance(lineId, deptCode);
         mFragment = EChart_WIP_Tj_Delegate.newInstance(lineId);
         //加载chart图表和wip统计两个fragment
@@ -204,13 +203,11 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     }
 
 
-    private void testMergeRequest() {
+    private void MergeRequest() {
         String deptCodes = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_DEPTCODE_NAME);
         Observable<GetTcrRateResponse> observable2 = ViseHttp.RETROFIT().create(WebApiServices.class).GetTcrRate(sid, lineId, accid).subscribeOn(Schedulers.io());
         Observable<GetJdRateResponse> observable3 = ViseHttp.RETROFIT().create(WebApiServices.class).GetJdRate(sid, lineId, accid).subscribeOn(Schedulers.io());
         Observable<GetEmpRateResponse> observable4 = ViseHttp.RETROFIT().create(WebApiServices.class).GetEmpRate(deptCode, deptCodes).subscribeOn(Schedulers.io());
-
-
         Observable.concat(observable2, observable3, observable4)
                 .subscribe(new ApiCallbackSubscriber<>(new ACallback<Object>() {
                     @Override

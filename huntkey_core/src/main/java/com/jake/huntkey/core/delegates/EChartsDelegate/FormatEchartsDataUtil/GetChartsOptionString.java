@@ -134,7 +134,7 @@ public class GetChartsOptionString {
 
         DataZoom dataZoom = new DataZoom();
         dataZoom.setType(DataZoomType.slider);
-        dataZoom.start(0).end(50).bottom("2%");
+        dataZoom.start(0).end(100).bottom("2%");
         option.dataZoom(dataZoom);
 
         SeriesFactory seriesFactory = new SeriesFactory();
@@ -186,7 +186,7 @@ public class GetChartsOptionString {
 
         DataZoom dataZoom = new DataZoom();
         dataZoom.setType(DataZoomType.slider);
-        dataZoom.start(0).end(50).bottom("2%");
+        dataZoom.start(0).end(100).bottom("2%");
         option.dataZoom(dataZoom);
 
         SeriesFactory seriesFactory = new SeriesFactory();
@@ -331,7 +331,7 @@ public class GetChartsOptionString {
 
         DataZoom dataZoom = new DataZoom();
         dataZoom.setType(DataZoomType.slider);
-        dataZoom.start(0).end(50).bottom("2%");
+        dataZoom.start(0).end(100).bottom("2%");
         option.dataZoom(dataZoom);
 
         SeriesFactory seriesFactory = new SeriesFactory();
@@ -388,7 +388,7 @@ public class GetChartsOptionString {
 
         DataZoom dataZoom = new DataZoom();
         dataZoom.setType(DataZoomType.slider);
-        dataZoom.start(0).end(50).bottom("2%");
+        dataZoom.start(0).end(100).bottom("2%");
         option.dataZoom(dataZoom);
 
         SeriesFactory seriesFactory = new SeriesFactory();
@@ -443,7 +443,7 @@ public class GetChartsOptionString {
 
         DataZoom dataZoom = new DataZoom();
         dataZoom.setType(DataZoomType.slider);
-        dataZoom.start(0).end(50).bottom("2%");
+        dataZoom.start(0).end(100).bottom("2%");
         option.dataZoom(dataZoom);
 
         SeriesFactory seriesFactory = new SeriesFactory();

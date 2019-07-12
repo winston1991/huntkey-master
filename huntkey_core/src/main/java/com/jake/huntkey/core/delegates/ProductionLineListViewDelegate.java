@@ -1,6 +1,7 @@
 package com.jake.huntkey.core.delegates;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -102,9 +103,15 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
         idSmartTable.getConfig().setColumnTitleHorizontalPadding(17);
         idSmartTable.getConfig().setMinTableWidth(ScreenUtils.getScreenWidth());
         FontStyle fontStyle = new FontStyle();
-        fontStyle.setTextColor(Color.BLACK);
+        fontStyle.setTextSize(ConvertUtils.sp2px(getResources().getDimension(R.dimen.table_colum)));
+        fontStyle.setTextColor(Color.rgb(27, 124, 226));
+        //fontStyle.setAlign(Paint.Align.RIGHT);
         idSmartTable.getConfig().setColumnTitleStyle(fontStyle);
         idSmartTable.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(213, 213, 213)));
+        fontStyle = new FontStyle();
+        fontStyle.setAlign(Paint.Align.RIGHT);
+        fontStyle.setTextSize(ConvertUtils.sp2px(getResources().getDimension(R.dimen.table_content)));
+        idSmartTable.getConfig().setContentStyle(fontStyle);
         loadNetData();
 
 //        getTableColums(getdatas().getContent().get(0).getTitles());
@@ -137,6 +144,7 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                         }
                         DialogLoaderManager.stopLoading();
                     }
+
                     @Override
                     public void onFail(int errCode, String errMsg) {
                         ToastUtils.showShort(errCode);
@@ -162,6 +170,7 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                     }
                 }
                 tableDatas.add(productionLineEntity);
+
             }
             TableData<ProductionLineEntity> tableData = new TableData<ProductionLineEntity>("", tableDatas, colums);
             idSmartTable.setTableData(tableData);
@@ -199,6 +208,10 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                 item = new Column(Titles.get(i - 1), tmp);
                 if (i == 3) {
                     item.setAutoMerge(true);
+                    item.setFixed(true);
+                    item.setTextAlign(Paint.Align.CENTER);  //设置第一列文字居中
+                } else if (i == 4) {
+                    item.setTextAlign(Paint.Align.CENTER); //设置第二列文字居中
                 }
                 colums.add(item);
             }
@@ -206,26 +219,7 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
     }
 
 
-    private Get20Be31DataResponse getdatas() {
-        String jsonS = "{\n" +
-                "\t\"ErrorMsg\": null,\n" +
-                "\t\"Status\": \"OK\",\n" +
-                "\t\"Content\": [{\n" +
-                "\t\t\"Titles\": [\"线体\", \"指标\", \"2019-02\", \"2019-03\", \"2019-04\", \"2019-05\", \"2019-06\", \"2019-07\", \"27周\", \"28周\", \"07月08\"],\n" +
-                "\t\t\"Data\": [\n" +
-                "\t\t\t[\"E2线\", \"直通率\", \"97.43\", \"97.68\", \"98.22\", \"96.88\", \"97.06\", \"96.22\", \"96.23\", \"20.83\", \"83.33\"],\n" +
-                "\t\t\t[\"E2线\", \"损失率\", \"18.15\", \"24.76\", \"17.32\", \"8.66\", \"9.73\", \"8.53\", \"8.35\", \"99.50\", \"95.65\"],\n" +
-                "\t\t\t[\"E2线\", \"合格率\", \"79.75\", \"73.49\", \"81.21\", \"88.49\", \"87.62\", \"88.02\", \"88.19\", \"0.10\", \"3.62\"]\n" +
-                "\t\t]\n" +
-                "\t}]\n" +
-                "}";
-        Gson gson = new Gson();
 
-        Get20Be31DataResponse get20Be31DataResponse = gson.fromJson(jsonS, new TypeToken<Get20Be31DataResponse>() {
-        }.getType());
-
-        return get20Be31DataResponse;
-    }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
