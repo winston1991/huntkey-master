@@ -2,10 +2,14 @@ package com.jake.huntkey.core.activitys;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.Toolbar;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -23,33 +27,19 @@ import com.joanzapata.iconify.IconDrawable;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.callback.ACallback;
 import com.xuexiang.xupdate.XUpdate;
-import com.xuexiang.xupdate.entity.UpdateEntity;
-import com.xuexiang.xupdate.proxy.IUpdateParser;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatEditText;
-import androidx.appcompat.widget.Toolbar;
 
 import butterknife.BindView;
-import io.reactivex.Observable;
-import io.reactivex.functions.Consumer;
+import butterknife.OnClick;
 
 
 public class LoginActivity extends BaseActivity {
 
 
-    @BindView(R2.id.id_edt_username)
-    protected AppCompatEditText userName;
-    @BindView(R2.id.id_edt_passwd)
-    protected AppCompatEditText passwd;
     @BindView(R2.id.id_btn_login)
     protected Button login_btn;
     @BindView(R2.id.toolbar)
@@ -58,6 +48,13 @@ public class LoginActivity extends BaseActivity {
     ImageView idImgUser;
     @BindView(R2.id.id_img_passwd)
     ImageView idImgPasswd;
+    @BindView(R2.id.id_tv_forget_passwd)
+    TextView idTvForgetPasswd;
+    @BindView(R2.id.id_edt_username)
+    AppCompatEditText idEdtUsername;
+    @BindView(R2.id.id_edt_passwd)
+    AppCompatEditText idEdtPasswd;
+
 
     @Override
     protected int setLayoutId() {
@@ -72,7 +69,9 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        userName.setSelection(userName.getText().toString().length());
+        String username = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER);
+        idEdtUsername.setText(username);
+        idEdtUsername.setSelection(idEdtUsername.getText().toString().length());
         Drawable drawableUser = new IconDrawable(this, HKIcons.icon_user);
         Drawable drawablePasswd = new IconDrawable(this, HKIcons.icon_password);
         idImgUser.setImageDrawable(drawableUser);
@@ -100,8 +99,8 @@ public class LoginActivity extends BaseActivity {
     private void login() {
         if (checkForm()) {
             HashMap<String, String> map = new HashMap<>();
-            map.put("i_emp", userName.getText().toString());
-            map.put("i_pwd", passwd.getText().toString());
+            map.put("i_emp", idEdtUsername.getText().toString());
+            map.put("i_pwd", idEdtPasswd.getText().toString());
             JSONObject jsonObject = new JSONObject(map);
             DialogLoaderManager.showLoading(this);
             ViseHttp.POST("api/Home/Login")
@@ -130,6 +129,7 @@ public class LoginActivity extends BaseActivity {
                             }
                             DialogLoaderManager.stopLoading();
                         }
+
                         @Override
                         public void onFail(int errCode, String errMsg) {
                             ToastUtils.showShort(errMsg);
@@ -143,27 +143,33 @@ public class LoginActivity extends BaseActivity {
         SPUtils spUtils = SPUtils.getInstance(Consts.SP_INSTANT_NAME);
         spUtils.put(Consts.SP_ITEM_TOKEN_NAME, data.getContent().get(0).getToken());
         spUtils.put(Consts.SP_ITEM_DEPTCODE_NAME, data.getContent().get(0).getDeptAuthority());
+        spUtils.put(Consts.SP_ITEM_USER_JOB_NUMBER, data.getContent().get(0).getUser());
+        spUtils.put(Consts.SP_ITEM_USER_NAME, data.getContent().get(0).getName());
     }
-
 
 
     private boolean checkForm() {
         boolean isPass = true;
-        if (userName.getText().toString().isEmpty()) {
-            userName.setError("用户名不能为空");
+        if (idEdtUsername.getText().toString().isEmpty()) {
+            idEdtUsername.setError("用户名不能为空");
             isPass = false;
         } else {
-            userName.setError(null);
+            idEdtUsername.setError(null);
         }
-        if (passwd.getText().toString().isEmpty()) {
-            passwd.setError("密码不能为空");
+        if (idEdtPasswd.getText().toString().isEmpty()) {
+            idEdtPasswd.setError("密码不能为空");
             isPass = false;
         } else {
-            passwd.setError(null);
+            idEdtPasswd.setError(null);
         }
         return isPass;
     }
 
+
+    @OnClick(R2.id.id_tv_forget_passwd)
+    public void onViewClicked() {
+        ActivityUtils.startActivity(PhoneVerifyFindPasswdActivity.class);
+    }
 }
 
 

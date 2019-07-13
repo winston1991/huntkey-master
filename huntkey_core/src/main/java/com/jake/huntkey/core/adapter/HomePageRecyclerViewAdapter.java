@@ -22,6 +22,5 @@ public class HomePageRecyclerViewAdapter extends BaseQuickAdapter<HomePageItemEn
         helper.setText(R.id.item_icon, homePageItemEntity.icon);
         helper.setText(R.id.item_name, homePageItemEntity.name);
 
-
     }
 }

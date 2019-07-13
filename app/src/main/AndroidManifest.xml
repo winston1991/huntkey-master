@@ -46,7 +46,19 @@
 
         <activity
             android:name=".core.activitys.MainActivity"
-            android:launchMode="singleTop"></activity>
+            android:launchMode="singleTask"></activity>
+
+        <activity
+            android:name=".core.activitys.FindPasswordActivity"
+            android:launchMode="singleTask"></activity>
+
+        <activity
+            android:name=".core.activitys.PhoneVerifyFindPasswdActivity"
+            android:launchMode="singleTask"></activity>
+
+        <activity
+            android:name=".core.activitys.ChangePasswdActivity"
+            android:launchMode="singleTask"></activity>
     </application>
 
 </manifest>

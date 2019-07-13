@@ -211,6 +211,7 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                     item.setFixed(true);
                     item.setTextAlign(Paint.Align.CENTER);  //设置第一列文字居中
                 } else if (i == 4) {
+                    item.setFixed(true);
                     item.setTextAlign(Paint.Align.CENTER); //设置第二列文字居中
                 }
                 colums.add(item);

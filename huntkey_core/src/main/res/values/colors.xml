@@ -26,4 +26,6 @@
 
     <color name="tabIndicatorColor">#E6B600</color>
 
+    <color name="devide_line">#D6D6D6</color>
+
 </resources>

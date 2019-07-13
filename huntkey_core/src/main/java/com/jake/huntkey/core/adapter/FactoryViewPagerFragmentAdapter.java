@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.jake.huntkey.core.delegates.DebugPagerFragment;
 import com.jake.huntkey.core.delegates.HomePageDelegate;
+import com.jake.huntkey.core.delegates.MineFragment;
 import com.jake.huntkey.core.delegates.ProductionLineListViewDelegate;
 
 import me.yokeyword.fragmentation.SupportFragment;
@@ -26,7 +27,9 @@ public class FactoryViewPagerFragmentAdapter extends FragmentPagerAdapter {
     public SupportFragment getItem(int position) {
         if (position == 0) {
             return ProductionLineListViewDelegate.newInstance(factoryName);
-        } else {
+        } else if(position == 2) {
+            return MineFragment.newInstance("");
+        }else {
             return DebugPagerFragment.newInstance(items[position]);
         }
 

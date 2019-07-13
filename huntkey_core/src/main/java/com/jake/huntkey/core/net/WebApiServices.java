@@ -315,4 +315,14 @@ public interface WebApiServices {
     @GET("api/Report/GetWipData")
     Observable<GetWipDataResponse> GetWipData(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
 
+
+
+    /**
+     * @return 获取Wip表格数据
+     */
+    @GET("api/Home/ChangePassword")
+    Observable<String> ChangePassword(@Query("emp") String emp, @Query("pwd") String pwd, @Query("npwd") String npwd);
+
+
+
 }

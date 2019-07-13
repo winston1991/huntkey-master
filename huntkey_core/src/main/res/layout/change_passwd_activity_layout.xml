@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar"></include>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rect_rounded_border"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginRight="25dp"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/id_edt_original_passwd"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:gravity="left|center_vertical"
+            android:hint="请输入原密码"
+            android:padding="10dp"
+            android:inputType="textPassword"
+            android:text=""
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:background="@color/devide_line"
+            android:layout_height="1dp" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/id_edt_new_passwd"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:gravity="left|center_vertical"
+            android:hint="请输入新密码"
+            android:padding="10dp"
+            android:inputType="textPassword"
+            android:text=""
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:background="@color/devide_line"
+            android:layout_height="0.5dp" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/id_edt_renew_passwd"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:gravity="left|center_vertical"
+            android:hint="请再次输入新密码"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:text=""
+            android:textSize="16sp" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/id_btn_commit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginRight="25dp"
+        android:background="@drawable/login_rounded_button_backgroud"
+        android:clickable="true"
+        android:gravity="center"
+        android:padding="3dp"
+        android:text="确定"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+</LinearLayout>
