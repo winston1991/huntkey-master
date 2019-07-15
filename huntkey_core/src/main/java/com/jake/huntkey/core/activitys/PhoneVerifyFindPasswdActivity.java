@@ -8,8 +8,10 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.Toolbar;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.SPUtils;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
+import com.jake.huntkey.core.app.Consts;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +40,12 @@ public class PhoneVerifyFindPasswdActivity extends BaseActivity {
                 finish();
             }
         });
+        boolean rememberPwd = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getBoolean(Consts.SP_ITEM_CHECKBOX_REMEMBER_PWD);
+        if (rememberPwd) {
+            idEdtJobNumber.setText(SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER));
+            idEdtPhoneNumber.setText(SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_PHONE_NUMBER));
+            idVerifyNumber.requestFocus();
+        }
     }
 
     @Override

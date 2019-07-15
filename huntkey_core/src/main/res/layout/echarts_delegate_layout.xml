@@ -94,7 +94,7 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/id_tablayout"
-        android:background="@android:color/white"
+        android:background="@color/tab_backgroud"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabIndicatorColor="@color/tabIndicatorColor"

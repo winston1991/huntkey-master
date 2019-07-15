@@ -1,5 +1,6 @@
 package com.jake.huntkey.core.net;
 
+import com.jake.huntkey.core.netbean.ChangePasswordResponse;
 import com.jake.huntkey.core.netbean.Get20BdJianKongInfoResponse;
 import com.jake.huntkey.core.netbean.Get20Be31DataResponse;
 import com.jake.huntkey.core.netbean.Get20BeJianKongInfoResponse;
@@ -26,18 +27,23 @@ import com.jake.huntkey.core.netbean.GetQueryWarnResponse;
 import com.jake.huntkey.core.netbean.GetRateResponse;
 import com.jake.huntkey.core.netbean.GetSampleResponse;
 import com.jake.huntkey.core.netbean.GetTcrRateResponse;
+import com.jake.huntkey.core.netbean.GetUserInfoResponse;
 import com.jake.huntkey.core.netbean.GetWeekEmpRateResponse;
 import com.jake.huntkey.core.netbean.GetWipDataResponse;
 import com.jake.huntkey.core.netbean.GetWipHeadResponse;
 import com.jake.huntkey.core.netbean.GetWipResponse;
+import com.jake.huntkey.core.netbean.LoginResponse;
 
 import io.reactivex.Observable;
 
+import okhttp3.RequestBody;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 
 import retrofit2.http.HEAD;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface WebApiServices {
@@ -316,13 +322,47 @@ public interface WebApiServices {
     Observable<GetWipDataResponse> GetWipData(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
 
 
+    /**
+     * @return 获取用户信息
+     * @emp 工号
+     */
+    @GET("api/Home/GetUserInfo")
+    Observable<GetUserInfoResponse> GetUserInfo(@Query("emp") String emp);
+
 
     /**
-     * @return 获取Wip表格数据
+     * @return 登录
      */
-    @GET("api/Home/ChangePassword")
-    Observable<String> ChangePassword(@Query("emp") String emp, @Query("pwd") String pwd, @Query("npwd") String npwd);
+    @POST("api/Home/Login")
+    Observable<LoginResponse> Login(@Body RequestBody body);
 
+
+    /**
+     * @return 修改密码
+     */
+    @POST("api/Home/ChangePassword")
+    Observable<ChangePasswordResponse> ChangePassword(@Body RequestBody body);
+
+
+    /**
+     * @return 发送验证码
+     */
+    @POST("api/Home/PostSendVerificationCode")
+    Observable<String> PostSendVerificationCode(@Body RequestBody body);
+
+
+    /**
+     * @return 验证验证码
+     */
+    @POST("api/Home/PostValidateCode")
+    Observable<String> PostValidateCode(@Body RequestBody body);
+
+
+    /**
+     * @return 重设密码
+     */
+    @POST("api/Home/ResetPassword")
+    Observable<String> ResetPassword(@Body RequestBody body);
 
 
 }

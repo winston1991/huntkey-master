@@ -90,7 +90,7 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
             super.mToolbar.setTitle(mTitle);
         }
         getData();
-        MergeRequest();
+        ConcatRequest();
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         mCurrentFragment = EChartContainerDelegate.newInstance(lineId, deptCode);
         mFragment = EChart_WIP_Tj_Delegate.newInstance(lineId);
@@ -203,11 +203,14 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     }
 
 
-    private void MergeRequest() {
+    /**
+     * 合并三个网络请求  达成率  稼动率  出勤率
+     */
+    private void ConcatRequest() {
         String deptCodes = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_DEPTCODE_NAME);
-        Observable<GetTcrRateResponse> observable2 = ViseHttp.RETROFIT().create(WebApiServices.class).GetTcrRate(sid, lineId, accid).subscribeOn(Schedulers.io());
-        Observable<GetJdRateResponse> observable3 = ViseHttp.RETROFIT().create(WebApiServices.class).GetJdRate(sid, lineId, accid).subscribeOn(Schedulers.io());
-        Observable<GetEmpRateResponse> observable4 = ViseHttp.RETROFIT().create(WebApiServices.class).GetEmpRate(deptCode, deptCodes).subscribeOn(Schedulers.io());
+        Observable<GetTcrRateResponse> observable2 = ViseHttp.RETROFIT().create(WebApiServices.class).GetTcrRate(sid, lineId, accid).subscribeOn(Schedulers.io()); //达成率
+        Observable<GetJdRateResponse> observable3 = ViseHttp.RETROFIT().create(WebApiServices.class).GetJdRate(sid, lineId, accid).subscribeOn(Schedulers.io()); // 稼动率
+        Observable<GetEmpRateResponse> observable4 = ViseHttp.RETROFIT().create(WebApiServices.class).GetEmpRate(deptCode, deptCodes).subscribeOn(Schedulers.io()); //出勤率
         Observable.concat(observable2, observable3, observable4)
                 .subscribe(new ApiCallbackSubscriber<>(new ACallback<Object>() {
                     @Override

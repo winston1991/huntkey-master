@@ -15,6 +15,6 @@ public class MyApplication extends Application {
                 .withIcon(new FontHkModule())
                 // 192.168.13.17:8033
                 //http://mesapp.huntkey.com:2025/
-                .withApiHost("http://mesapp.huntkey.com:2025/").configure();
+                .withApiHost(BuildConfig.HostUrl).configure();
     }
 }

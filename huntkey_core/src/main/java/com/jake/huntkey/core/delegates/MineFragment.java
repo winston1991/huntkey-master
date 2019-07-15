@@ -28,6 +28,8 @@ public class MineFragment extends BaseBackDelegate {
     TextView idTvChangePasswd;
     @BindView(R2.id.id_tv_name)
     TextView idTvName;
+    @BindView(R2.id.id_tv_phone_number)
+    TextView idTvPhoneNumber;
 
     private String mTitle;
 
@@ -60,8 +62,9 @@ public class MineFragment extends BaseBackDelegate {
 
     protected void initView(View view) {
         idTvJobNumber.setText("工号:" + SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER));
-
+        idTvDept.setText("部门:" + SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_DEPT_NAME));
         idTvName.setText(SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_NAME));
+        idTvPhoneNumber.setText("手机号:" + SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_PHONE_NUMBER));
     }
 
     @OnClick(R2.id.id_tv_change_passwd)

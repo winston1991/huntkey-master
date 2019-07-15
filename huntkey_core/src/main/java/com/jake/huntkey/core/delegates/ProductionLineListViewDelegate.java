@@ -105,25 +105,15 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
         FontStyle fontStyle = new FontStyle();
         fontStyle.setTextSize(ConvertUtils.sp2px(getResources().getDimension(R.dimen.table_colum)));
         fontStyle.setTextColor(Color.rgb(27, 124, 226));
-        //fontStyle.setAlign(Paint.Align.RIGHT);
+        //fontStyle.setAlign(Paint.Align.RIGHT);  //设置文字居右
         idSmartTable.getConfig().setColumnTitleStyle(fontStyle);
         idSmartTable.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(213, 213, 213)));
         fontStyle = new FontStyle();
         fontStyle.setAlign(Paint.Align.RIGHT);
         fontStyle.setTextSize(ConvertUtils.sp2px(getResources().getDimension(R.dimen.table_content)));
         idSmartTable.getConfig().setContentStyle(fontStyle);
+        idSmartTable.getConfig().setVerticalPadding(ConvertUtils.dp2px(10));
         loadNetData();
-
-//        getTableColums(getdatas().getContent().get(0).getTitles());
-//        try {
-//            getTableData(getdatas().getContent().get(0).getData());
-//        } catch (NoSuchFieldException e) {
-//            e.printStackTrace();
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        }
-//        TableData<ProductionLineEntity> tableData = new TableData<ProductionLineEntity>("", tableDatas, colums);
-//        idSmartTable.setTableData(tableData);
 
     }
 
@@ -208,19 +198,16 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                 item = new Column(Titles.get(i - 1), tmp);
                 if (i == 3) {
                     item.setAutoMerge(true);
-                    item.setFixed(true);
+                    item.setFixed(true);  //固定第一列
                     item.setTextAlign(Paint.Align.CENTER);  //设置第一列文字居中
                 } else if (i == 4) {
-                    item.setFixed(true);
+                    item.setFixed(true); //固定第二列
                     item.setTextAlign(Paint.Align.CENTER); //设置第二列文字居中
                 }
                 colums.add(item);
             }
         }
     }
-
-
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)

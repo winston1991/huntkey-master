@@ -1,7 +1,21 @@
 apply plugin: 'com.android.application'
-
+apply from: 'config.gradle'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('D:/AS_WorkSpace/huntkey2/huntkey-master/mes.jks')
+            storePassword '123456'
+            keyAlias = 'key0'
+            keyPassword '123456'
+        }
+        release {
+            storeFile file('D:/AS_WorkSpace/huntkey2/huntkey-master/mes.jks')
+            storePassword '123456'
+            keyAlias = 'key0'
+            keyPassword '123456'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.jake.huntkey"
@@ -11,10 +25,38 @@ android {
         versionName "1.19.0001"
         multiDexEnabled true
     }
+
     buildTypes {
         release {
-            minifyEnabled false
+            buildConfigField "String", "HostUrl", "\"${url["release"]}\""
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            minifyEnabled false  //是否混淆
+            //是否清楚无用资源
+            shrinkResources false
+            //是否启用zipAlign压缩
+            zipAlignEnabled false
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "MES_v${defaultConfig.versionName}_${buildType.name}.apk"
+                }
+            }
+        }
+
+        debug {
+            buildConfigField "String", "HostUrl", "\"${url["debug"]}\""
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+            //是否清楚无用资源
+            shrinkResources false
+            //是否启用zipAlign压缩
+            zipAlignEnabled false
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "MES_v${defaultConfig.versionName}_${buildType.name}.apk"
+                }
+            }
         }
     }
 
