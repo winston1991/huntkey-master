@@ -112,7 +112,7 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
         fontStyle.setAlign(Paint.Align.RIGHT);
         fontStyle.setTextSize(ConvertUtils.sp2px(getResources().getDimension(R.dimen.table_content)));
         idSmartTable.getConfig().setContentStyle(fontStyle);
-        idSmartTable.getConfig().setVerticalPadding(ConvertUtils.dp2px(10));
+        idSmartTable.getConfig().setVerticalPadding(ConvertUtils.dp2px(6));
         loadNetData();
 
     }
@@ -129,8 +129,8 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                     public void onSuccess(Get20Be31DataResponse data) {
                         super.onSuccess(data);
                         if (data.getStatus().equals("OK") && data.getContent().size() > 0) {
-                            getTableColums(data.getContent().get(0).getTitles());
-                            getTableData(data.getContent().get(0).getData());
+                            getTableColums(data.getContent().get(0).getTitles()); //表头
+                            getTableData(data.getContent().get(0).getData());  //表格数据
                         }
                         DialogLoaderManager.stopLoading();
                     }
@@ -160,7 +160,6 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                     }
                 }
                 tableDatas.add(productionLineEntity);
-
             }
             TableData<ProductionLineEntity> tableData = new TableData<ProductionLineEntity>("", tableDatas, colums);
             idSmartTable.setTableData(tableData);

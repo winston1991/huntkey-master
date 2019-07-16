@@ -88,36 +88,10 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
 
     }
 
-
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         ((SupportFragment) getParentFragment()).start(FactoryWorkShopContainerDelegate.newInstance(((List<HomePageItemEntity>) adapter.getData()).get(position).name));
         EventBusActivityScope.getDefault(_mActivity).postSticky(((List<HomePageItemEntity>) adapter.getData()).get(position));
-
-    }
-
-    private void test() {
-
-        ViseHttp.RETROFIT()
-                .create(WebApiServices.class)
-                .GetFpyRate("5", "431", "1")
-                .compose(ApiTransformer.<GetFpyRateResponse>norTransformer())
-                .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetFpyRateResponse>() {
-                    @Override
-                    public void onSuccess(GetFpyRateResponse getFpyRateResponse) {
-                        ViseLog.i("request onSuccess!");
-                        if (getFpyRateResponse == null) {
-                            return;
-                        } else {
-                            ToastUtils.showShort(getFpyRateResponse.getContent().toString());
-                        }
-                    }
-
-                    @Override
-                    public void onFail(int errCode, String errMsg) {
-                        ToastUtils.showShort(errMsg);
-                    }
-                }));
 
     }
 

@@ -23,16 +23,22 @@ import com.github.abel533.echarts.series.Line;
 import com.github.abel533.echarts.series.Series;
 import com.github.abel533.echarts.series.SeriesFactory;
 import com.github.abel533.echarts.series.gauge.Detail;
+import com.github.abel533.echarts.style.LineStyle;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GetChartsOptionString {
 
-    public static String getZhiTongLvGauge1(String rate) {
+    public static String getZhiTongLvGauge1(String rate, HashMap hashMap) {
         GsonOption option = new GsonOption();
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         Gauge gauge = new Gauge();
+        gauge.axisLine().lineStyle().color(new Object[]{new Object[]{(Float) hashMap.get("fpy_red"), "#ff4500"}, new Object[]{(Float) hashMap.get("fpy_yellow_end"), "#ffff00"}, new Object[]{1, "lime"}});
+        gauge.axisLine().lineStyle().width(2).shadowBlur(10).setShadowColor("#fff");
         gauge.name("直通率");
         gauge.detail(new Detail().formatter("{value}%"));
         gauge.data(new Data().setValue(rate).setName("直通率"));
@@ -93,10 +99,12 @@ public class GetChartsOptionString {
     }
 
 
-    public static String getDaChengLvGaugeChartOptions(String rate) {
+    public static String getDaChengLvGaugeChartOptions(String rate, HashMap hashMap) {
         GsonOption option = new GsonOption();
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         Gauge gauge = new Gauge();
+        gauge.axisLine().lineStyle().color(new Object[]{new Object[]{hashMap.get("tcr_yellow_begin"), "#ff4500"}, new Object[]{hashMap.get("tcr_yellow_end"), "#ffff00"}, new Object[]{1, "lime"}});
+        gauge.axisLine().lineStyle().shadowBlur(10).width(2).shadowColor("#fff");
         gauge.name("达成率");
         gauge.detail(new Detail().formatter("{value}%"));
         gauge.data(new Data().setValue(rate).setName("达成率"));
@@ -222,6 +230,10 @@ public class GetChartsOptionString {
         GsonOption option = new GsonOption();
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         Gauge gauge = new Gauge();
+        LineStyle lineStyle = new LineStyle();
+        lineStyle.color(new Object[]{new Object[]{0.7, "#ff4500"}, new Object[]{0.85, "#ffff00"}, new Object[]{1, "lime"}});
+        lineStyle.shadowBlur(10).width(2).setShadowColor("#fff");
+        gauge.axisLine().setLineStyle(lineStyle);
         gauge.name("设备稼动率");
         gauge.detail(new Detail().formatter("{value}%"));
         gauge.data(new Data().setValue(rate).setName("稼动率"));
@@ -265,7 +277,7 @@ public class GetChartsOptionString {
         dataZoom.setEnd(100);
         option.dataZoom(dataZoom);
         Bar bar = new Bar("稼动率Top5");
-        bar.data(axisY.toArray());
+        bar.data(axisY.toArray()).itemStyle().normal().color("#E6B600");
         option.series(bar);
         return option.toString();
     }
@@ -284,7 +296,7 @@ public class GetChartsOptionString {
         dataZoom.setEnd(100);
         option.dataZoom(dataZoom);
         Bar bar = new Bar("停工线时");
-        bar.data(axisY.toArray());
+        bar.data(axisY.toArray()).itemStyle().normal().color("#0098D9");
         option.series(bar);
         return option.toString();
     }
@@ -294,6 +306,10 @@ public class GetChartsOptionString {
         GsonOption option = new GsonOption();
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         Gauge gauge = new Gauge();
+        LineStyle lineStyle = new LineStyle();
+        lineStyle.color(new Object[]{new Object[]{0.7, "#ff4500"}, new Object[]{0.85, "#ffff00"}, new Object[]{1, "lime"}});
+        lineStyle.shadowBlur(10).width(2).setShadowColor("#fff");
+        gauge.axisLine().setLineStyle(lineStyle);
         gauge.name("出勤率");
         gauge.detail(new Detail().formatter("{value}%"));
         gauge.data(new Data().setValue(rate).setName("出勤率"));

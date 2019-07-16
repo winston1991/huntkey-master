@@ -144,7 +144,6 @@ public class LoginActivity extends BaseActivity {
                         public ObservableSource<GetUserInfoResponse> apply(LoginResponse data) throws Exception {
                             if (data != null && data.getStatus().equals("OK") && data.getContent() != null && data.getContent().size() > 0) {
                                 if (data.getContent().get(0).getResult().equals("1")) {
-
                                     handleLoginSuccess(data);
                                     ToastUtils.showShort("登录成功");
                                 } else if (data.getContent().get(0).getResult().equals("2")) {
@@ -177,13 +176,12 @@ public class LoginActivity extends BaseActivity {
                             if (data != null && data instanceof GetUserInfoResponse) {
                                 GetUserInfoResponse userInfo = (GetUserInfoResponse) data;
                                 if (userInfo.getContent() != null && userInfo.getStatus().equals("OK")) {
-                                    SPUtils.getInstance(Consts.SP_INSTANT_NAME).put(Consts.SP_ITEM_PHONE_NUMBER, userInfo.getContent().get(0).getPhone());
-                                    SPUtils.getInstance(Consts.SP_INSTANT_NAME).put(Consts.SP_ITEM_DEPT_NAME, userInfo.getContent().get(0).getDeptName());
+                                    SPUtils.getInstance(Consts.SP_INSTANT_NAME).put(Consts.SP_ITEM_PHONE_NUMBER, userInfo.getContent().get(0).getPhone());//获取手机号码
+                                    SPUtils.getInstance(Consts.SP_INSTANT_NAME).put(Consts.SP_ITEM_DEPT_NAME, userInfo.getContent().get(0).getDeptName());//获取员工部门
                                 }
                             }
                             DialogLoaderManager.stopLoading();
                         }
-
                         @Override
                         public void onFail(int errCode, String errMsg) {
                             DialogLoaderManager.stopLoading();

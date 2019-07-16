@@ -86,8 +86,6 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
     }
 
     protected void initViews(View rootview) {
-
-
         Bundle bundle = getArguments();
         if (bundle != null) {
             lineId = bundle.getString(ARG_lineID);
@@ -131,9 +129,7 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
                             getTableColums(data.getContent().get(0).getTitles());
                             getTableData(data.getContent().get(0).getData());
                         }
-
                     }
-
                     @Override
                     public void onFail(int errCode, String errMsg) {
 

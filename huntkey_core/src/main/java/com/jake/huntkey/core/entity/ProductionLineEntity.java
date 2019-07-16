@@ -54,6 +54,27 @@ public class ProductionLineEntity {
     public String item48;
     public String item49;
     public String item50;
+    public String item51;
+    public String item52;
+    public String item53;
+    public String item54;
+    public String item55;
+    public String item56;
+    public String item57;
+    public String item58;
+    public String item59;
+    public String item60;
+    public String item61;
+    public String item62;
+    public String item63;
+    public String item64;
+    public String item65;
+    public String item67;
+    public String item68;
+    public String item69;
+    public String item70;
+    public String item71;
+    public String item72;
 
     public ProductionLineEntity() {
 

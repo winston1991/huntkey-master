@@ -113,7 +113,6 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
                             idUpmTv.setText("UPM: " + data.getContent().get(0).getUpm());
                         }
                     }
-
                     @Override
                     public void onFail(int errCode, String errMsg) {
                         ToastUtils.showShort(errMsg);

@@ -28,6 +28,7 @@ import com.jake.huntkey.core.net.callback.dealTokenExpire;
 import com.jake.huntkey.core.netbean.GetEmpRateResponse;
 import com.jake.huntkey.core.netbean.GetFpyRateResponse;
 import com.jake.huntkey.core.netbean.GetJdRateResponse;
+import com.jake.huntkey.core.netbean.GetQueryWarnResponse;
 import com.jake.huntkey.core.netbean.GetTcrRateResponse;
 import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
 import com.vise.xsnow.http.ViseHttp;
@@ -40,6 +41,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -58,9 +60,10 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
     private String sid; //服务器id
     private String accid; //工厂id
     private String deptCode; //部门code;
-    ArrayList<Column> colums;
-    ArrayList<ProductionLineEntity> tableDatas;
-    GetFpyRateResponse mGetFpyRateResponse;
+    ArrayList<Column> colums;  //达成率表头column集合
+    ArrayList<ProductionLineEntity> tableDatas; //达成率表格数据集合
+    GetFpyRateResponse mGetFpyRateResponse;  //直通率数据缓存
+    HashMap<String, Float> gaugeColorRange;  //仪表盘颜色区间值
 
 
     public static EChartContainerDelegate newInstance(String lineId, String deptCode) {
@@ -82,7 +85,7 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         idSmartTable1.getConfig().setShowTableTitle(false);
         mAgentWeb = new WebViewCreater(this).createAgentWeb(this, flContainer);
         //注入接口,供JS调用
-        mAgentWeb.getJsInterfaceHolder().addJavaObject("Android", mChartInterface = new ChartInterface());
+        mAgentWeb.getJsInterfaceHolder().addJavaObject("Android", mChartInterface = new ChartInterface(_mActivity, mAgentWeb));
         Bundle bundle = getArguments();
         if (bundle != null) {
             lineId = bundle.getString(ARG_LineId);
@@ -92,10 +95,14 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
     }
 
 
+    /**
+     * 加载直通率数据
+     */
     public void loadZhiTongLvChart() {
         idSmartTable1.setVisibility(View.GONE);
         mAgentWeb.getJsAccessEntrace().quickCallJs("clearChart");
         mAgentWeb.getJsAccessEntrace().quickCallJs("showDiv");
+        mAgentWeb.getWebCreator().getWebView().loadUrl("javascript:Android.resize(document.body.getBoundingClientRect().height)");
         getZhiTongLvData();
     }
 
@@ -142,14 +149,24 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
             data = getFpyRateResponse.getContent().get(0).getLossRateTop5().getRate();
             mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart4", mChartInterface.getZhiTongLvLvOptions4(axisX, data));
 
-            mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.getZhiTongLvLvOptions1(getFpyRateResponse.getContent().get(0).getRate()));
+            mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.getZhiTongLvLvOptions1(getFpyRateResponse.getContent().get(0).getRate(), gaugeColorRange));
         }
     }
 
 
+    /**
+     * 加载达成率数据
+     *
+     * @param mGetTcrRateResponse
+     */
     public void loadDaChengLvChart(GetTcrRateResponse mGetTcrRateResponse) {
         mAgentWeb.getJsAccessEntrace().quickCallJs("clearChart");
         mAgentWeb.getJsAccessEntrace().quickCallJs("hideDiv");
+        /**
+         * 官方是不建议滚动组件相互嵌套的，但是碍于需求，有时候又不可避免原生控件随WebView一起滚动，所以用到了ScrollView与WebView的嵌套
+         *  这里Js调用本地重新测量尺寸
+         */
+        mAgentWeb.getWebCreator().getWebView().loadUrl("javascript:Android.resize(document.body.getBoundingClientRect().height)");
         idSmartTable1.setVisibility(View.VISIBLE);
         getDaChengLvData(mGetTcrRateResponse);
 
@@ -187,8 +204,7 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
             getTableColums(data.getContent().get(0).getMonitorData().get(0));
             getTableDatas(data.getContent().get(0).getMonitorData());
 
-            mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.getDaChengLvOptions1(data.getContent().get(0).getRate()));
-
+            mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.getDaChengLvOptions1(data.getContent().get(0).getRate(), gaugeColorRange));
             List<String> axisX = data.getContent().get(0).getTcr7DayRate().getOtpt_start_time();
             List<String> legend1 = data.getContent().get(0).getTcr7DayRate().getTargetqty(); //计划数量
             List<String> legend2 = data.getContent().get(0).getTcr7DayRate().getOqty(); //A班完成数
@@ -205,6 +221,11 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         }
     }
 
+    /**
+     * 获取达成率下面表格列头
+     *
+     * @param Titles
+     */
     private void getTableColums(List<String> Titles) {
         //创建表头列
         if (Titles.size() > 0) {
@@ -221,6 +242,11 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         }
     }
 
+    /**
+     * 获取达成率表格数据
+     *
+     * @param data
+     */
     private void getTableDatas(final List<List<String>> data) {
         if (data != null && data.size() > 0) {
             tableDatas = new ArrayList<>();
@@ -244,10 +270,16 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         }
     }
 
+    /**
+     * 获取稼动率图表数据
+     *
+     * @param getJdRateResponse
+     */
     public void loadJiaDongLvChart(GetJdRateResponse getJdRateResponse) {
         idSmartTable1.setVisibility(View.GONE);
         mAgentWeb.getJsAccessEntrace().quickCallJs("clearChart");
         mAgentWeb.getJsAccessEntrace().quickCallJs("showDiv");
+        mAgentWeb.getWebCreator().getWebView().loadUrl("javascript:Android.resize(document.body.getBoundingClientRect().height)");
         getJiaDongLvData(getJdRateResponse);
 
     }
@@ -299,6 +331,7 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         idSmartTable1.setVisibility(View.GONE);
         mAgentWeb.getJsAccessEntrace().quickCallJs("clearChart");
         mAgentWeb.getJsAccessEntrace().quickCallJs("showDiv");
+        mAgentWeb.getWebCreator().getWebView().loadUrl("javascript:Android.resize(document.body.getBoundingClientRect().height)");
         getChuQinLvData(getEmpRateResponse);
 
     }
@@ -319,7 +352,6 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
                             dealGetEmpRateResponse(data);
                             DialogLoaderManager.stopLoading();
                         }
-
                         @Override
                         public void onFail(int errCode, String errMsg) {
                             DialogLoaderManager.stopLoading();
@@ -376,7 +408,37 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
 
     @Override
     public void onPageLoadFinished() {
-        loadZhiTongLvChart();
+
+        /**
+         * 获取仪表盘的颜色显示区间， 此接口不管成功还是失败多要去调用获取直通率图表数据
+         */
+        ViseHttp.RETROFIT()
+                .create(WebApiServices.class)
+                .GetQueryWarn(sid)
+                .compose(ApiTransformer.<GetQueryWarnResponse>norTransformer())
+                .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetQueryWarnResponse>() {
+                    @Override
+                    public void onSuccess(GetQueryWarnResponse data) {
+                        if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
+                            gaugeColorRange = new HashMap<>();
+                            Float f = Float.parseFloat(data.getContent().get(0).getFpy_red()) / 100;
+                            gaugeColorRange.put("fpy_red", f);
+                            f = Float.parseFloat(data.getContent().get(0).getFpy_yellow_begin()) / 100;
+                            gaugeColorRange.put("fpy_yellow_begin", f);
+                            f = Float.parseFloat(data.getContent().get(0).getFpy_yellow_end()) / 100;
+                            gaugeColorRange.put("fpy_yellow_end", f);
+                            f = Float.parseFloat(data.getContent().get(0).getTcr_yellow_begin()) / 100;
+                            gaugeColorRange.put("tcr_yellow_begin", f);
+                            f = Float.parseFloat(data.getContent().get(0).getTcr_yellow_end()) / 100;
+                            gaugeColorRange.put("tcr_yellow_end", f);
+                        }
+                        loadZhiTongLvChart();
+                    }
+                    @Override
+                    public void onFail(int errCode, String errMsg) {
+                        loadZhiTongLvChart();
+                    }
+                }));
     }
 
     /**

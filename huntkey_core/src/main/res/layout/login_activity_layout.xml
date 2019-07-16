@@ -94,19 +94,21 @@
 
             <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/id_checkbox_rememberpwd"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
                 android:checked="false"
                 android:clickable="true"
                 android:text="记住账号"
                 android:textColor="@color/colorPrimary" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
 
             <TextView
                 android:id="@+id/id_tv_forget_passwd"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.5"
                 android:gravity="right"
                 android:text="忘记密码"
                 android:textColor="@color/colorPrimary" />

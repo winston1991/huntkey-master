@@ -1,5 +1,6 @@
 package com.jake.huntkey.core.delegates;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -8,9 +9,11 @@ import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.activitys.ChangePasswdActivity;
+import com.jake.huntkey.core.activitys.LoginActivity;
 import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
 
@@ -20,6 +23,7 @@ import butterknife.OnClick;
 
 public class MineFragment extends BaseBackDelegate {
     private static final String ARG_TYPE = "arg_type";
+    private static final int REQUEST_CODE = 1;
     @BindView(R2.id.id_tv_job_number)
     TextView idTvJobNumber;
     @BindView(R2.id.id_tv_dept)
@@ -69,6 +73,17 @@ public class MineFragment extends BaseBackDelegate {
 
     @OnClick(R2.id.id_tv_change_passwd)
     public void onViewClicked() {
-        ActivityUtils.startActivity(ChangePasswdActivity.class);
+        Intent intent = new Intent(_mActivity, ChangePasswdActivity.class);
+        getActivity().startActivityFromFragment(this, intent, REQUEST_CODE);
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == ChangePasswdActivity.RESULT_CODE) {
+            _mActivity.finish();
+            ActivityUtils.startActivity(LoginActivity.class);//密码修改成功，重新登录
+        }
+    }
+
 }

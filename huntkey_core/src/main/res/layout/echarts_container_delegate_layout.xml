@@ -21,6 +21,7 @@
             android:layout_weight="1" />
 
         <com.bin.david.form.core.SmartTable
+            android:layout_marginTop="10dp"
             android:id="@+id/id_smart_table1"
             android:layout_width="match_parent"
             android:layout_height="200dp"

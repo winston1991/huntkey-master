@@ -1,7 +1,12 @@
 package com.jake.huntkey.core.delegates.EChartsDelegate.FormatEchartsDataUtil;
 
 import android.webkit.JavascriptInterface;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
+import androidx.fragment.app.FragmentActivity;
+
+import com.blankj.utilcode.util.ScreenUtils;
 import com.github.abel533.echarts.AxisPointer;
 
 import com.github.abel533.echarts.DataZoom;
@@ -21,8 +26,10 @@ import com.github.abel533.echarts.series.Bar;
 import com.github.abel533.echarts.series.Gauge;
 import com.github.abel533.echarts.series.SeriesFactory;
 import com.github.abel533.echarts.series.gauge.Detail;
+import com.just.agentweb.core.AgentWeb;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -30,10 +37,17 @@ import java.util.List;
  */
 public class ChartInterface {
 
+    protected FragmentActivity mActivity = null;
+    protected AgentWeb mAgentWeb;
+
+    public ChartInterface(FragmentActivity activity, AgentWeb agentWeb) {
+        this.mActivity = activity;
+        this.mAgentWeb = agentWeb;
+    }
 
     @JavascriptInterface
-    public String getZhiTongLvLvOptions1(String rate) {
-        return GetChartsOptionString.getZhiTongLvGauge1(rate);
+    public String getZhiTongLvLvOptions1(String rate, HashMap<String,Float> hashMap) {
+        return GetChartsOptionString.getZhiTongLvGauge1(rate, hashMap);
     }
 
     @JavascriptInterface
@@ -52,8 +66,8 @@ public class ChartInterface {
     }
 
     @JavascriptInterface
-    public String getDaChengLvOptions1(String rate) {
-        return GetChartsOptionString.getDaChengLvGaugeChartOptions(rate);
+    public String getDaChengLvOptions1(String rate, HashMap<String, Float> hashmap) {
+        return GetChartsOptionString.getDaChengLvGaugeChartOptions(rate, hashmap);
     }
 
 
@@ -106,4 +120,18 @@ public class ChartInterface {
     public String getChuQinLvOptions4(List<String>... lists) {
         return GetChartsOptionString.getChuQinLvBarOptions4(lists);
     }
+
+
+
+    @JavascriptInterface
+    public void resize(final float height) {
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAgentWeb.getWebCreator().getWebView().setLayoutParams(new FrameLayout.LayoutParams(ScreenUtils.getScreenWidth(), (int) (height * ScreenUtils.getScreenDensity())));
+            }
+        });
+
+    }
+
 }
