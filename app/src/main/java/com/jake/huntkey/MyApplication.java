@@ -13,8 +13,6 @@ public class MyApplication extends Application {
         HkEngine.init(this)
                 .withIcon(new FontAwesomeModule())
                 .withIcon(new FontHkModule())
-                // 192.168.13.17:8033
-                //http://mesapp.huntkey.com:2025/
                 .withApiHost(BuildConfig.HostUrl).configure();
     }
 }

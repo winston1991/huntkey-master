@@ -1,6 +1,5 @@
 package com.jake.huntkey.core.activitys;
 
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -13,6 +12,7 @@ import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.net.WebApiServices;
+import com.jake.huntkey.core.net.callback.dealTokenExpire;
 import com.jake.huntkey.core.netbean.ChangePasswordResponse;
 import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
 import com.vise.xsnow.http.ViseHttp;
@@ -109,9 +109,10 @@ public class ChangePasswdActivity extends BaseActivity {
                 RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
         DialogLoaderManager.showLoading(this);
         ViseHttp.RETROFIT().create(WebApiServices.class).ChangePassword(requestBody)
-                .compose(ApiTransformer.<ChangePasswordResponse>norTransformer()).subscribe(new ApiCallbackSubscriber<>(new ACallback<ChangePasswordResponse>() {
+                .compose(ApiTransformer.<ChangePasswordResponse>norTransformer()).subscribe(new ApiCallbackSubscriber<>(new dealTokenExpire<ChangePasswordResponse>(this) {
             @Override
             public void onSuccess(ChangePasswordResponse data) {
+                super.onSuccess(data);
                 if (data != null && data.getContent() != null && data.getStatus().equals("OK")) {
                     ToastUtils.showShort(data.getContent().get(0));
                     ChangePasswdActivity.this.setResult(RESULT_CODE);

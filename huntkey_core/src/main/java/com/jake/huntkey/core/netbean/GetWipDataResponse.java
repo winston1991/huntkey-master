@@ -27,24 +27,24 @@ public class GetWipDataResponse extends BaseResponse{
 
     public static class Content {
 
-        private List<String> Titles;
-        private List<List<String>> Data;
+        private String[] Titles;
 
-        public void setTitles(List<String> Titles) {
-            this.Titles = Titles;
-        }
-
-        public List<String> getTitles() {
-            return Titles;
-        }
-
-        public void setData(List<List<String>> Data) {
-            this.Data = Data;
-        }
-
-        public List<List<String>> getData() {
+        public String[][] getData() {
             return Data;
         }
 
+        public void setData(String[][] data) {
+            Data = data;
+        }
+
+        private String[][]  Data;
+
+        public String[] getTitles() {
+            return Titles;
+        }
+
+        public void setTitles(String[] titles) {
+            Titles = titles;
+        }
     }
 }

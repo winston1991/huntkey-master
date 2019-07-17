@@ -1,6 +1,9 @@
 package com.jake.huntkey.core.delegates.EChartsDelegate;
 
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +14,18 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.bin.david.form.core.SmartTable;
+import com.bin.david.form.core.TableConfig;
+import com.bin.david.form.data.CellInfo;
 import com.bin.david.form.data.column.Column;
 import com.bin.david.form.data.format.bg.BaseBackgroundFormat;
+import com.bin.david.form.data.format.draw.IDrawFormat;
 import com.bin.david.form.data.style.FontStyle;
+import com.bin.david.form.data.table.ArrayTableData;
 import com.bin.david.form.data.table.TableData;
+import com.bin.david.form.utils.DensityUtils;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.github.abel533.echarts.Legend;
@@ -68,7 +77,7 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
     SmartTable<WIPEntity> smartTable1;
 
     @BindView(R2.id.id_smart_table2)
-    SmartTable<ProductionLineEntity> smartTable2;
+    SmartTable<String> smartTable2;
     ArrayList<Column> colums;
     ArrayList<ProductionLineEntity> tableDatas;
 
@@ -99,7 +108,6 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         smartTable1.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(0, 152, 217)));
         smartTable1.getConfig().setColumnTitleStyle(fontStyle);
 
-
         smartTable2.getConfig().setFixedTitle(true);
         smartTable2.getConfig().setShowXSequence(false);
         smartTable2.getConfig().setShowYSequence(false);
@@ -126,8 +134,32 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
                     @Override
                     public void onSuccess(GetWipDataResponse data) {
                         if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
-                            getTableColums(data.getContent().get(0).getTitles());
-                            getTableData(data.getContent().get(0).getData());
+                            String[] titles = data.getContent().get(0).getTitles();
+                            String[][] datas = data.getContent().get(0).getData();
+                            ArrayTableData<String> arrayTableData = ArrayTableData.create("", titles, transformMatrix(datas), new IDrawFormat<String>() {
+                                @Override
+                                public int measureWidth(Column<String> column, int position, TableConfig config) {
+                                    return DensityUtils.dp2px(_mActivity, 60);
+                                }
+                                @Override
+                                public int measureHeight(Column<String> column, int position, TableConfig config) {
+                                    return DensityUtils.dp2px(_mActivity, 20);
+                                }
+                                @Override
+                                public void draw(Canvas c, Rect rect, CellInfo<String> cellInfo, TableConfig config) {
+                                    Paint paint = config.getPaint();
+                                    paint.setStyle(Paint.Style.FILL);
+                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.transparent));
+                                    c.drawRect(rect.left + 3, rect.top + 3, rect.right - 3, rect.bottom - 3, paint);
+                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_content_font_color));
+                                    paint.setTextSize(ConvertUtils.dp2px(14));
+                                    Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+                                    int baseline = (rect.bottom + rect.top - fontMetrics.bottom - fontMetrics.top) / 2;
+                                    c.drawText(cellInfo.data, rect.centerX(), baseline, paint);
+                                }
+                            });
+                            smartTable2.setTableData(arrayTableData);
+                            smartTable2.getTableData().getColumns().get(0).setFixed(true);
                         }
                     }
                     @Override
@@ -137,46 +169,18 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
                 }));
     }
 
-    private void getTableColums(List<String> Titles) {
-        //创建表实体
-        if (Titles.size() > 0) {
-            colums = new ArrayList<>();
-            Column item = null;
-            for (int i = 1; i <= Titles.size(); i++) {
-                String tmp = "item" + (i);
-                item = new Column(Titles.get(i - 1), tmp);
-                if (i == 1) {
-                    item.setFixed(true);
-                }
-                colums.add(item);
+
+    // 将二维数组矩阵转置
+    public static String[][] transformMatrix(String matrix[][]) {
+        String a[][] = new String[matrix[0].length][matrix.length];
+        for (int i = 0; i < matrix[0].length; i++) {
+            for (int j = 0; j < matrix.length; j++) {
+                a[i][j] = matrix[j][i];
             }
         }
+        return a;
     }
 
-
-    private void getTableData(final List<List<String>> data) {
-        if (data != null && data.size() > 0) {
-            tableDatas = new ArrayList<>();
-            ProductionLineEntity productionLineEntity;
-            for (int i = 0; i < data.size(); i++) {
-                productionLineEntity = new ProductionLineEntity();
-                for (int j = 1; j <= data.get(i).size(); j++) {
-                    try {
-                        Field field = productionLineEntity.getClass().getDeclaredField("item" + j);
-                        field.setAccessible(true);
-                        field.set(productionLineEntity, data.get(i).get(j - 1));
-                    } catch (Exception e) {
-                        ToastUtils.showShort(e.toString());
-                    }
-                }
-                tableDatas.add(productionLineEntity);
-            }
-            if (tableDatas != null && colums != null) {
-                TableData<ProductionLineEntity> tableData = new TableData<ProductionLineEntity>("", tableDatas, colums);
-                smartTable2.setTableData(tableData);
-            }
-        }
-    }
 
     //获取抽样表数据
     private void getSampleTableData() {
@@ -205,6 +209,7 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
                         }
 
                     }
+
                     @Override
                     public void onFail(int errCode, String errMsg) {
                         ToastUtils.showShort(errMsg);
@@ -221,7 +226,6 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
     protected void onBindView(Bundle savedInstanceState, View rootView) {
         initViews(rootView);
     }
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)

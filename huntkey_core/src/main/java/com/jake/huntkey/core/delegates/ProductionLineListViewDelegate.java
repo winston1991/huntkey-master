@@ -99,20 +99,20 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
         idSmartTable.getConfig().setShowYSequence(false);
         idSmartTable.getConfig().setShowTableTitle(false);
         idSmartTable.getConfig().setShowXSequence(false);
-        idSmartTable.getConfig().setHorizontalPadding(16);
-        idSmartTable.getConfig().setColumnTitleHorizontalPadding(17);
-        idSmartTable.getConfig().setMinTableWidth(ScreenUtils.getScreenWidth());
+        idSmartTable.getConfig().setHorizontalPadding(16);  //设置表格内容水平padding
+        idSmartTable.getConfig().setVerticalPadding(ConvertUtils.dp2px(6));//设置表格内容垂直padding
+        idSmartTable.getConfig().setColumnTitleHorizontalPadding(17); //设置表格列标题内容padding
+        idSmartTable.getConfig().setMinTableWidth(ScreenUtils.getScreenWidth());  //设置表格最小宽度
         FontStyle fontStyle = new FontStyle();
         fontStyle.setTextSize(ConvertUtils.sp2px(getResources().getDimension(R.dimen.table_colum)));
         fontStyle.setTextColor(Color.rgb(27, 124, 226));
         //fontStyle.setAlign(Paint.Align.RIGHT);  //设置文字居右
-        idSmartTable.getConfig().setColumnTitleStyle(fontStyle);
+        idSmartTable.getConfig().setColumnTitleStyle(fontStyle);//设置表头字体格式
         idSmartTable.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(213, 213, 213)));
         fontStyle = new FontStyle();
         fontStyle.setAlign(Paint.Align.RIGHT);
         fontStyle.setTextSize(ConvertUtils.sp2px(getResources().getDimension(R.dimen.table_content)));
-        idSmartTable.getConfig().setContentStyle(fontStyle);
-        idSmartTable.getConfig().setVerticalPadding(ConvertUtils.dp2px(6));
+        idSmartTable.getConfig().setContentStyle(fontStyle);//设置表格内容字体格式
         loadNetData();
 
     }

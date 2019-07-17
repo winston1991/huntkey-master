@@ -33,6 +33,9 @@ import com.jake.huntkey.core.netbean.GetWipDataResponse;
 import com.jake.huntkey.core.netbean.GetWipHeadResponse;
 import com.jake.huntkey.core.netbean.GetWipResponse;
 import com.jake.huntkey.core.netbean.LoginResponse;
+import com.jake.huntkey.core.netbean.PostSendVerificationCodeResponse;
+import com.jake.huntkey.core.netbean.PostValidateCodeResponse;
+import com.jake.huntkey.core.netbean.ResetPasswordResponse;
 
 import io.reactivex.Observable;
 
@@ -348,21 +351,21 @@ public interface WebApiServices {
      * @return 发送验证码
      */
     @POST("api/Home/PostSendVerificationCode")
-    Observable<String> PostSendVerificationCode(@Body RequestBody body);
+    Observable<PostSendVerificationCodeResponse> PostSendVerificationCode(@Body RequestBody body);
 
 
     /**
      * @return 验证验证码
      */
     @POST("api/Home/PostValidateCode")
-    Observable<String> PostValidateCode(@Body RequestBody body);
+    Observable<PostValidateCodeResponse> PostValidateCode(@Body RequestBody body);
 
 
     /**
      * @return 重设密码
      */
     @POST("api/Home/ResetPassword")
-    Observable<String> ResetPassword(@Body RequestBody body);
+    Observable<ResetPasswordResponse> ResetPassword(@Body RequestBody body);
 
 
 }

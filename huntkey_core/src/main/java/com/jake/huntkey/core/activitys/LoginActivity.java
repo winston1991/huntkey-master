@@ -14,6 +14,7 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.Toolbar;
 
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.SPUtils;
@@ -131,7 +132,7 @@ public class LoginActivity extends BaseActivity {
             map.put("emp", idEdtUsername.getText().toString());
             map.put("pwd", idEdtPasswd.getText().toString());
             map.put("ip", NetworkUtils.getIPAddress(true));
-            map.put("mac", DeviceUtils.getMacAddress());
+            map.put("mac", DeviceUtils.getAndroidID());
             map.put("equip", DeviceUtils.getModel());
             JSONObject jsonObject = new JSONObject(map);
             RequestBody requestBody =
@@ -155,10 +156,15 @@ public class LoginActivity extends BaseActivity {
                                     ToastUtils.showShort("密码即将过期,请尽快修改密码");
                                 } else if (data.getContent().get(0).getResult().equals("4")) {
                                     //密码已经过期强制跳到修改密码界面
+                                    ToastUtils.showShort("密码已经过期,请修改密码");
+                                    ActivityUtils.startActivity(ChangePasswdActivity.class);
                                 } else if (data.getContent().get(0).getResult().equals("5")) {
                                     //账号已经锁定
+                                    ToastUtils.showShort("密码错误超过5次,账号已经锁定!");
                                 } else if (data.getContent().get(0).getResult().equals("0")) {
                                     //初始密码，轻质跳到修改密码界面
+                                    ToastUtils.showShort("请修改初始密码!");
+                                    ActivityUtils.startActivity(ChangePasswdActivity.class);
                                 } else if (data.getContent().get(0).getResult().equals("-1")) {
                                     //账号无效
                                     idEdtUsername.setError(data.getContent().get(0).getMessage());
@@ -182,6 +188,7 @@ public class LoginActivity extends BaseActivity {
                             }
                             DialogLoaderManager.stopLoading();
                         }
+
                         @Override
                         public void onFail(int errCode, String errMsg) {
                             DialogLoaderManager.stopLoading();

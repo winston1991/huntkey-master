@@ -31,5 +31,11 @@
 
     <color name="tab_backgroud">#D5D5D5</color>
 
+    <color name="table_content_font_color">#636363</color>
+
+    <color name="table_content_backgroud">#e6e6e6</color>
+
+
+    <color name="transparent">#00000000</color>
 
 </resources>
