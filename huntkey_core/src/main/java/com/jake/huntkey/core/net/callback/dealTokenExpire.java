@@ -20,9 +20,8 @@ public abstract class dealTokenExpire<T extends BaseResponse> extends ACallback<
     public void onSuccess(T data) {
         if (data != null) {
             if (data.getStatus().equals("NG") && data.getErrorMsg().contains("Token")) {
-                if(mActivity != null)
-                {
-                    ToastUtils.showShort("Token已经失效或过期,请重新登录");
+                if (mActivity != null) {
+                    ToastUtils.showShort(data.getErrorMsg());
                     ActivityUtils.startActivity(LoginActivity.class);
                     mActivity.finish();
                 }
@@ -32,5 +31,5 @@ public abstract class dealTokenExpire<T extends BaseResponse> extends ACallback<
     }
 
     @Override
-    public abstract  void onFail(int errCode, String errMsg) ;
+    public abstract void onFail(int errCode, String errMsg);
 }

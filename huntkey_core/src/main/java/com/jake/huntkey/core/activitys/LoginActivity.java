@@ -1,5 +1,6 @@
 package com.jake.huntkey.core.activitys;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
@@ -85,11 +86,13 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        String username = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER);
+        getDeviceId(this);
+        String username = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER).trim();
         boolean rememberPwd = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getBoolean(Consts.SP_ITEM_CHECKBOX_REMEMBER_PWD);
         if (rememberPwd) {
             idEdtUsername.setText(username);
             idCheckboxRememberpwd.setChecked(true);
+            idEdtPasswd.requestFocus();
         }
         idCheckboxRememberpwd.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -132,7 +135,7 @@ public class LoginActivity extends BaseActivity {
             map.put("emp", idEdtUsername.getText().toString());
             map.put("pwd", idEdtPasswd.getText().toString());
             map.put("ip", NetworkUtils.getIPAddress(true));
-            map.put("mac", DeviceUtils.getAndroidID());
+            map.put("mac", IMEI);
             map.put("equip", DeviceUtils.getModel());
             JSONObject jsonObject = new JSONObject(map);
             RequestBody requestBody =
@@ -173,7 +176,7 @@ public class LoginActivity extends BaseActivity {
                                 ToastUtils.showShort("登录失败");
                             }
                             DialogLoaderManager.stopLoading();
-                            return ViseHttp.RETROFIT().create(WebApiServices.class).GetUserInfo(idEdtUsername.getText().toString()).subscribeOn(Schedulers.io());
+                            return ViseHttp.RETROFIT().create(WebApiServices.class).GetUserInfo(idEdtUsername.getText().toString().trim()).subscribeOn(Schedulers.io());
                         }
                     })
                     .subscribe(new ApiCallbackSubscriber<>(new ACallback<Object>() {
@@ -181,9 +184,9 @@ public class LoginActivity extends BaseActivity {
                         public void onSuccess(Object data) {
                             if (data != null && data instanceof GetUserInfoResponse) {
                                 GetUserInfoResponse userInfo = (GetUserInfoResponse) data;
-                                if (userInfo.getContent() != null && userInfo.getStatus().equals("OK")) {
-                                    SPUtils.getInstance(Consts.SP_INSTANT_NAME).put(Consts.SP_ITEM_PHONE_NUMBER, userInfo.getContent().get(0).getPhone());//获取手机号码
-                                    SPUtils.getInstance(Consts.SP_INSTANT_NAME).put(Consts.SP_ITEM_DEPT_NAME, userInfo.getContent().get(0).getDeptName());//获取员工部门
+                                if (userInfo.getContent() != null && userInfo.getContent().size() > 0) {
+                                    SPUtils.getInstance(Consts.SP_INSTANT_NAME).put(Consts.SP_ITEM_PHONE_NUMBER, userInfo.getContent().get(0).getPhone().trim());//获取手机号码
+                                    SPUtils.getInstance(Consts.SP_INSTANT_NAME).put(Consts.SP_ITEM_DEPT_NAME, userInfo.getContent().get(0).getDeptName().trim());//获取员工部门
                                 }
                             }
                             DialogLoaderManager.stopLoading();
@@ -240,10 +243,10 @@ public class LoginActivity extends BaseActivity {
         map.put("Authorization", "Bearer " + data.getContent().get(0).getToken());
         map.put("Content-Type", "application/json;charset=utf-8");
         SPUtils spUtils = SPUtils.getInstance(Consts.SP_INSTANT_NAME);
-        spUtils.put(Consts.SP_ITEM_TOKEN_NAME, data.getContent().get(0).getToken());
-        spUtils.put(Consts.SP_ITEM_DEPTCODE_NAME, data.getContent().get(0).getDeptAuthority());
-        spUtils.put(Consts.SP_ITEM_USER_NAME, data.getContent().get(0).getName());//用户名
-        spUtils.put(Consts.SP_ITEM_USER_JOB_NUMBER, data.getContent().get(0).getUser());//保存账号
+        spUtils.put(Consts.SP_ITEM_TOKEN_NAME, data.getContent().get(0).getToken().trim());
+        spUtils.put(Consts.SP_ITEM_DEPTCODE_NAME, data.getContent().get(0).getDeptAuthority().trim());
+        spUtils.put(Consts.SP_ITEM_USER_NAME, data.getContent().get(0).getName().trim());//用户名
+        spUtils.put(Consts.SP_ITEM_USER_JOB_NUMBER, data.getContent().get(0).getUser().trim());//保存工号
         if (idCheckboxRememberpwd.isChecked()) {
             spUtils.put(Consts.SP_ITEM_CHECKBOX_REMEMBER_PWD, true);//
         } else {
@@ -277,7 +280,9 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R2.id.id_tv_forget_passwd)
     public void onViewClicked() {
-        ActivityUtils.startActivity(PhoneVerifyFindPasswdActivity.class);
+        Intent intent = new Intent(this, PhoneVerifyFindPasswdActivity.class);
+        intent.putExtra("jobNumber", idEdtUsername.getText().toString().trim());
+        startActivity(intent);
     }
 
 

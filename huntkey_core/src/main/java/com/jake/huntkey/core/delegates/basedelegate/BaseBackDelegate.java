@@ -1,5 +1,6 @@
 package com.jake.huntkey.core.delegates.basedelegate;
 
+import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.widget.Toolbar;
@@ -26,5 +27,6 @@ public abstract class BaseBackDelegate extends CheckPermissionDelegate {
             }
         });
     }
+
 
 }

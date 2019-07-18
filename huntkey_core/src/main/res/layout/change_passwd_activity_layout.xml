@@ -22,7 +22,7 @@
             android:layout_height="match_parent"
             android:background="@null"
             android:gravity="left|center_vertical"
-            android:hint="请输入原密码"
+            android:hint="请输入原始密码"
             android:padding="10dp"
             android:inputType="textPassword"
             android:text=""

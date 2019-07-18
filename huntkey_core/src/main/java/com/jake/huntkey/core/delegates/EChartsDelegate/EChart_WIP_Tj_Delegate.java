@@ -8,9 +8,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.webkit.JavascriptInterface;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,37 +21,19 @@ import com.bin.david.form.data.format.bg.BaseBackgroundFormat;
 import com.bin.david.form.data.format.draw.IDrawFormat;
 import com.bin.david.form.data.style.FontStyle;
 import com.bin.david.form.data.table.ArrayTableData;
-import com.bin.david.form.data.table.TableData;
 import com.bin.david.form.utils.DensityUtils;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.github.abel533.echarts.Legend;
-import com.github.abel533.echarts.Title;
-import com.github.abel533.echarts.Tooltip;
-import com.github.abel533.echarts.axis.CategoryAxis;
-import com.github.abel533.echarts.axis.ValueAxis;
-import com.github.abel533.echarts.code.AxisType;
-import com.github.abel533.echarts.code.Trigger;
-import com.github.abel533.echarts.data.Data;
-import com.github.abel533.echarts.data.PieData;
-import com.github.abel533.echarts.json.GsonOption;
-import com.github.abel533.echarts.series.Bar;
-import com.github.abel533.echarts.series.Gauge;
-import com.github.abel533.echarts.series.Line;
-import com.github.abel533.echarts.series.Pie;
-import com.github.abel533.echarts.series.gauge.Detail;
+
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.entity.ProductionLineEntity;
-import com.jake.huntkey.core.entity.StationSheetEntity;
 import com.jake.huntkey.core.entity.WIPEntity;
 import com.jake.huntkey.core.net.WebApiServices;
-import com.jake.huntkey.core.netbean.GetFpyRateResponse;
 import com.jake.huntkey.core.netbean.GetSampleResponse;
 import com.jake.huntkey.core.netbean.GetWipDataResponse;
-import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.callback.ACallback;
 import com.vise.xsnow.http.core.ApiTransformer;
@@ -63,9 +42,7 @@ import com.vise.xsnow.http.subscriber.ApiCallbackSubscriber;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
@@ -120,7 +97,6 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         fontStyle.setTextSize(ConvertUtils.sp2px(20));
         smartTable1.getConfig().setTableTitleStyle(fontStyle);
         smartTable2.getConfig().setTableTitleStyle(fontStyle);
-
         getSampleTableData();
         getWipTableData();
     }
@@ -202,14 +178,12 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
                                 wipEntity.setQuantity(data.getContent().get(i).getSapm_act_qty());
                                 wipEntity.setMakeFlowNumber(data.getContent().get(i).getSapm_wo_nbr());
                                 String sapm_remark = data.getContent().get(i).getSapm_remark();
-                                wipEntity.setnGInfo((sapm_remark == null) ? "-" : sapm_remark);
+                                wipEntity.setnGInfo(sapm_remark);
                                 samples.add(wipEntity);
                             }
                             smartTable1.setData(samples);
                         }
-
                     }
-
                     @Override
                     public void onFail(int errCode, String errMsg) {
                         ToastUtils.showShort(errMsg);

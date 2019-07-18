@@ -13,16 +13,11 @@ import com.bin.david.form.data.format.bg.BaseBackgroundFormat;
 import com.bin.david.form.data.style.FontStyle;
 import com.bin.david.form.data.table.TableData;
 import com.blankj.utilcode.util.ConvertUtils;
-import com.blankj.utilcode.util.JsonUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
-import com.jake.huntkey.core.adapter.HomePageRecyclerViewAdapter;
 import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.delegates.EChartsDelegate.EChartsBoardDelegate;
 import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
@@ -30,19 +25,14 @@ import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.entity.ProductionLineEntity;
 import com.jake.huntkey.core.net.WebApiServices;
 import com.jake.huntkey.core.net.callback.dealTokenExpire;
-import com.jake.huntkey.core.netbean.BaseResponse;
 import com.jake.huntkey.core.netbean.Get20Be31DataResponse;
-import com.jake.huntkey.core.netbean.LoginResponse;
 import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
-import com.vise.utils.assist.JSONUtil;
 import com.vise.xsnow.http.ViseHttp;
-import com.vise.xsnow.http.callback.ACallback;
 import com.vise.xsnow.http.core.ApiTransformer;
 import com.vise.xsnow.http.subscriber.ApiCallbackSubscriber;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -61,12 +51,13 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
     @BindView(R2.id.id_smart_table)
     SmartTable idSmartTable;
 
-
     private String sid;//服务器id
     private String accid; //工厂id
     ArrayList<Column> colums;
     ArrayList<ProductionLineEntity> tableDatas;
     private String mTitle;  //工厂名
+    // 预加载标志，默认值为false，设置为true，表示已经预加载完成，可以加载数据
+    private boolean isPrepared;
 
     public static ProductionLineListViewDelegate newInstance(String title) {
         Bundle args = new Bundle();
@@ -77,16 +68,18 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        EventBusActivityScope.getDefault(_mActivity).register(this);
+        isPrepared = true; //界面已经加载完成
+        loadData();
     }
+
 
     @Override
     public Object setLayout() {
         return R.layout.production_line_layout;
     }
-
 
     @Override
     protected void onBindView(Bundle savedInstanceState, View rootView) {
@@ -94,7 +87,6 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
     }
 
     protected void initView(View view) {
-
         mTitle = getArguments().getString(ARG_TYPE);
         idSmartTable.getConfig().setShowYSequence(false);
         idSmartTable.getConfig().setShowTableTitle(false);
@@ -113,8 +105,17 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
         fontStyle.setAlign(Paint.Align.RIGHT);
         fontStyle.setTextSize(ConvertUtils.sp2px(getResources().getDimension(R.dimen.table_content)));
         idSmartTable.getConfig().setContentStyle(fontStyle);//设置表格内容字体格式
-        loadNetData();
 
+    }
+
+
+    @Override
+    protected void loadData() {
+        super.loadData();
+        if (!isPrepared || !isVisible) {
+            return;
+        }
+        loadNetData();
     }
 
     private void loadNetData() {
@@ -215,13 +216,6 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
         accid = homePageItemEntity.accid;
     }
 
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        EventBusActivityScope.getDefault(_mActivity).register(this);
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
 
     @Override
     public void onDestroyView() {

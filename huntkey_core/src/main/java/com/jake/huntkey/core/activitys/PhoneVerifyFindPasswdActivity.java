@@ -2,14 +2,13 @@ package com.jake.huntkey.core.activitys;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.Toolbar;
 
-import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.RegexUtils;
@@ -20,7 +19,7 @@ import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.net.WebApiServices;
 import com.jake.huntkey.core.net.callback.dealTokenExpire;
-import com.jake.huntkey.core.netbean.ChangePasswordResponse;
+import com.jake.huntkey.core.netbean.GetUserInfoResponse;
 import com.jake.huntkey.core.netbean.PostSendVerificationCodeResponse;
 import com.jake.huntkey.core.netbean.PostValidateCodeResponse;
 import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
@@ -29,13 +28,14 @@ import com.vise.xsnow.http.callback.ACallback;
 import com.vise.xsnow.http.core.ApiTransformer;
 import com.vise.xsnow.http.subscriber.ApiCallbackSubscriber;
 
-
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -45,17 +45,18 @@ import okhttp3.RequestBody;
 public class PhoneVerifyFindPasswdActivity extends BaseActivity {
     @BindView(R2.id.toolbar)
     Toolbar toolbar;
-    @BindView(R2.id.id_edt_job_number)
-    AppCompatEditText idEdtJobNumber;
-    @BindView(R2.id.id_edt_phone_number)
-    AppCompatEditText idEdtPhoneNumber;
+
     @BindView(R2.id.id_verify_number)
     AppCompatEditText idVerifyNumber;
     @BindView(R2.id.id_btn_next)
     Button idBtnNext;
     @BindView(R2.id.id_btn_get_verifynumber)
     Button idBtnGetVerifynumber;
-
+    @BindView(R2.id.id_tv_job_number)
+    TextView idTvJobNumber;
+    @BindView(R2.id.id_tv_phone_number)
+    TextView idTvPhoneNumber;
+    String jobNumber;
 
     @Override
     protected void initView() {
@@ -67,21 +68,23 @@ public class PhoneVerifyFindPasswdActivity extends BaseActivity {
                 finish();
             }
         });
-        boolean rememberPwd = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getBoolean(Consts.SP_ITEM_CHECKBOX_REMEMBER_PWD);
-        String jobNumber = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER);
-        String phoneNumber = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_PHONE_NUMBER);
-        if (rememberPwd) {
-            idEdtJobNumber.setText(jobNumber);
-            idEdtPhoneNumber.setText(phoneNumber);
-            if (jobNumber.equals("")) {
-                idEdtJobNumber.requestFocus();
-            } else if (phoneNumber.equals("")) {
-                idEdtPhoneNumber.requestFocus();
-            } else if (!jobNumber.equals("") && !phoneNumber.equals("")) {
-                idVerifyNumber.requestFocus();
-            }
+        jobNumber = jobNumber = getIntent().getStringExtra("jobNumber");
+        String phoneNumber = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_PHONE_NUMBER).trim();
+        if (jobNumber.isEmpty()) {
+            jobNumber = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER).trim();
         }
+        idTvJobNumber.setText(jobNumber);
+        idTvPhoneNumber.setText(phoneNumber.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2"));
+        if (jobNumber.equals("")) {
+            idTvJobNumber.requestFocus();
+        } else if (phoneNumber.equals("")) {
+            idTvPhoneNumber.requestFocus();
+        } else if (!jobNumber.equals("") && !phoneNumber.equals("")) {
+            idVerifyNumber.requestFocus();
+        }
+
     }
+
 
     @Override
     protected int setLayoutId() {
@@ -103,7 +106,7 @@ public class PhoneVerifyFindPasswdActivity extends BaseActivity {
             idVerifyNumber.setError(null);
         }
         HashMap<String, String> map = new HashMap<>();
-        map.put("emp", SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER));
+        map.put("emp", jobNumber);
         map.put("code", verifyNumber);
         JSONObject jsonObject = new JSONObject(map);
         RequestBody requestBody =
@@ -143,7 +146,7 @@ public class PhoneVerifyFindPasswdActivity extends BaseActivity {
 
     private void getVerifyNumber() {
         HashMap<String, String> map = new HashMap<>();
-        map.put("emp", SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER));
+        map.put("emp", jobNumber);
         map.put("equip", DeviceUtils.getModel());
         map.put("ip", NetworkUtils.getIPAddress(true));
         JSONObject jsonObject = new JSONObject(map);
@@ -174,13 +177,12 @@ public class PhoneVerifyFindPasswdActivity extends BaseActivity {
 
     private boolean checkForm() {
         boolean flag = true;
-        String phoneNumber = idEdtPhoneNumber.getText().toString().trim();
-        if (phoneNumber.isEmpty() || !RegexUtils.isMobileSimple(phoneNumber)) {
-            idEdtPhoneNumber.setError("请填写正确的手机号码!");
+        String jobNumber = idTvJobNumber.getText().toString().trim();
+        if (jobNumber.isEmpty()) {
+            ToastUtils.showShort("工号为空无法获取验证码");
             flag = false;
-        } else {
-            idEdtPhoneNumber.setError(null);
         }
         return flag;
     }
+
 }
