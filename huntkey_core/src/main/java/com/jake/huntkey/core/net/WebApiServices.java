@@ -361,11 +361,25 @@ public interface WebApiServices {
     Observable<PostValidateCodeResponse> PostValidateCode(@Body RequestBody body);
 
 
-    /**
+      /**
      * @return 重设密码
      */
     @POST("api/Home/ResetPassword")
     Observable<ResetPasswordResponse> ResetPassword(@Body RequestBody body);
+
+
+    /**
+     * @return
+     */
+    @GET("api/Report/GetJiePai")
+    Observable<GetJiePaiResponse> GetJiePai(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
+
+
+    /**
+     * @return
+     */
+    @GET("api/Report/Get20BdJianKongInfo")
+    Observable<String> Get20BdJianKongInfo(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
 
 
 }
