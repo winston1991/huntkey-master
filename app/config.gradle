@@ -1,6 +1,5 @@
 ext {
     url = [
-
             "debug"  : "http://192.168.24.56:8066/",
             //"debug"  : "http://192.168.13.17:8033/",
             "release": "http://mesapp.huntkey.com:2025/"

@@ -1,8 +1,10 @@
 package com.jake.huntkey.core.delegates.basedelegate;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.blankj.utilcode.util.ToastUtils;
+import com.jake.huntkey.core.activitys.LoginActivity;
 import com.jake.huntkey.core.delegates.MainDelegate;
 import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
 
@@ -41,12 +43,13 @@ public abstract class MainBackPressDelegate extends CheckPermissionDelegate {
             if (this instanceof MainDelegate) {
                 if (!((MainDelegate) this).viewPagerDelegate.isFirstPage()) {
                     ((MainDelegate) this).viewPagerDelegate.goToFirstPage();
-                }else {
+                } else {
                     if (System.currentTimeMillis() - TOUCH_TIME < WAIT_TIME) {
-                        _mActivity.finish();           // 如果是 第一个Fragment 则退出app
+                        _mActivity.startActivity(new Intent(_mActivity, LoginActivity.class));
+                        _mActivity.finish();// 如果是 第一个Fragment 则退出app
                     } else {
                         TOUCH_TIME = System.currentTimeMillis();
-                        ToastUtils.showShort("请双击退出应用");
+                        ToastUtils.showShort("请双击退出登录");
                     }
                 }
             }

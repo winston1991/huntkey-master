@@ -35,7 +35,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
 
-        <activity android:name=".core.activitys.LoginActivity">
+        <activity android:name=".core.activitys.LoginActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

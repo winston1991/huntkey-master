@@ -20,6 +20,7 @@ import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.net.WebApiServices;
 import com.jake.huntkey.core.net.callback.dealTokenExpire;
 import com.jake.huntkey.core.netbean.GetUserInfoResponse;
+import com.jake.huntkey.core.netbean.LoginResponse;
 import com.jake.huntkey.core.netbean.PostSendVerificationCodeResponse;
 import com.jake.huntkey.core.netbean.PostValidateCodeResponse;
 import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
@@ -35,7 +36,6 @@ import java.util.HashMap;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
@@ -57,6 +57,7 @@ public class PhoneVerifyFindPasswdActivity extends BaseActivity {
     @BindView(R2.id.id_tv_phone_number)
     TextView idTvPhoneNumber;
     String jobNumber;
+    private String phoneNum;
 
     @Override
     protected void initView() {
@@ -68,21 +69,44 @@ public class PhoneVerifyFindPasswdActivity extends BaseActivity {
                 finish();
             }
         });
-        jobNumber = jobNumber = getIntent().getStringExtra("jobNumber");
-        String phoneNumber = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_PHONE_NUMBER).trim();
-        if (jobNumber.isEmpty()) {
-            jobNumber = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER).trim();
+        jobNumber = getIntent().getStringExtra("jobNumber");
+        phoneNum = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_PHONE_NUMBER).trim();
+        if (!jobNumber.equals(SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER).trim())) {
+            idTvPhoneNumber.setText("");
+            getUserInfo(jobNumber);
+        } else {
+            if (phoneNum.isEmpty()) {
+                getUserInfo(jobNumber);
+            } else {
+                idTvPhoneNumber.setText(phoneNum.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2"));
+
+            }
         }
         idTvJobNumber.setText(jobNumber);
-        idTvPhoneNumber.setText(phoneNumber.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2"));
-        if (jobNumber.equals("")) {
-            idTvJobNumber.requestFocus();
-        } else if (phoneNumber.equals("")) {
-            idTvPhoneNumber.requestFocus();
-        } else if (!jobNumber.equals("") && !phoneNumber.equals("")) {
-            idVerifyNumber.requestFocus();
-        }
+        idVerifyNumber.requestFocus();
 
+    }
+
+    private void getUserInfo(String jobNumber) {
+        ViseHttp.RETROFIT().create(WebApiServices.class).GetUserInfo(jobNumber)
+                .compose(ApiTransformer.<GetUserInfoResponse>norTransformer())
+                .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetUserInfoResponse>() {
+
+
+                    @Override
+                    public void onSuccess(GetUserInfoResponse data) {
+                        if (data != null && data.getContent() != null && data.getContent().size() > 0) {
+                            phoneNum = data.getContent().get(0).getPhone().trim();
+                            idTvPhoneNumber.setText(phoneNum.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2"));
+                            idVerifyNumber.requestFocus();
+                        }
+                    }
+
+                    @Override
+                    public void onFail(int errCode, String errMsg) {
+
+                    }
+                }));
     }
 
 
@@ -119,8 +143,11 @@ public class PhoneVerifyFindPasswdActivity extends BaseActivity {
                 super.onSuccess(data);
                 if (data.getContent() != null && data.getContent().size() > 0) {
                     Intent intent = new Intent(PhoneVerifyFindPasswdActivity.this, FindPasswordActivity.class);
-                    intent.putExtra("token", data.getContent().get(0).getToken());
+                    intent.putExtra("token", data.getContent().get(0).getToken().trim());
+                    intent.putExtra("emp", jobNumber);
                     startActivity(intent);
+                    SPUtils.getInstance(Consts.SP_INSTANT_NAME).put(Consts.SP_ITEM_USER_JOB_NUMBER, jobNumber);//保存工号
+                    SPUtils.getInstance(Consts.SP_INSTANT_NAME).put(Consts.SP_ITEM_PHONE_NUMBER, phoneNum);//获取手机号码
                     finish();
                 } else {
                     ToastUtils.showShort(data.getErrorMsg());
@@ -184,5 +211,6 @@ public class PhoneVerifyFindPasswdActivity extends BaseActivity {
         }
         return flag;
     }
+
 
 }

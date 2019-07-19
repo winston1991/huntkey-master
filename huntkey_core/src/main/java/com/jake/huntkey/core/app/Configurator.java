@@ -3,11 +3,8 @@ package com.jake.huntkey.core.app;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Handler;
-
-import androidx.annotation.NonNull;
-
-import com.blankj.utilcode.util.ToastUtils;
 import com.blankj.utilcode.util.Utils;
+import com.jake.huntkey.core.BuildConfig;
 import com.jake.huntkey.core.net.OKHttpUpdateHttpService;
 import com.joanzapata.iconify.IconFontDescriptor;
 import com.joanzapata.iconify.Iconify;
@@ -83,6 +80,8 @@ public final class Configurator {
 
         //升级程序
         XUpdate.get()
+                .isWifiOnly(false)
+                .debug(BuildConfig.DEBUG)
                 .setILogger(new LogcatLogger())
                 .isGet(true)
                 .param("client", "EMS")         //设置默认公共请求参数

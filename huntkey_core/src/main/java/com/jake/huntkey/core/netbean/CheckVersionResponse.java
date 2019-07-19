@@ -47,7 +47,7 @@ public class CheckVersionResponse {
         private String Version;
         private String Url;
         private String Content;
-        private String String;
+        private String Date;
 
         public void setVersion(String Version) {
             this.Version = Version;
@@ -74,11 +74,11 @@ public class CheckVersionResponse {
         }
 
         public void setDate(String String) {
-            this.String = String;
+            this.Date = String;
         }
 
         public String getDate() {
-            return String;
+            return Date;
         }
 
     }

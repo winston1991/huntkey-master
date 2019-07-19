@@ -85,6 +85,12 @@ public class LoginActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        checkVersion();
+    }
+
+    @Override
     protected void initView() {
         getDeviceId(this);
         String username = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER).trim();
@@ -116,7 +122,7 @@ public class LoginActivity extends BaseActivity {
                 login();
             }
         });
-        checkVersion();
+
 
     }
 
@@ -191,7 +197,6 @@ public class LoginActivity extends BaseActivity {
                             }
                             DialogLoaderManager.stopLoading();
                         }
-
                         @Override
                         public void onFail(int errCode, String errMsg) {
                             DialogLoaderManager.stopLoading();
@@ -280,8 +285,13 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R2.id.id_tv_forget_passwd)
     public void onViewClicked() {
+        String jn = idEdtUsername.getText().toString().trim();
+        if (jn.isEmpty()) {
+            idEdtUsername.setError("请填写正确的工号!");
+            return;
+        }
         Intent intent = new Intent(this, PhoneVerifyFindPasswdActivity.class);
-        intent.putExtra("jobNumber", idEdtUsername.getText().toString().trim());
+        intent.putExtra("jobNumber", jn);
         startActivity(intent);
     }
 

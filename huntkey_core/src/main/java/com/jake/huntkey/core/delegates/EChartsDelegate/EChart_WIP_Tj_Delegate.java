@@ -45,6 +45,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import io.reactivex.disposables.Disposable;
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 
 public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
@@ -102,47 +103,55 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
     }
 
     private void getWipTableData() {
+
+        ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new ACallback<GetWipDataResponse>() {
+            @Override
+            public void onSuccess(GetWipDataResponse data) {
+                if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
+                    String[] titles = data.getContent().get(0).getTitles();
+                    String[][] datas = data.getContent().get(0).getData();
+                    ArrayTableData<String> arrayTableData = ArrayTableData.create("", titles, transformMatrix(datas), new IDrawFormat<String>() {
+                        @Override
+                        public int measureWidth(Column<String> column, int position, TableConfig config) {
+                            return DensityUtils.dp2px(_mActivity, 60);
+                        }
+
+                        @Override
+                        public int measureHeight(Column<String> column, int position, TableConfig config) {
+                            return DensityUtils.dp2px(_mActivity, 20);
+                        }
+
+                        @Override
+                        public void draw(Canvas c, Rect rect, CellInfo<String> cellInfo, TableConfig config) {
+                            Paint paint = config.getPaint();
+                            paint.setStyle(Paint.Style.FILL);
+                            paint.setColor(ContextCompat.getColor(_mActivity, R.color.transparent));
+                            c.drawRect(rect.left + 3, rect.top + 3, rect.right - 3, rect.bottom - 3, paint);
+                            paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_content_font_color));
+                            paint.setTextSize(ConvertUtils.dp2px(14));
+                            Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
+                            int baseline = (rect.bottom + rect.top - fontMetrics.bottom - fontMetrics.top) / 2;
+                            c.drawText(cellInfo.data, rect.centerX(), baseline, paint);
+                        }
+                    });
+                    smartTable2.setTableData(arrayTableData);
+                    smartTable2.getTableData().getColumns().get(0).setFixed(true);
+                }
+            }
+
+            @Override
+            public void onFail(int errCode, String errMsg) {
+
+            }
+
+
+        });
         ViseHttp.RETROFIT()
                 .create(WebApiServices.class)
                 .GetWipData(sid, lineId, accid)
                 .compose(ApiTransformer.<GetWipDataResponse>norTransformer())
-                .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetWipDataResponse>() {
-                    @Override
-                    public void onSuccess(GetWipDataResponse data) {
-                        if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
-                            String[] titles = data.getContent().get(0).getTitles();
-                            String[][] datas = data.getContent().get(0).getData();
-                            ArrayTableData<String> arrayTableData = ArrayTableData.create("", titles, transformMatrix(datas), new IDrawFormat<String>() {
-                                @Override
-                                public int measureWidth(Column<String> column, int position, TableConfig config) {
-                                    return DensityUtils.dp2px(_mActivity, 60);
-                                }
-                                @Override
-                                public int measureHeight(Column<String> column, int position, TableConfig config) {
-                                    return DensityUtils.dp2px(_mActivity, 20);
-                                }
-                                @Override
-                                public void draw(Canvas c, Rect rect, CellInfo<String> cellInfo, TableConfig config) {
-                                    Paint paint = config.getPaint();
-                                    paint.setStyle(Paint.Style.FILL);
-                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.transparent));
-                                    c.drawRect(rect.left + 3, rect.top + 3, rect.right - 3, rect.bottom - 3, paint);
-                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_content_font_color));
-                                    paint.setTextSize(ConvertUtils.dp2px(14));
-                                    Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
-                                    int baseline = (rect.bottom + rect.top - fontMetrics.bottom - fontMetrics.top) / 2;
-                                    c.drawText(cellInfo.data, rect.centerX(), baseline, paint);
-                                }
-                            });
-                            smartTable2.setTableData(arrayTableData);
-                            smartTable2.getTableData().getColumns().get(0).setFixed(true);
-                        }
-                    }
-                    @Override
-                    public void onFail(int errCode, String errMsg) {
-
-                    }
-                }));
+                .subscribe(disposable);
+        ViseHttp.addDisposable("GetWipData", disposable);
     }
 
 
@@ -160,35 +169,39 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
 
     //获取抽样表数据
     private void getSampleTableData() {
+        ApiCallbackSubscriber disposable;
+        disposable = new ApiCallbackSubscriber<>(new ACallback<GetSampleResponse>() {
+            @Override
+            public void onSuccess(GetSampleResponse data) {
+                if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
+                    ArrayList<WIPEntity> samples = new ArrayList<>();
+                    WIPEntity wipEntity;
+                    for (int i = 0; i < data.getContent().size(); i++) {
+                        wipEntity = new WIPEntity();
+                        wipEntity.setId("" + (i + 1));
+                        wipEntity.setSamplingResult(data.getContent().get(i).getCode_name());
+                        wipEntity.setSamplingNumber(data.getContent().get(i).getSapm_lot());
+                        wipEntity.setQuantity(data.getContent().get(i).getSapm_act_qty());
+                        wipEntity.setMakeFlowNumber(data.getContent().get(i).getSapm_wo_nbr());
+                        String sapm_remark = data.getContent().get(i).getSapm_remark();
+                        wipEntity.setnGInfo(sapm_remark);
+                        samples.add(wipEntity);
+                    }
+                    smartTable1.setData(samples);
+                }
+            }
+
+            @Override
+            public void onFail(int errCode, String errMsg) {
+                ToastUtils.showShort(errMsg);
+            }
+        });
         ViseHttp.RETROFIT()
                 .create(WebApiServices.class)
                 .GetSample(sid, lineId, accid)
                 .compose(ApiTransformer.<GetSampleResponse>norTransformer())
-                .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetSampleResponse>() {
-                    @Override
-                    public void onSuccess(GetSampleResponse data) {
-                        if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
-                            ArrayList<WIPEntity> samples = new ArrayList<>();
-                            WIPEntity wipEntity;
-                            for (int i = 0; i < data.getContent().size(); i++) {
-                                wipEntity = new WIPEntity();
-                                wipEntity.setId("" + (i + 1));
-                                wipEntity.setSamplingResult(data.getContent().get(i).getCode_name());
-                                wipEntity.setSamplingNumber(data.getContent().get(i).getSapm_lot());
-                                wipEntity.setQuantity(data.getContent().get(i).getSapm_act_qty());
-                                wipEntity.setMakeFlowNumber(data.getContent().get(i).getSapm_wo_nbr());
-                                String sapm_remark = data.getContent().get(i).getSapm_remark();
-                                wipEntity.setnGInfo(sapm_remark);
-                                samples.add(wipEntity);
-                            }
-                            smartTable1.setData(samples);
-                        }
-                    }
-                    @Override
-                    public void onFail(int errCode, String errMsg) {
-                        ToastUtils.showShort(errMsg);
-                    }
-                }));
+                .subscribe(disposable);
+        ViseHttp.addDisposable("GetSample", disposable);
     }
 
     @Override
@@ -219,5 +232,7 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
     public void onDestroyView() {
         EventBusActivityScope.getDefault(_mActivity).unregister(this);
         super.onDestroyView();
+        ViseHttp.cancelTag("GetSample");
+        ViseHttp.cancelTag("GetWipData");
     }
 }

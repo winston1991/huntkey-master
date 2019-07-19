@@ -100,24 +100,28 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     }
 
     private void getData() {
+
+        ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new ACallback<GetNbrInfoResponse>() {
+            @Override
+            public void onSuccess(GetNbrInfoResponse data) {
+                if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
+                    marqueeTextView.setText(data.getContent().get(0).getOtpt_wo_nbr());//设置工单
+                    material_number_marqueenview.setText(data.getContent().get(0).getOtpt_part());//设置料号
+                    idUpmTv.setText("UPM: " + data.getContent().get(0).getUpm());
+                }
+            }
+
+            @Override
+            public void onFail(int errCode, String errMsg) {
+                ToastUtils.showShort(errMsg);
+            }
+        });
         ViseHttp.RETROFIT()
                 .create(WebApiServices.class)
                 .GetNbrInfo(sid, lineId, accid)
                 .compose(ApiTransformer.<GetNbrInfoResponse>norTransformer())
-                .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetNbrInfoResponse>() {
-                    @Override
-                    public void onSuccess(GetNbrInfoResponse data) {
-                        if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
-                            marqueeTextView.setText(data.getContent().get(0).getOtpt_wo_nbr());//设置工单
-                            material_number_marqueenview.setText(data.getContent().get(0).getOtpt_part());//设置料号
-                            idUpmTv.setText("UPM: " + data.getContent().get(0).getUpm());
-                        }
-                    }
-                    @Override
-                    public void onFail(int errCode, String errMsg) {
-                        ToastUtils.showShort(errMsg);
-                    }
-                }));
+                .subscribe(disposable);
+        ViseHttp.addDisposable("GetNbrInfo", disposable);
     }
 
 
@@ -199,6 +203,8 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     public void onDestroyView() {
         EventBusActivityScope.getDefault(_mActivity).unregister(this);
         super.onDestroyView();
+        ViseHttp.cancelTag("ConcatRequest");
+        ViseHttp.cancelTag("GetNbrInfo");
     }
 
 
@@ -206,26 +212,30 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
      * 合并三个网络请求  达成率  稼动率  出勤率
      */
     private void ConcatRequest() {
+
+        ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new ACallback<Object>() {
+            @Override
+            public void onSuccess(Object data) {
+                if (data instanceof GetJdRateResponse) {
+                    mGetJdRateResponse = (GetJdRateResponse) data;
+                } else if (data instanceof GetEmpRateResponse) {
+                    mGetEmpRateResponse = (GetEmpRateResponse) data;
+                } else if (data instanceof GetTcrRateResponse) {
+                    mGetTcrRateResponse = (GetTcrRateResponse) data;
+                }
+            }
+
+            @Override
+            public void onFail(int errCode, String errMsg) {
+            }
+        });
         String deptCodes = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_DEPTCODE_NAME);
         Observable<GetTcrRateResponse> observable2 = ViseHttp.RETROFIT().create(WebApiServices.class).GetTcrRate(sid, lineId, accid).subscribeOn(Schedulers.io()); //达成率
         Observable<GetJdRateResponse> observable3 = ViseHttp.RETROFIT().create(WebApiServices.class).GetJdRate(sid, lineId, accid).subscribeOn(Schedulers.io()); // 稼动率
         Observable<GetEmpRateResponse> observable4 = ViseHttp.RETROFIT().create(WebApiServices.class).GetEmpRate(deptCode, deptCodes).subscribeOn(Schedulers.io()); //出勤率
         Observable.concat(observable2, observable3, observable4)
-                .subscribe(new ApiCallbackSubscriber<>(new ACallback<Object>() {
-                    @Override
-                    public void onSuccess(Object data) {
-                        if (data instanceof GetJdRateResponse) {
-                            mGetJdRateResponse = (GetJdRateResponse) data;
-                        } else if (data instanceof GetEmpRateResponse) {
-                            mGetEmpRateResponse = (GetEmpRateResponse) data;
-                        } else if (data instanceof GetTcrRateResponse) {
-                            mGetTcrRateResponse = (GetTcrRateResponse) data;
-                        }
-                    }
-                    @Override
-                    public void onFail(int errCode, String errMsg) {
-                    }
-                }));
+                .subscribe(disposable);
 
+        ViseHttp.addDisposable("ConcatRequest", disposable);
     }
 }

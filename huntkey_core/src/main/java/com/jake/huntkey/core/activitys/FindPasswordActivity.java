@@ -43,6 +43,7 @@ public class FindPasswordActivity extends BaseActivity {
     @BindView(R2.id.id_btn_commit)
     Button idBtnCommit;
     private String token;
+    private String jobNumber;
 
     @Override
     protected void initView() {
@@ -54,7 +55,8 @@ public class FindPasswordActivity extends BaseActivity {
                 finish();
             }
         });
-        token = getIntent().getStringExtra("token");
+        token = getIntent().getStringExtra("token").trim();
+        jobNumber = getIntent().getStringExtra("emp").trim();
     }
 
     @Override
@@ -66,15 +68,19 @@ public class FindPasswordActivity extends BaseActivity {
     public void onViewClicked() {
         if (checkForm()) {
             HashMap<String, String> map = new HashMap<>();
-            map.put("emp", SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_USER_JOB_NUMBER));
+            map.put("emp", jobNumber);
             map.put("pwd", idEdtRenewPasswd.getText().toString().trim());
             JSONObject jsonObject = new JSONObject(map);
             RequestBody requestBody =
                     RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonObject.toString());
             DialogLoaderManager.showLoading(this);
-            ViseHttp
-                    .RETROFIT().addHeader("Authorization", "Bearer " + token)
-                    .addHeader("Content-Type", "application/json;charset=utf-8")
+
+            map = new HashMap<>();
+            map.put("Authorization", "Bearer " + token);
+            map.put("Content-Type", "application/json;charset=utf-8");
+            ViseHttp.CONFIG().globalHeaders(map);//设置全局请求头
+
+            ViseHttp.RETROFIT()
                     .create(WebApiServices.class).ResetPassword(requestBody)
                     .compose(ApiTransformer.<ResetPasswordResponse>norTransformer())
                     .subscribe(new ApiCallbackSubscriber<>(new ACallback<ResetPasswordResponse>() {
@@ -89,7 +95,6 @@ public class FindPasswordActivity extends BaseActivity {
                             }
                             DialogLoaderManager.stopLoading();
                         }
-
                         @Override
                         public void onFail(int errCode, String errMsg) {
                             ToastUtils.showShort(errMsg);
