@@ -197,7 +197,15 @@ public class JiePaiDelegate extends BaseBackDelegate {
                 } else {
                     paint.setColor(ContextCompat.getColor(_mActivity, R.color.transparent));
                 }
-                c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
+               c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
+                if(cellInfo.row == 6)
+                {
+                    config.getContentStyle().setAlign(Paint.Align.LEFT);
+                }else
+                {
+                    config.getContentStyle().setAlign(Paint.Align.CENTER);
+                }
+
 
                 super.draw(c, rect, cellInfo, config);
             }
