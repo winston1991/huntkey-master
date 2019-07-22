@@ -12,20 +12,18 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!--<include layout="@layout/toolbar"></include>-->
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:paddingLeft="20dp"
             android:gravity="center_vertical|left"
-            android:text="工单/工站表"
+            android:text="节拍表"
             android:textColor="#0098D9"
             android:textSize="@dimen/table_title"
             android:textStyle="bold" />
 
         <com.bin.david.form.core.SmartTable
-            android:id="@+id/id_smart_table2"
+            android:id="@+id/id_smart_table1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
@@ -35,13 +33,13 @@
             android:layout_height="50dp"
             android:paddingLeft="20dp"
             android:gravity="center_vertical|left"
-            android:text="WIP统计表"
+            android:text="工站监控表"
             android:textColor="#0098D9"
             android:textSize="@dimen/table_title"
             android:textStyle="bold" />
 
         <com.bin.david.form.core.SmartTable
-            android:id="@+id/id_smart_table1"
+            android:id="@+id/id_smart_table2"
             android:layout_width="match_parent"
             android:layout_height="500dp" />
 

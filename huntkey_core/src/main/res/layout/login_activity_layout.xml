@@ -42,6 +42,7 @@
                 android:background="@null"
                 android:gravity="left|center_vertical"
                 android:hint="账号"
+                android:lines="1"
                 android:text=""
                 android:textSize="18sp" />
         </LinearLayout>
@@ -67,6 +68,7 @@
                 android:background="@null"
                 android:gravity="left|center_vertical"
                 android:hint="密码"
+                android:lines="1"
                 android:inputType="textPassword"
                 android:text=""
                 android:textSize="18sp" />

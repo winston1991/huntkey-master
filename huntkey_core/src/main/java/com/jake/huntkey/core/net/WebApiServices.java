@@ -361,7 +361,7 @@ public interface WebApiServices {
     Observable<PostValidateCodeResponse> PostValidateCode(@Body RequestBody body);
 
 
-      /**
+    /**
      * @return 重设密码
      */
     @POST("api/Home/ResetPassword")
@@ -379,7 +379,7 @@ public interface WebApiServices {
      * @return
      */
     @GET("api/Report/Get20BdJianKongInfo")
-    Observable<String> Get20BdJianKongInfo(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
+    Observable<Get20BdJianKongInfoResponse> Get20BdJianKongInfo(@Query("sid") String sid, @Query("lineId") String lineId, @Query("acctId") String acctId);
 
 
 }

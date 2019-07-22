@@ -63,6 +63,7 @@ public class FactoryWorkshopDelegate extends BaseBackDelegate {
         mToolbar.setTitle(mTitle);
         factoryViewPagerFragmentAdapter = new FactoryViewPagerFragmentAdapter(getFragmentManager(), new String[]{"看板", "预警", "我的"}, mTitle);
         viewPager.setAdapter(factoryViewPagerFragmentAdapter);
+        viewPager.setOffscreenPageLimit(2);
         tabLayout.setupWithViewPager(viewPager);//将TabLayout与Viewpager联动起来
         //图片状态选择器
         StateListDrawable boardDrawable = new StateListDrawable();

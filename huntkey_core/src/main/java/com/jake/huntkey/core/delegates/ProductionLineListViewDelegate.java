@@ -8,8 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bin.david.form.core.SmartTable;
+import com.bin.david.form.core.TableConfig;
+import com.bin.david.form.data.CellInfo;
 import com.bin.david.form.data.column.Column;
 import com.bin.david.form.data.format.bg.BaseBackgroundFormat;
+import com.bin.david.form.data.format.bg.BaseCellBackgroundFormat;
+import com.bin.david.form.data.format.bg.ICellBackgroundFormat;
 import com.bin.david.form.data.style.FontStyle;
 import com.bin.david.form.data.table.TableData;
 import com.blankj.utilcode.util.ConvertUtils;
@@ -40,6 +44,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import butterknife.BindView;
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
@@ -58,6 +63,7 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
     private String mTitle;  //工厂名
     // 预加载标志，默认值为false，设置为true，表示已经预加载完成，可以加载数据
     private boolean isPrepared;
+    private boolean dataIsLoad;
 
     public static ProductionLineListViewDelegate newInstance(String title) {
         Bundle args = new Bundle();
@@ -105,14 +111,26 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
         fontStyle.setAlign(Paint.Align.RIGHT);
         fontStyle.setTextSize(ConvertUtils.sp2px(getResources().getDimension(R.dimen.table_content)));
         idSmartTable.getConfig().setContentStyle(fontStyle);//设置表格内容字体格式
-
+        ICellBackgroundFormat<CellInfo> backgroundFormat = new BaseCellBackgroundFormat<CellInfo>() {
+            @Override
+            public int getBackGroundColor(CellInfo cellInfo) {
+                if (cellInfo.col == 0 && cellInfo.row % 2 == 0) {
+                    return ContextCompat.getColor(_mActivity, R.color.table_divide);
+                } else if (cellInfo.col != 0 && (cellInfo.row / 3) % 2 == 0) {
+                    return ContextCompat.getColor(_mActivity, R.color.table_divide);
+                } else {
+                    return TableConfig.INVALID_COLOR;
+                }
+            }
+        };
+        idSmartTable.getConfig().setContentCellBackgroundFormat(backgroundFormat);
     }
 
 
     @Override
     protected void loadData() {
         super.loadData();
-        if (!isPrepared || !isVisible) {
+        if (!isPrepared || !isVisible || dataIsLoad) {
             return;
         }
         loadNetData();
@@ -132,6 +150,7 @@ public class ProductionLineListViewDelegate extends BaseBackDelegate {
                         if (data.getStatus().equals("OK") && data.getContent().size() > 0) {
                             getTableColums(data.getContent().get(0).getTitles()); //表头
                             getTableData(data.getContent().get(0).getData());  //表格数据
+                            dataIsLoad = true;
                         }
                         DialogLoaderManager.stopLoading();
                     }

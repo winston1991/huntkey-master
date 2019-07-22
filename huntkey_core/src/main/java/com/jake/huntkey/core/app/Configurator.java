@@ -84,7 +84,7 @@ public final class Configurator {
                 .debug(BuildConfig.DEBUG)
                 .setILogger(new LogcatLogger())
                 .isGet(true)
-                .param("client", "EMS")         //设置默认公共请求参数
+                .param("client", "MES")         //设置默认公共请求参数
                 .setOnUpdateFailureListener(new OnUpdateFailureListener() {  //设置版本更新出错的监听
                     @Override
                     public void onFailure(UpdateError error) {

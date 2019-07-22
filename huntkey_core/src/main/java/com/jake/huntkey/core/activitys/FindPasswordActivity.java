@@ -1,5 +1,6 @@
 package com.jake.huntkey.core.activitys;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -88,13 +89,16 @@ public class FindPasswordActivity extends BaseActivity {
                         public void onSuccess(ResetPasswordResponse data) {
                             if (data.getContent() != null && data.getContent().size() > 0) {
                                 ToastUtils.showShort(data.getContent().get(0));
-                                ActivityUtils.startActivity(LoginActivity.class);
+                                Intent intent = new Intent(FindPasswordActivity.this, LoginActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                startActivity(intent);
                                 finish();
                             } else {
                                 ToastUtils.showShort(data.getErrorMsg());
                             }
                             DialogLoaderManager.stopLoading();
                         }
+
                         @Override
                         public void onFail(int errCode, String errMsg) {
                             ToastUtils.showShort(errMsg);

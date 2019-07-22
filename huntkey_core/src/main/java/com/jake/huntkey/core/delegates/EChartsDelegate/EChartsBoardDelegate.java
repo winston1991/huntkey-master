@@ -17,6 +17,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.app.Consts;
+import com.jake.huntkey.core.delegates.DebugPagerFragment;
 import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.net.WebApiServices;
@@ -58,8 +59,10 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
 
 
     private int mCurrentFragmentPostion = 0;
-    private SupportFragment mCurrentFragment;
-    private SupportFragment mFragment;
+    private SupportFragment mEchartDelegate;
+    private SupportFragment mWIPDelegate;
+    private SupportFragment mJiePaiDelegate;
+    private SupportFragment mCurrentDelegate;
     private String lineId; //线体id
     private String accid; //工厂id
     private String sid;// 服务器id
@@ -92,10 +95,11 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
         getData();
         ConcatRequest();
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-        mCurrentFragment = EChartContainerDelegate.newInstance(lineId, deptCode);
-        mFragment = EChart_WIP_Tj_Delegate.newInstance(lineId);
-        //加载chart图表和wip统计两个fragment
-        loadMultipleRootFragment(R.id.fl_container, 0, mCurrentFragment, mFragment);
+        mCurrentDelegate = mEchartDelegate = EChartContainerDelegate.newInstance(lineId, deptCode);
+        mWIPDelegate = EChart_WIP_Tj_Delegate.newInstance(lineId);
+        mJiePaiDelegate = JiePaiDelegate.newInstance(lineId);
+        //加载chart图表和wip统计.节拍三个fragment
+        loadMultipleRootFragment(R.id.fl_container, 0, mEchartDelegate, mWIPDelegate, mJiePaiDelegate);
 
     }
 
@@ -139,6 +143,7 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
         tabLayout.addTab(tabLayout.newTab().setText("稼动率"));
         tabLayout.addTab(tabLayout.newTab().setText("出勤率"));
         tabLayout.addTab(tabLayout.newTab().setText("WIP统计"));
+        tabLayout.addTab(tabLayout.newTab().setText("节拍"));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -146,23 +151,32 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
                 if (tab.getPosition() != mCurrentFragmentPostion) {
                     switch (tab.getPosition()) {
                         case 0:
-                            showHideFragment(mCurrentFragment, mFragment);
-                            ((EChartContainerDelegate) mCurrentFragment).loadZhiTongLvChart();
+                            showHideFragment(mEchartDelegate, mCurrentDelegate);
+                            ((EChartContainerDelegate) mEchartDelegate).loadZhiTongLvChart();
+                            mCurrentDelegate = mEchartDelegate;
                             break;
                         case 1:
-                            showHideFragment(mCurrentFragment, mFragment);
-                            ((EChartContainerDelegate) mCurrentFragment).loadDaChengLvChart(mGetTcrRateResponse);
+                            showHideFragment(mEchartDelegate, mCurrentDelegate);
+                            ((EChartContainerDelegate) mEchartDelegate).loadDaChengLvChart(mGetTcrRateResponse);
+                            mCurrentDelegate = mEchartDelegate;
                             break;
                         case 2:
-                            showHideFragment(mCurrentFragment, mFragment);
-                            ((EChartContainerDelegate) mCurrentFragment).loadJiaDongLvChart(mGetJdRateResponse);
+                            showHideFragment(mEchartDelegate, mCurrentDelegate);
+                            ((EChartContainerDelegate) mEchartDelegate).loadJiaDongLvChart(mGetJdRateResponse);
+                            mCurrentDelegate = mEchartDelegate;
                             break;
                         case 3:
-                            showHideFragment(mCurrentFragment, mFragment);
-                            ((EChartContainerDelegate) mCurrentFragment).loadChuQinLvChart(mGetEmpRateResponse);
+                            showHideFragment(mEchartDelegate, mCurrentDelegate);
+                            ((EChartContainerDelegate) mEchartDelegate).loadChuQinLvChart(mGetEmpRateResponse);
+                            mCurrentDelegate = mEchartDelegate;
                             break;
                         case 4:
-                            showHideFragment(mFragment, mCurrentFragment);
+                            showHideFragment(mWIPDelegate, mCurrentDelegate);
+                            mCurrentDelegate = mWIPDelegate;
+                            break;
+                        case 5:
+                            showHideFragment(mJiePaiDelegate, mCurrentDelegate);
+                            mCurrentDelegate = mJiePaiDelegate;
                             break;
 
                     }

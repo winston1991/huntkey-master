@@ -32,6 +32,7 @@ import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.entity.ProductionLineEntity;
 import com.jake.huntkey.core.entity.WIPEntity;
 import com.jake.huntkey.core.net.WebApiServices;
+import com.jake.huntkey.core.net.callback.dealTokenExpire;
 import com.jake.huntkey.core.netbean.GetSampleResponse;
 import com.jake.huntkey.core.netbean.GetWipDataResponse;
 import com.vise.xsnow.http.ViseHttp;
@@ -93,24 +94,25 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         smartTable2.getConfig().setColumnTitleBackground(new BaseBackgroundFormat(Color.rgb(0, 152, 217)));
         smartTable2.getConfig().setColumnTitleStyle(fontStyle);
 
-        fontStyle = new FontStyle();
-        fontStyle.setTextColor(Color.GRAY);
-        fontStyle.setTextSize(ConvertUtils.sp2px(20));
-        smartTable1.getConfig().setTableTitleStyle(fontStyle);
-        smartTable2.getConfig().setTableTitleStyle(fontStyle);
+//        fontStyle = new FontStyle();
+//        fontStyle.setTextColor(Color.GRAY);
+//        fontStyle.setTextSize(ConvertUtils.sp2px(20));
+//        smartTable1.getConfig().setTableTitleStyle(fontStyle);
+//        smartTable2.getConfig().setTableTitleStyle(fontStyle);
         getSampleTableData();
         getWipTableData();
     }
 
     private void getWipTableData() {
 
-        ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new ACallback<GetWipDataResponse>() {
+        ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new dealTokenExpire<GetWipDataResponse>(_mActivity) {
             @Override
             public void onSuccess(GetWipDataResponse data) {
+                super.onSuccess(data);
                 if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
                     String[] titles = data.getContent().get(0).getTitles();
                     String[][] datas = data.getContent().get(0).getData();
-                    ArrayTableData<String> arrayTableData = ArrayTableData.create("", titles, transformMatrix(datas), new IDrawFormat<String>() {
+                    ArrayTableData<String> arrayTableData = ArrayTableData.create("", titles, ArrayTableData.transformColumnArray(datas), new IDrawFormat<String>() {
                         @Override
                         public int measureWidth(Column<String> column, int position, TableConfig config) {
                             return DensityUtils.dp2px(_mActivity, 60);
@@ -154,25 +156,13 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
         ViseHttp.addDisposable("GetWipData", disposable);
     }
 
-
-    // 将二维数组矩阵转置
-    public static String[][] transformMatrix(String matrix[][]) {
-        String a[][] = new String[matrix[0].length][matrix.length];
-        for (int i = 0; i < matrix[0].length; i++) {
-            for (int j = 0; j < matrix.length; j++) {
-                a[i][j] = matrix[j][i];
-            }
-        }
-        return a;
-    }
-
-
     //获取抽样表数据
     private void getSampleTableData() {
         ApiCallbackSubscriber disposable;
-        disposable = new ApiCallbackSubscriber<>(new ACallback<GetSampleResponse>() {
+        disposable = new ApiCallbackSubscriber<>(new dealTokenExpire<GetSampleResponse>(_mActivity) {
             @Override
             public void onSuccess(GetSampleResponse data) {
+                super.onSuccess(data);
                 if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
                     ArrayList<WIPEntity> samples = new ArrayList<>();
                     WIPEntity wipEntity;

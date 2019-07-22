@@ -1,5 +1,5 @@
 /**
-  * Copyright 2019 bejson.com 
+  * Copyright 2019 bejson.com
   */
 package com.jake.huntkey.core.netbean;
 import java.util.List;
