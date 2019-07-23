@@ -40,11 +40,13 @@ dependencies {
     //QMUI通用组件库
     api 'com.qmuiteam:qmui:1.2.0'
     //XUI通用组件库
-    api 'com.github.xuexiangjys:XUI:1.0.5'
-    api 'androidx.appcompat:appcompat:+'
+    api 'com.github.xuexiangjys:XUI:1.0.7'
+    api 'androidx.appcompat:appcompat:1.0.2'
     api 'androidx.core:core:+'
-    api 'androidx.recyclerview:recyclerview:+'
-    api 'com.google.android.material:material:+'
+    api 'androidx.recyclerview:recyclerview:1.0.0'
+    api 'com.google.android.material:material:1.1.0-alpha07'
+    api 'com.github.xuexiangjys.SmartRefreshLayout:refresh-header:1.1.5'
+    api 'com.github.xuexiangjys.SmartRefreshLayout:refresh-layout:1.1.5'
     //glide图片加载框架
     api 'com.github.bumptech.glide:glide:4.8.0'
     //基于AndroidX的fragment库  单Activity+多Fragment

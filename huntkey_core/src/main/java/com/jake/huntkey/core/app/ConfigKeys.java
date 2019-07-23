@@ -3,14 +3,12 @@ package com.jake.huntkey.core.app;
 
 
 public enum ConfigKeys {
-    API_HOST,
+    API_HOST,  //服务器主机地址
     APPLICATION_CONTEXT,
     CONFIG_READY,
-    ICON,
     LOADER_DELAYED,
     INTERCEPTOR,
-    WE_CHAT_APP_ID,
-    WE_CHAT_APP_SECRET,
     ACTIVITY,
     HANDLER,
+    GAUGE_COLOR_RANGE
 }

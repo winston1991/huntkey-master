@@ -2,47 +2,54 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        app:srlEnableAutoLoadMore="true"
+        app:srlEnableLoadMore="true">
 
-        <TextView
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:paddingLeft="20dp"
-            android:gravity="center_vertical|left"
-            android:text="节拍表"
-            android:textColor="#0098D9"
-            android:textSize="@dimen/table_title"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <com.bin.david.form.core.SmartTable
-            android:id="@+id/id_smart_table1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_vertical|left"
+                android:paddingLeft="20dp"
+                android:text="节拍表"
+                android:textColor="#0098D9"
+                android:textSize="@dimen/table_title"
+                android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:paddingLeft="20dp"
-            android:gravity="center_vertical|left"
-            android:text="工站监控表"
-            android:textColor="#0098D9"
-            android:textSize="@dimen/table_title"
-            android:textStyle="bold" />
+            <com.bin.david.form.core.SmartTable
+                android:id="@+id/id_smart_table1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-        <com.bin.david.form.core.SmartTable
-            android:id="@+id/id_smart_table2"
-            android:layout_width="match_parent"
-            android:layout_height="500dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_vertical|left"
+                android:paddingLeft="20dp"
+                android:text="工站监控表"
+                android:textColor="#0098D9"
+                android:textSize="@dimen/table_title"
+                android:textStyle="bold" />
 
+            <com.bin.david.form.core.SmartTable
+                android:id="@+id/id_smart_table2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-    </LinearLayout>
+        </LinearLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
 </ScrollView>

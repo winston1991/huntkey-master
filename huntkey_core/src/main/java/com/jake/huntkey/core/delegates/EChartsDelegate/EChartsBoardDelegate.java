@@ -16,6 +16,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
+import com.jake.huntkey.core.app.Configurator;
 import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.delegates.DebugPagerFragment;
 import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
@@ -24,6 +25,7 @@ import com.jake.huntkey.core.net.WebApiServices;
 import com.jake.huntkey.core.netbean.GetEmpRateResponse;
 import com.jake.huntkey.core.netbean.GetJdRateResponse;
 import com.jake.huntkey.core.netbean.GetNbrInfoResponse;
+import com.jake.huntkey.core.netbean.GetQueryWarnResponse;
 import com.jake.huntkey.core.netbean.GetTcrRateResponse;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.callback.ACallback;
@@ -32,6 +34,8 @@ import com.vise.xsnow.http.subscriber.ApiCallbackSubscriber;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.HashMap;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
@@ -70,7 +74,7 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     private GetJdRateResponse mGetJdRateResponse;  //稼动率数据
     private GetEmpRateResponse mGetEmpRateResponse; //出勤率数据
     private GetTcrRateResponse mGetTcrRateResponse; //达成率数据
-
+    HashMap<String, Float> gaugeColorRange;  //仪表盘颜色区间值
 
     public static EChartsBoardDelegate newInstance(String title, String lineId, String deptCode) {
 
@@ -229,13 +233,29 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
 
         ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new ACallback<Object>() {
             @Override
-            public void onSuccess(Object data) {
-                if (data instanceof GetJdRateResponse) {
-                    mGetJdRateResponse = (GetJdRateResponse) data;
-                } else if (data instanceof GetEmpRateResponse) {
-                    mGetEmpRateResponse = (GetEmpRateResponse) data;
-                } else if (data instanceof GetTcrRateResponse) {
-                    mGetTcrRateResponse = (GetTcrRateResponse) data;
+            public void onSuccess(Object object) {
+                if (object instanceof GetJdRateResponse) {
+                    mGetJdRateResponse = (GetJdRateResponse) object;
+                } else if (object instanceof GetEmpRateResponse) {
+                    mGetEmpRateResponse = (GetEmpRateResponse) object;
+                } else if (object instanceof GetTcrRateResponse) {
+                    mGetTcrRateResponse = (GetTcrRateResponse) object;
+                } else if (object instanceof GetQueryWarnResponse) {
+                    GetQueryWarnResponse data = (GetQueryWarnResponse) object;
+                    if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
+                        gaugeColorRange = new HashMap<>();
+                        Float f = Float.parseFloat(data.getContent().get(0).getFpy_red()) / 100;
+                        gaugeColorRange.put("fpy_red", f);
+                        f = Float.parseFloat(data.getContent().get(0).getFpy_yellow_begin()) / 100;
+                        gaugeColorRange.put("fpy_yellow_begin", f);
+                        f = Float.parseFloat(data.getContent().get(0).getFpy_yellow_end()) / 100;
+                        gaugeColorRange.put("fpy_yellow_end", f);
+                        f = Float.parseFloat(data.getContent().get(0).getTcr_yellow_begin()) / 100;
+                        gaugeColorRange.put("tcr_yellow_begin", f);
+                        f = Float.parseFloat(data.getContent().get(0).getTcr_yellow_end()) / 100;
+                        gaugeColorRange.put("tcr_yellow_end", f);
+                        Configurator.getInstance().withGagueColorRange(gaugeColorRange);
+                    }
                 }
             }
 
@@ -244,10 +264,11 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
             }
         });
         String deptCodes = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_DEPTCODE_NAME);
+        Observable<GetQueryWarnResponse> observable1 = ViseHttp.RETROFIT().create(WebApiServices.class).GetQueryWarn(sid).subscribeOn(Schedulers.io());
         Observable<GetTcrRateResponse> observable2 = ViseHttp.RETROFIT().create(WebApiServices.class).GetTcrRate(sid, lineId, accid).subscribeOn(Schedulers.io()); //达成率
         Observable<GetJdRateResponse> observable3 = ViseHttp.RETROFIT().create(WebApiServices.class).GetJdRate(sid, lineId, accid).subscribeOn(Schedulers.io()); // 稼动率
         Observable<GetEmpRateResponse> observable4 = ViseHttp.RETROFIT().create(WebApiServices.class).GetEmpRate(deptCode, deptCodes).subscribeOn(Schedulers.io()); //出勤率
-        Observable.concat(observable2, observable3, observable4)
+        Observable.concat(observable1, observable2, observable3, observable4)
                 .subscribe(disposable);
 
         ViseHttp.addDisposable("ConcatRequest", disposable);

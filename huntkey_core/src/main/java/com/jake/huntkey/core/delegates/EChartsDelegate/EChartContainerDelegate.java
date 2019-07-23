@@ -19,7 +19,9 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
+import com.jake.huntkey.core.app.ConfigKeys;
 import com.jake.huntkey.core.app.Consts;
+import com.jake.huntkey.core.app.HkEngine;
 import com.jake.huntkey.core.delegates.EChartsDelegate.FormatEchartsDataUtil.ChartInterface;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.entity.ProductionLineEntity;
@@ -63,7 +65,6 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
     ArrayList<Column> colums;  //达成率表头column集合
     ArrayList<ProductionLineEntity> tableDatas; //达成率表格数据集合
     GetFpyRateResponse mGetFpyRateResponse;  //直通率数据缓存
-    HashMap<String, Float> gaugeColorRange;  //仪表盘颜色区间值
 
 
     public static EChartContainerDelegate newInstance(String lineId, String deptCode) {
@@ -118,9 +119,7 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
                     mGetFpyRateResponse = data;
                     dealGetFpyRateResponse(data);
                     DialogLoaderManager.stopLoading();
-
                 }
-
                 @Override
                 public void onFail(int errCode, String errMsg) {
                     DialogLoaderManager.stopLoading();
@@ -154,7 +153,7 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
             data = getFpyRateResponse.getContent().get(0).getLossRateTop5().getRate();
             mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart4", mChartInterface.getZhiTongLvLvOptions4(axisX, data));
 
-            mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.getZhiTongLvLvOptions1(getFpyRateResponse.getContent().get(0).getRate(), gaugeColorRange));
+            mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.getZhiTongLvLvOptions1(getFpyRateResponse.getContent().get(0).getRate(), (HashMap<String, Float>) HkEngine.getConfiguration(ConfigKeys.GAUGE_COLOR_RANGE)));
         }
     }
 
@@ -210,8 +209,7 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         if (data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
             getTableColums(data.getContent().get(0).getMonitorData().get(0));
             getTableDatas(data.getContent().get(0).getMonitorData());
-
-            mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.getDaChengLvOptions1(data.getContent().get(0).getRate(), gaugeColorRange));
+            mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart1", mChartInterface.getDaChengLvOptions1(data.getContent().get(0).getRate(), (HashMap<String, Float>) HkEngine.getConfiguration(ConfigKeys.GAUGE_COLOR_RANGE)));
             List<String> axisX = data.getContent().get(0).getTcr7DayRate().getOtpt_start_time();
             List<String> legend1 = data.getContent().get(0).getTcr7DayRate().getTargetqty(); //计划数量
             List<String> legend2 = data.getContent().get(0).getTcr7DayRate().getOqty(); //A班完成数
@@ -420,38 +418,7 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
 
     @Override
     public void onPageLoadFinished() {
-
-        /**
-         * 获取仪表盘的颜色显示区间， 此接口不管成功还是失败多要去调用获取直通率图表数据
-         */
-        ViseHttp.RETROFIT()
-                .create(WebApiServices.class)
-                .GetQueryWarn(sid)
-                .compose(ApiTransformer.<GetQueryWarnResponse>norTransformer())
-                .subscribe(new ApiCallbackSubscriber<>(new ACallback<GetQueryWarnResponse>() {
-                    @Override
-                    public void onSuccess(GetQueryWarnResponse data) {
-                        if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
-                            gaugeColorRange = new HashMap<>();
-                            Float f = Float.parseFloat(data.getContent().get(0).getFpy_red()) / 100;
-                            gaugeColorRange.put("fpy_red", f);
-                            f = Float.parseFloat(data.getContent().get(0).getFpy_yellow_begin()) / 100;
-                            gaugeColorRange.put("fpy_yellow_begin", f);
-                            f = Float.parseFloat(data.getContent().get(0).getFpy_yellow_end()) / 100;
-                            gaugeColorRange.put("fpy_yellow_end", f);
-                            f = Float.parseFloat(data.getContent().get(0).getTcr_yellow_begin()) / 100;
-                            gaugeColorRange.put("tcr_yellow_begin", f);
-                            f = Float.parseFloat(data.getContent().get(0).getTcr_yellow_end()) / 100;
-                            gaugeColorRange.put("tcr_yellow_end", f);
-                        }
-                        loadZhiTongLvChart();
-                    }
-
-                    @Override
-                    public void onFail(int errCode, String errMsg) {
-                        loadZhiTongLvChart();
-                    }
-                }));
+        loadZhiTongLvChart();
     }
 
     /**

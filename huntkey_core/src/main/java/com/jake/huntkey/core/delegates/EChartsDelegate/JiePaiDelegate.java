@@ -9,6 +9,7 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -90,47 +91,99 @@ public class JiePaiDelegate extends BaseBackDelegate {
         initTableFormat();
         loadJiePaiData();
         load20BdJianKongInfoData();
+
     }
 
     private void load20BdJianKongInfoData() {
         ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new dealTokenExpire<Get20BdJianKongInfoResponse>(_mActivity) {
+            private int height;
+
             @Override
             public void onSuccess(Get20BdJianKongInfoResponse data) {
                 super.onSuccess(data);
                 if (data != null && data.getContent() != null && data.getContent().size() > 0) {
-                    String[] titles = data.getContent().get(0).getData().getTitles();
-                    formatDate(titles);
-                    List<List<String>> tableDatas = new ArrayList();
-                    List<String> list;
-                    List<CellRange> cellRanges = new ArrayList<>();
-                    CellRange cellRange;
-                    for (int i = 0; i < data.getContent().size(); i++) {
-                        list = new ArrayList<>();
-                        list.add(data.getContent().get(i).getLaytName());
-                        for (int j = 0; j < titles.length - 1; j++) {
-                            list.add("");
-                        }
-                        tableDatas.add(list);
-                        tableDatas.addAll(data.getContent().get(i).getData().getData());
-                        cellRange = new CellRange(i*9, i*9,0, titles.length);
-                        cellRanges.add(cellRange);
-                    }
-                    String[][] td = new String[tableDatas.size()][tableDatas.get(0).size()];
-                    for (int i = 0; i < tableDatas.size(); i++) {
-                        for (int j = 0; j < tableDatas.get(i).size(); j++) {
-                            td[i][j] = tableDatas.get(i).get(j);
-                        }
-                    }
-                    ArrayTableData<String> arrayTableData = ArrayTableData.create("", titles, ArrayTableData.transformColumnArray(td), new TextDrawFormat<String>() {
-                    });
-                    idSmartTable2.setTableData(arrayTableData);
-                    idSmartTable2.getTableData().setUserCellRange(cellRanges);
+                    showJianKongData(data);
                 }
+            }
+
+            private void showJianKongData(Get20BdJianKongInfoResponse data) {
+                String[] titles = data.getContent().get(0).getData().getTitles();//表头
+                final int itemSize = data.getContent().get(0).getData().getData().size() + 1;//每个工单制令数
+
+                formatDate(titles);
+                List<List<String>> tableDatas = new ArrayList();
+                List<String> list;
+                List<CellRange> cellRanges = new ArrayList<>();  //工单行的单元格合并区间集合
+                CellRange cellRange;
+                for (int i = 0; i < data.getContent().size(); i++) {
+                    list = new ArrayList<>();
+                    list.add(data.getContent().get(i).getLaytName());
+                    for (int j = 0; j < titles.length - 1; j++) {
+                        list.add("");
+                    }
+                    tableDatas.add(list);
+                    tableDatas.addAll(data.getContent().get(i).getData().getData());
+                    cellRange = new CellRange(i * itemSize, i * itemSize, 0, titles.length); //每个合并区间
+                    cellRanges.add(cellRange);
+                }
+                String[][] td = new String[tableDatas.size()][tableDatas.get(0).size()];
+                for (int i = 0; i < tableDatas.size(); i++) {
+                    for (int j = 0; j < tableDatas.get(i).size(); j++) {
+                        td[i][j] = tableDatas.get(i).get(j);
+                    }
+                }
+
+                TextDrawFormat<String> textDrawFormat = new TextDrawFormat<String>() {
+                    @Override
+                    protected void drawText(Canvas c, String value, Rect rect, Paint paint) {
+                        paint.setColor(ContextCompat.getColor(_mActivity, R.color.black));
+                        super.drawText(c, value, rect, paint);
+                    }
+
+                    @Override
+                    public void draw(Canvas c, Rect rect, CellInfo<String> cellInfo, TableConfig config) {
+                        Paint paint = config.getPaint();
+                        paint.setStyle(Paint.Style.FILL);
+                        if ((cellInfo.row % itemSize) == 0) {
+                            config.getContentStyle().setAlign(Paint.Align.LEFT);  //工单行居左
+                            paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_divide));
+                            c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
+                            rect.left += config.getHorizontalPadding();
+                            rect.right -= config.getHorizontalPadding();
+                        } else {
+                            config.getContentStyle().setAlign(Paint.Align.CENTER);//其他行居右
+                            if ((cellInfo.row % itemSize) == 8 && cellInfo.col != 0) //节拍达成率
+                            {
+                                if (cellInfo.value.equals("-1")) {
+                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_cell_green));
+                                } else {
+                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.qmui_config_color_red));
+                                }
+                                c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
+                            }
+                        }
+                        super.draw(c, rect, cellInfo, config);
+                    }
+
+                    @Override
+                    public int measureHeight(Column<String> column, int position, TableConfig config) {
+
+                        return  super.measureHeight(column, position, config);
+                    }
+                };
+                ArrayTableData<String> arrayTableData = ArrayTableData.create("", titles, ArrayTableData.transformColumnArray(td), textDrawFormat);
+                idSmartTable2.setTableData(arrayTableData);
+                ((Column) idSmartTable2.getTableData().getColumns().get(0)).setFixed(true);
+                idSmartTable2.getTableData().setUserCellRange(cellRanges);
+                int lines = idSmartTable2.getTableData().getLineSize();
+                idSmartTable2.getConfig().setColumnTitleHorizontalPadding(ConvertUtils.dp2px(8));
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 30 * lines);
+                idSmartTable2.setLayoutParams(layoutParams);
             }
 
             @Override
             public void onFail(int errCode, String errMsg) {
-
+                ToastUtils.showShort(errMsg);
             }
         });
         ViseHttp.RETROFIT()
@@ -153,7 +206,6 @@ public class JiePaiDelegate extends BaseBackDelegate {
                     showJiePaiTable(titles, tabledatas);
                 }
             }
-
             @Override
             public void onFail(int errCode, String errMsg) {
                 ToastUtils.showShort(errMsg);
@@ -173,6 +225,8 @@ public class JiePaiDelegate extends BaseBackDelegate {
             for (int j = 0; j < tabledatas[0].length; j++) {
                 if (tabledatas[i][j].isEmpty()) {
                     tabledatas[i][j] = "-";
+                } else if (tabledatas[i][j].equals("-1")) {
+                    tabledatas[i][j] = "1";
                 }
             }
         }
@@ -182,12 +236,13 @@ public class JiePaiDelegate extends BaseBackDelegate {
                 paint.setColor(ContextCompat.getColor(_mActivity, R.color.black));
                 super.drawText(c, value, rect, paint);
             }
+
             @Override
             public void draw(Canvas c, Rect rect, CellInfo<String> cellInfo, TableConfig config) {
                 Paint paint = config.getPaint();
                 paint.setStyle(Paint.Style.FILL);
                 if (cellInfo.col != 0) {
-                    if (cellInfo.value.equals("-1")) {
+                    if (cellInfo.value.equals("1")) {
                         paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_cell_green));
                     } else if (cellInfo.value.equals("-")) {
                         paint.setColor(ContextCompat.getColor(_mActivity, R.color.white));
@@ -195,22 +250,15 @@ public class JiePaiDelegate extends BaseBackDelegate {
                         paint.setColor(ContextCompat.getColor(_mActivity, R.color.qmui_config_color_red));
                     }
                 } else {
-                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.transparent));
+                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.white));
                 }
-               c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
-                if(cellInfo.row == 6)
-                {
-                    config.getContentStyle().setAlign(Paint.Align.LEFT);
-                }else
-                {
-                    config.getContentStyle().setAlign(Paint.Align.CENTER);
-                }
-
-
+                c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
                 super.draw(c, rect, cellInfo, config);
             }
         });
         idSmartTable1.setTableData(arrayTableData);
+        idSmartTable1.getConfig().setColumnTitleHorizontalPadding(ConvertUtils.dp2px(8));
+
     }
 
     private void formatDate(String[] titles) {
