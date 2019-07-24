@@ -8,10 +8,10 @@
     app:srlFooterHeight="0dp">
 
 
+    <com.bin.david.form.core.SmartTable
+        android:id="@+id/id_smart_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-        <com.bin.david.form.core.SmartTable
-            android:id="@+id/id_smart_table"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>

@@ -18,7 +18,6 @@ import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.app.Configurator;
 import com.jake.huntkey.core.app.Consts;
-import com.jake.huntkey.core.delegates.DebugPagerFragment;
 import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.net.WebApiServices;
@@ -61,11 +60,11 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     @BindView(R2.id.id_upm_tv)
     TextView idUpmTv;
 
-
     private int mCurrentFragmentPostion = 0;
     private SupportFragment mEchartDelegate;
     private SupportFragment mWIPDelegate;
     private SupportFragment mJiePaiDelegate;
+    private SupportFragment mWorkStationMonitorDelegate;
     private SupportFragment mCurrentDelegate;
     private String lineId; //线体id
     private String accid; //工厂id
@@ -96,19 +95,19 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
             deptCode = bundle.getString(ARG_DeptCode);
             super.mToolbar.setTitle(mTitle);
         }
-        getData();
+        getBoardData();
         ConcatRequest();
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         mCurrentDelegate = mEchartDelegate = EChartContainerDelegate.newInstance(lineId, deptCode);
         mWIPDelegate = EChart_WIP_Tj_Delegate.newInstance(lineId);
         mJiePaiDelegate = JiePaiDelegate.newInstance(lineId);
+        mWorkStationMonitorDelegate = WorkStationMonitorDelegate.newInstance(lineId);
         //加载chart图表和wip统计.节拍三个fragment
-        loadMultipleRootFragment(R.id.fl_container, 0, mEchartDelegate, mWIPDelegate, mJiePaiDelegate);
+        loadMultipleRootFragment(R.id.fl_container, 0, mEchartDelegate, mWIPDelegate, mJiePaiDelegate, mWorkStationMonitorDelegate);
 
     }
 
-    private void getData() {
-
+    private void getBoardData() {
         ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new ACallback<GetNbrInfoResponse>() {
             @Override
             public void onSuccess(GetNbrInfoResponse data) {
@@ -148,6 +147,7 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
         tabLayout.addTab(tabLayout.newTab().setText("出勤率"));
         tabLayout.addTab(tabLayout.newTab().setText("WIP统计"));
         tabLayout.addTab(tabLayout.newTab().setText("节拍"));
+        tabLayout.addTab(tabLayout.newTab().setText("工站监控"));
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -181,6 +181,10 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
                         case 5:
                             showHideFragment(mJiePaiDelegate, mCurrentDelegate);
                             mCurrentDelegate = mJiePaiDelegate;
+                            break;
+                        case 6:
+                            showHideFragment(mWorkStationMonitorDelegate, mCurrentDelegate);
+                            mCurrentDelegate = mWorkStationMonitorDelegate;
                             break;
 
                     }
@@ -227,10 +231,9 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
 
 
     /**
-     * 合并三个网络请求  达成率  稼动率  出勤率
+     * 合并四个网络请求  达成率  稼动率  出勤率  仪表盘颜色区间值
      */
     private void ConcatRequest() {
-
         ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new ACallback<Object>() {
             @Override
             public void onSuccess(Object object) {

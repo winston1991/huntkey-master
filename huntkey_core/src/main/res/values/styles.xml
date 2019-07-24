@@ -13,6 +13,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+
+    <!--XUI框架中有的组件必须要用XUI的主题-->
+    <style name="XUI" parent="XUITheme.Phone" />
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

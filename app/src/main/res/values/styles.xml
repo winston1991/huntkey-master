@@ -1,6 +1,7 @@
 <resources>
 
-    <!-- Base application theme. -->
+
+    <!-- Base application theme2. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -8,10 +9,15 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="XUI.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <!--XUI框架中有的组件必须要用XUI的主题-->
+    <style name="XUI" parent="XUITheme.Phone" />
+
+    <style name="MyAppTheme" parent="XUI.NoActionBar"></style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
