@@ -99,7 +99,7 @@
         android:layout_height="wrap_content"
         app:tabIndicatorColor="@color/tabIndicatorColor"
         app:tabIndicatorHeight="3dp"
-        app:tabSelectedTextColor="@color/tab_selected"
+        app:tabSelectedTextColor="@color/tabIndicatorColor"
         app:tabTextAppearance="@style/tab_appearance"
         app:tabTextColor="@color/tableTitle"></com.google.android.material.tabs.TabLayout>
 

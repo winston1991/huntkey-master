@@ -4,15 +4,19 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.view.ViewTreeObserver;
+import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 
 import com.bin.david.form.core.SmartTable;
 import com.bin.david.form.core.TableConfig;
@@ -27,21 +31,24 @@ import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
+import com.jake.huntkey.core.app.ConfigKeys;
+import com.jake.huntkey.core.app.HkEngine;
 import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.net.WebApiServices;
 import com.jake.huntkey.core.net.callback.dealTokenExpire;
 import com.jake.huntkey.core.netbean.Get20BdJianKongInfoResponse;
-import com.jake.huntkey.core.netbean.GetJiePaiResponse;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.core.ApiTransformer;
 import com.vise.xsnow.http.subscriber.ApiCallbackSubscriber;
+import com.xuexiang.xui.widget.statelayout.StatefulLayout;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -52,10 +59,18 @@ public class WorkStationMonitorDelegate extends BaseBackDelegate {
     private static final String ARG_lineID = "lineId";
     @BindView(R2.id.id_smart_table)
     SmartTable idSmartTable;
+    @BindView(R2.id.id_state_layout)
+    StatefulLayout idStateLayout;
+    @BindView(R2.id.id_smart_refresh_layout)
+    SmartRefreshLayout idSmartRefreshLayout;
+    @BindView(R2.id.id_scrollview)
+    NestedScrollView idScrollview;
     private String lineId;
     private String sid;
     private String accid;
-
+    private String colortcrred;
+    private String colorfpyred;
+    private String colorfpyyellow;
 
     public static WorkStationMonitorDelegate newInstance(String lineId) {
         Bundle args = new Bundle();
@@ -76,12 +91,21 @@ public class WorkStationMonitorDelegate extends BaseBackDelegate {
     }
 
     protected void initView(View view) {
+        HashMap<String, Float> colorRange = (HashMap<String, Float>) HkEngine.getConfiguration(ConfigKeys.GAUGE_COLOR_RANGE);
+        if (colorRange != null) {
+            colortcrred = Float.toString(colorRange.get("tcr_yellow_end") * 100);
+            colorfpyred = Float.toString(colorRange.get("fpy_red") * 100);
+            colorfpyyellow = Float.toString(colorRange.get("fpy_yellow_end") * 100);
+        }
         Bundle bundle = getArguments();
         if (bundle != null) {
             lineId = bundle.getString(ARG_lineID);
         }
         initTableFormat();
         load20BdJianKongInfoData();
+
+
+
 
     }
 
@@ -149,10 +173,26 @@ public class WorkStationMonitorDelegate extends BaseBackDelegate {
                                 if (cellInfo.value.equals("1")) {
                                     paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_cell_green));
                                 } else {
-                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.qmui_config_color_red));
+                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_cell_red));
                                 }
                                 c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
                             }
+//                            else if ((cellInfo.row % itemSize) == 7 && cellInfo.col != 0) //目标达成率
+//                            {
+//                                if (cellInfo.value.compareTo(colortcrred) < 0) {
+//                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_cell_red));
+//                                    c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
+//                                }
+//                            } else if ((cellInfo.row % itemSize) == 6 && cellInfo.col != 0) //一次良率
+//                            {
+//                                if (cellInfo.value.compareTo(colorfpyred) < 0) {
+//                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_cell_red));
+//                                    c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
+//                                } else if (cellInfo.value.compareTo(colorfpyyellow) < 0) {
+//                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.yellow));
+//                                    c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
+//                                }
+//                            }
                         }
                         super.draw(c, rect, cellInfo, config);
                     }

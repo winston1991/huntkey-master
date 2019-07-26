@@ -103,7 +103,7 @@ public class GetChartsOptionString {
         GsonOption option = new GsonOption();
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         Gauge gauge = new Gauge();
-        gauge.axisLine().lineStyle().color(new Object[]{new Object[]{hashMap.get("tcr_yellow_begin"), "#ff4500"}, new Object[]{hashMap.get("tcr_yellow_end"), "#E6B600"}, new Object[]{1, "lime"}});
+        gauge.axisLine().lineStyle().color(new Object[]{new Object[]{hashMap.get("tcr_yellow_begin"), "#ff4500"}, new Object[]{hashMap.get("tcr_yellow_end"), "lime"}, new Object[]{1, "lime"}});
         gauge.axisLine().lineStyle().shadowBlur(10).width(2).shadowColor("#fff");
         gauge.name("达成率");
         gauge.detail(new Detail().formatter("{value}%"));
@@ -191,7 +191,6 @@ public class GetChartsOptionString {
         categoryAxisY2.axisLabel().setFormatter("{value} %");
         option.yAxis(categoryAxisY1, categoryAxisY2);
 
-
         DataZoom dataZoom = new DataZoom();
         dataZoom.setType(DataZoomType.slider);
         dataZoom.start(0).end(100).bottom("2%");
@@ -199,22 +198,24 @@ public class GetChartsOptionString {
 
         SeriesFactory seriesFactory = new SeriesFactory();
         Bar bar1 = SeriesFactory.newBar("计划数量");
-        bar1.yAxisIndex(0).label().normal().show(true).position(Position.top);
+        bar1.yAxisIndex(0).label().normal();
         bar1.data(list1.toArray());
         Bar bar2 = SeriesFactory.newBar("A班完成数量");
-        bar2.yAxisIndex(0).label().normal().show(true).position(Position.top);
+        bar2.stack("总量");
+        bar2.yAxisIndex(0).label().normal();
         bar2.data(list2.toArray());
         Bar bar3 = SeriesFactory.newBar("B班完成数量");
-        bar3.yAxisIndex(0).label().normal().show(true).position(Position.top);
+        bar3.stack("总量");
+        bar3.yAxisIndex(0).label().normal();
         bar3.data(list4.toArray());
 
 
         Line line1 = seriesFactory.newLine("A班达成率");
-        line1.yAxisIndex(1).label().normal().show(true).position(Position.top);
+        line1.yAxisIndex(1).label().normal();
         line1.data(list3.toArray());
 
         Line line2 = seriesFactory.newLine("B班达成率");
-        line2.yAxisIndex(1).label().normal().show(true).position(Position.top);
+        line2.yAxisIndex(1).label().normal();
         line2.data(list5.toArray());
 
         option.grid().top("20%").containLabel(false);

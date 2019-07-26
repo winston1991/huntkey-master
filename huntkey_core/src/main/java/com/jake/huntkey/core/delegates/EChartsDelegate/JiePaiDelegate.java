@@ -89,6 +89,7 @@ public class JiePaiDelegate extends BaseBackDelegate {
         }
         initTableFormat();
         loadJiePaiData();
+
     }
 
 
@@ -148,7 +149,7 @@ public class JiePaiDelegate extends BaseBackDelegate {
                     } else if (cellInfo.value.equals("-")) {
                         paint.setColor(ContextCompat.getColor(_mActivity, R.color.white));
                     } else {
-                        paint.setColor(ContextCompat.getColor(_mActivity, R.color.qmui_config_color_red));
+                        paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_cell_red));
                     }
                 } else {
                     config.getContentStyle().setAlign(Paint.Align.LEFT);

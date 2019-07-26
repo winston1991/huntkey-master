@@ -8,14 +8,16 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="MyAppTheme" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-
-    <!--XUI框架中有的组件必须要用XUI的主题-->
-    <style name="XUI" parent="XUITheme.Phone" />
+  <style name="XUI" parent="XUITheme.Phone">
+      <item name="colorPrimary">@color/colorPrimary</item>
+      <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+      <item name="colorAccent">@color/colorAccent</item>
+  </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -36,7 +38,7 @@
 
     <style name="AppTheme.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AppTheme.NoActionBar.SwipeBack">
+    <style name="MyAppTheme.SwipeBack">
         <item name="android:windowIsTranslucent">true</item>
     </style>
 

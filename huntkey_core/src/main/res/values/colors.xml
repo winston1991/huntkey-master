@@ -41,5 +41,11 @@
 
     <color name="table_cell_green">#008000</color>
 
+    <color name="table_cell_red">#FA3A3A</color>
+
     <color name="table_divide">#C1D4F3</color>
+
+
+    <color name="yellow">#FFFF00</color>
+
 </resources>

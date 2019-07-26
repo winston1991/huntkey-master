@@ -174,7 +174,6 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
                         wipEntity.setQuantity(data.getContent().get(i).getSapm_act_qty());
                         wipEntity.setMakeFlowNumber(data.getContent().get(i).getSapm_wo_nbr());
                         String sapm_remark = data.getContent().get(i).getSapm_remark();
-                        wipEntity.setnGInfo(sapm_remark);
                         samples.add(wipEntity);
                     }
                     smartTable1.setData(samples);
