@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,15 +17,12 @@ import androidx.core.content.ContextCompat;
 import com.bin.david.form.core.SmartTable;
 import com.bin.david.form.core.TableConfig;
 import com.bin.david.form.data.CellInfo;
-import com.bin.david.form.data.CellRange;
-import com.bin.david.form.data.column.Column;
 import com.bin.david.form.data.format.bg.BaseBackgroundFormat;
-import com.bin.david.form.data.format.draw.IDrawFormat;
 import com.bin.david.form.data.format.draw.TextDrawFormat;
 import com.bin.david.form.data.style.FontStyle;
 import com.bin.david.form.data.table.ArrayTableData;
-import com.bin.david.form.utils.DensityUtils;
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
@@ -34,23 +30,18 @@ import com.jake.huntkey.core.delegates.basedelegate.BaseBackDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.net.WebApiServices;
 import com.jake.huntkey.core.net.callback.dealTokenExpire;
-import com.jake.huntkey.core.netbean.Get20BdJianKongInfoResponse;
 import com.jake.huntkey.core.netbean.GetJiePaiResponse;
-import com.jake.huntkey.core.netbean.GetWipDataResponse;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.vise.xsnow.http.ViseHttp;
-import com.vise.xsnow.http.callback.ACallback;
 import com.vise.xsnow.http.core.ApiTransformer;
 import com.vise.xsnow.http.subscriber.ApiCallbackSubscriber;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
-import io.reactivex.Observable;
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 
 
@@ -58,6 +49,8 @@ public class JiePaiDelegate extends BaseBackDelegate {
     private static final String ARG_lineID = "lineId";
     @BindView(R2.id.id_smart_table)
     SmartTable idSmartTable;
+    @BindView(R2.id.id_smart_refresh_layout)
+    SmartRefreshLayout idSmartRefreshLayout;
 
     private String lineId;
     private String sid;
@@ -89,10 +82,13 @@ public class JiePaiDelegate extends BaseBackDelegate {
         }
         initTableFormat();
         loadJiePaiData();
-
+        idSmartRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                loadJiePaiData();
+            }
+        });
     }
-
-
 
 
     private void loadJiePaiData() {
@@ -105,10 +101,12 @@ public class JiePaiDelegate extends BaseBackDelegate {
                     String[][] tabledatas = data.getContent().get(0).getData();
                     showJiePaiTable(titles, tabledatas);
                 }
+                idSmartRefreshLayout.finishRefresh();
             }
 
             @Override
             public void onFail(int errCode, String errMsg) {
+                idSmartRefreshLayout.finishRefresh();
                 ToastUtils.showShort(errMsg);
             }
         });
@@ -164,7 +162,10 @@ public class JiePaiDelegate extends BaseBackDelegate {
         idSmartTable.setTableData(arrayTableData);
         idSmartTable.getConfig().setColumnTitleHorizontalPadding(ConvertUtils.dp2px(4));
         idSmartTable.getConfig().setHorizontalPadding(ConvertUtils.dp2px(4));
+        idSmartTable.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ScreenUtils.getScreenHeight()));
+
     }
+
     private void formatDate(String[] titles) {
         for (int i = 0; i < titles.length; i++) {
             if (i < 2) {
@@ -173,6 +174,7 @@ public class JiePaiDelegate extends BaseBackDelegate {
             titles[i] = titles[i].substring(11, 16) + "~" + titles[i].substring(31, 36);
         }
     }
+
     private void initTableFormat() {
         idSmartTable.getConfig().setFixedTitle(true);
         idSmartTable.getConfig().setShowXSequence(false);

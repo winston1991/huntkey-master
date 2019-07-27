@@ -2,33 +2,13 @@ package com.jake.huntkey.core.delegates.EChartsDelegate.FormatEchartsDataUtil;
 
 import android.webkit.JavascriptInterface;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import androidx.fragment.app.FragmentActivity;
 
 import com.blankj.utilcode.util.ScreenUtils;
-import com.github.abel533.echarts.AxisPointer;
 
-import com.github.abel533.echarts.DataZoom;
-import com.github.abel533.echarts.Legend;
-import com.github.abel533.echarts.Tooltip;
-import com.github.abel533.echarts.axis.AxisLabel;
-import com.github.abel533.echarts.axis.AxisTick;
-import com.github.abel533.echarts.axis.CategoryAxis;
-import com.github.abel533.echarts.code.AxisType;
-import com.github.abel533.echarts.code.DataZoomType;
-import com.github.abel533.echarts.code.PointerType;
-import com.github.abel533.echarts.code.Position;
-import com.github.abel533.echarts.code.Trigger;
-import com.github.abel533.echarts.data.Data;
-import com.github.abel533.echarts.json.GsonOption;
-import com.github.abel533.echarts.series.Bar;
-import com.github.abel533.echarts.series.Gauge;
-import com.github.abel533.echarts.series.SeriesFactory;
-import com.github.abel533.echarts.series.gauge.Detail;
 import com.just.agentweb.core.AgentWeb;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -83,7 +63,7 @@ public class ChartInterface {
 
     @JavascriptInterface
     public String getJiaDongLvOptions1(String rate) {
-        return GetChartsOptionString.getJiaDOngLvGaugeOptions1(rate);
+        return GetChartsOptionString.getJiaDongLvGaugeOptions1(rate);
     }
 
     @JavascriptInterface

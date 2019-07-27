@@ -73,7 +73,7 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
     private GetJdRateResponse mGetJdRateResponse;  //稼动率数据
     private GetEmpRateResponse mGetEmpRateResponse; //出勤率数据
     private GetTcrRateResponse mGetTcrRateResponse; //达成率数据
-    HashMap<String, Float> gaugeColorRange;  //仪表盘颜色区间值
+
 
     public static EChartsBoardDelegate newInstance(String title, String lineId, String deptCode) {
 
@@ -243,22 +243,6 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
                     mGetEmpRateResponse = (GetEmpRateResponse) object;
                 } else if (object instanceof GetTcrRateResponse) {
                     mGetTcrRateResponse = (GetTcrRateResponse) object;
-                } else if (object instanceof GetQueryWarnResponse) {
-                    GetQueryWarnResponse data = (GetQueryWarnResponse) object;
-                    if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
-                        gaugeColorRange = new HashMap<>();
-                        Float f = Float.parseFloat(data.getContent().get(0).getFpy_red()) / 100;
-                        gaugeColorRange.put("fpy_red", f);
-                        f = Float.parseFloat(data.getContent().get(0).getFpy_yellow_begin()) / 100;
-                        gaugeColorRange.put("fpy_yellow_begin", f);
-                        f = Float.parseFloat(data.getContent().get(0).getFpy_yellow_end()) / 100;
-                        gaugeColorRange.put("fpy_yellow_end", f);
-                        f = Float.parseFloat(data.getContent().get(0).getTcr_yellow_begin()) / 100;
-                        gaugeColorRange.put("tcr_yellow_begin", f);
-                        f = Float.parseFloat(data.getContent().get(0).getTcr_yellow_end()) / 100;
-                        gaugeColorRange.put("tcr_yellow_end", f);
-                        Configurator.getInstance().withGagueColorRange(gaugeColorRange);
-                    }
                 }
             }
 
@@ -267,11 +251,10 @@ public class EChartsBoardDelegate extends BaseBackDelegate {
             }
         });
         String deptCodes = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_DEPTCODE_NAME);
-        Observable<GetQueryWarnResponse> observable1 = ViseHttp.RETROFIT().create(WebApiServices.class).GetQueryWarn(sid).subscribeOn(Schedulers.io());
         Observable<GetTcrRateResponse> observable2 = ViseHttp.RETROFIT().create(WebApiServices.class).GetTcrRate(sid, lineId, accid).subscribeOn(Schedulers.io()); //达成率
         Observable<GetJdRateResponse> observable3 = ViseHttp.RETROFIT().create(WebApiServices.class).GetJdRate(sid, lineId, accid).subscribeOn(Schedulers.io()); // 稼动率
         Observable<GetEmpRateResponse> observable4 = ViseHttp.RETROFIT().create(WebApiServices.class).GetEmpRate(deptCode, deptCodes).subscribeOn(Schedulers.io()); //出勤率
-        Observable.concat(observable1, observable2, observable3, observable4)
+        Observable.concat( observable2, observable3, observable4)
                 .subscribe(disposable);
 
         ViseHttp.addDisposable("ConcatRequest", disposable);

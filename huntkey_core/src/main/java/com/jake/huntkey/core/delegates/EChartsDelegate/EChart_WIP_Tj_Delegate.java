@@ -24,7 +24,6 @@ import com.bin.david.form.data.table.ArrayTableData;
 import com.bin.david.form.utils.DensityUtils;
 import com.blankj.utilcode.util.ConvertUtils;
 import com.blankj.utilcode.util.ToastUtils;
-
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
@@ -35,8 +34,10 @@ import com.jake.huntkey.core.net.WebApiServices;
 import com.jake.huntkey.core.net.callback.dealTokenExpire;
 import com.jake.huntkey.core.netbean.GetSampleResponse;
 import com.jake.huntkey.core.netbean.GetWipDataResponse;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.vise.xsnow.http.ViseHttp;
-import com.vise.xsnow.http.callback.ACallback;
 import com.vise.xsnow.http.core.ApiTransformer;
 import com.vise.xsnow.http.subscriber.ApiCallbackSubscriber;
 
@@ -46,7 +47,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 
 import butterknife.BindView;
-import io.reactivex.disposables.Disposable;
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 
 public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
@@ -59,6 +59,8 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
     SmartTable<String> smartTable2;
     ArrayList<Column> colums;
     ArrayList<ProductionLineEntity> tableDatas;
+    @BindView(R2.id.id_smart_refresh_layout)
+    SmartRefreshLayout idSmartRefreshLayout;
 
     private String lineId;
     private String sid;
@@ -101,6 +103,12 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
 //        smartTable2.getConfig().setTableTitleStyle(fontStyle);
         getSampleTableData();
         getWipTableData();
+        idSmartRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                getWipTableData();
+            }
+        });
     }
 
     private void getWipTableData() {
@@ -139,10 +147,12 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
                     smartTable2.setTableData(arrayTableData);
                     smartTable2.getTableData().getColumns().get(0).setFixed(true);
                 }
+                idSmartRefreshLayout.finishRefresh();
             }
 
             @Override
             public void onFail(int errCode, String errMsg) {
+                idSmartRefreshLayout.finishRefresh();
 
             }
 
@@ -178,10 +188,12 @@ public class EChart_WIP_Tj_Delegate extends CheckPermissionDelegate {
                     }
                     smartTable1.setData(samples);
                 }
+                idSmartRefreshLayout.finishRefresh();
             }
 
             @Override
             public void onFail(int errCode, String errMsg) {
+                idSmartRefreshLayout.finishRefresh();
                 ToastUtils.showShort(errMsg);
             }
         });

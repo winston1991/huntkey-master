@@ -17,11 +17,15 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.adapter.HomePageRecyclerViewAdapter;
+import com.jake.huntkey.core.app.Configurator;
 import com.jake.huntkey.core.app.Consts;
 import com.jake.huntkey.core.delegates.basedelegate.CheckPermissionDelegate;
 import com.jake.huntkey.core.entity.HomePageItemEntity;
 import com.jake.huntkey.core.net.WebApiServices;
+import com.jake.huntkey.core.net.callback.dealTokenExpire;
 import com.jake.huntkey.core.netbean.GetFpyRateResponse;
+import com.jake.huntkey.core.netbean.GetQueryWarnResponse;
+import com.jake.huntkey.core.netbean.GetSampleResponse;
 import com.jake.huntkey.core.netbean.LoginResponse;
 
 import com.vise.log.ViseLog;
@@ -34,9 +38,12 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import me.yokeyword.eventbusactivityscope.EventBusActivityScope;
 import me.yokeyword.fragmentation.SupportFragment;
 
@@ -48,7 +55,7 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
     RecyclerView mRecyclerView;
     HomePageRecyclerViewAdapter mHomePageRecyclerViewAdapter;
     ArrayList<HomePageItemEntity> entityList;
-
+    HashMap<String, Float> gaugeColorRange;  //仪表盘颜色区间值
     public static HomePageDelegate newInstance() {
         Bundle args = new Bundle();
         HomePageDelegate fragment = new HomePageDelegate();
@@ -91,7 +98,38 @@ public class HomePageDelegate extends CheckPermissionDelegate implements BaseQui
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         ((SupportFragment) getParentFragment()).start(FactoryWorkShopContainerDelegate.newInstance(((List<HomePageItemEntity>) adapter.getData()).get(position).name));
-        EventBusActivityScope.getDefault(_mActivity).postSticky(((List<HomePageItemEntity>) adapter.getData()).get(position));
+        HomePageItemEntity homePageItemEntity=  ((List<HomePageItemEntity>) adapter.getData()).get(position);
+        EventBusActivityScope.getDefault(_mActivity).postSticky(homePageItemEntity);
+        getQueryWarn(homePageItemEntity.sid);
+
+
+    }
+
+    private void getQueryWarn(String sid) {
+        ViseHttp.RETROFIT().create(WebApiServices.class).GetQueryWarn(sid) .compose(ApiTransformer.<GetQueryWarnResponse>norTransformer()).subscribe(new ApiCallbackSubscriber<>(new dealTokenExpire<GetQueryWarnResponse>(_mActivity) {
+            @Override
+            public void onSuccess(GetQueryWarnResponse data) {
+                super.onSuccess(data);
+                if (data != null && data.getContent() != null && data.getStatus().equals("OK") && data.getContent().size() > 0) {
+                    gaugeColorRange = new HashMap<>();
+                    Float f = Float.parseFloat(data.getContent().get(0).getFpy_red()) / 100;
+                    gaugeColorRange.put("fpy_red", f);
+                    f = Float.parseFloat(data.getContent().get(0).getFpy_yellow_begin()) / 100;
+                    gaugeColorRange.put("fpy_yellow_begin", f);
+                    f = Float.parseFloat(data.getContent().get(0).getFpy_yellow_end()) / 100;
+                    gaugeColorRange.put("fpy_yellow_end", f);
+                    f = Float.parseFloat(data.getContent().get(0).getTcr_yellow_begin()) / 100;
+                    gaugeColorRange.put("tcr_yellow_begin", f);
+                    f = Float.parseFloat(data.getContent().get(0).getTcr_yellow_end()) / 100;
+                    gaugeColorRange.put("tcr_yellow_end", f);
+                    Configurator.getInstance().withGagueColorRange(gaugeColorRange);
+                }
+            }
+            @Override
+            public void onFail(int errCode, String errMsg) {
+
+            }
+        }));
 
     }
 

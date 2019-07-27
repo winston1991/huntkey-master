@@ -32,13 +32,14 @@ public class WebViewCreater {
      *
      * @param fragment
      * @param viewGroup
-
      * @return
      */
     public AgentWeb createAgentWeb(SupportFragment fragment, ViewGroup viewGroup) {
         return AgentWeb.with(fragment)
                 .setAgentWebParent(viewGroup, -1, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-                .useDefaultIndicator(-1, 3)
+                .closeIndicator()
+                //.useDefaultIndicator(-1, 3)
+
                 .setWebViewClient(new WebViewClient() {
                     @Override
                     public void onPageFinished(WebView view, String url) {

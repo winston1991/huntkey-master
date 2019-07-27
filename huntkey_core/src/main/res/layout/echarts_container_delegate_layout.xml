@@ -1,33 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/id_smart_refresh_layout"
+
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    app:srlEnableAutoLoadMore="true"
+    app:srlEnableLoadMore="true"
+    app:srlFooterHeight="0dp">
 
-
-    <LinearLayout
+    <com.scwang.smartrefresh.layout.header.ClassicsHeader
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        app:srlClassicsSpinnerStyle="FixedBehind"
+        app:srlDrawableArrowSize="20dp"
+        app:srlDrawableMarginRight="20dp"
+        app:srlDrawableProgressSize="20dp"
+        app:srlEnableLastTime="true"
+        app:srlFinishDuration="500"
+        app:srlTextSizeTime="10dp"
+        app:srlTextSizeTitle="16sp"
+        app:srlTextTimeMarginTop="2dp" />
 
-        <!--<include layout="@layout/toolbar"></include>-->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-
-        <FrameLayout
-            android:id="@+id/fl_container"
+        <com.xuexiang.xui.widget.statelayout.StatefulLayout
+            android:id="@+id/id_state_layout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <com.bin.david.form.core.SmartTable
-            android:layout_marginTop="20dp"
-            android:id="@+id/id_smart_table1"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:visibility="gone" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!--<include layout="@layout/toolbar"></include>-->
+                <FrameLayout
+                    android:id="@+id/fl_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
 
+                <com.bin.david.form.core.SmartTable
+                    android:id="@+id/id_smart_table1"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="20dp"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </com.xuexiang.xui.widget.statelayout.StatefulLayout>
 
-    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-</ScrollView>
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>

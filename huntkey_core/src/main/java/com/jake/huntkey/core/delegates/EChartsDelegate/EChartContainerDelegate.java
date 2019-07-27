@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,7 +17,6 @@ import com.bin.david.form.data.format.bg.BaseBackgroundFormat;
 import com.bin.david.form.data.style.FontStyle;
 import com.bin.david.form.data.table.TableData;
 import com.blankj.utilcode.util.SPUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
 import com.jake.huntkey.core.app.ConfigKeys;
@@ -30,11 +30,12 @@ import com.jake.huntkey.core.net.callback.dealTokenExpire;
 import com.jake.huntkey.core.netbean.GetEmpRateResponse;
 import com.jake.huntkey.core.netbean.GetFpyRateResponse;
 import com.jake.huntkey.core.netbean.GetJdRateResponse;
-import com.jake.huntkey.core.netbean.GetQueryWarnResponse;
 import com.jake.huntkey.core.netbean.GetTcrRateResponse;
 import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.vise.xsnow.http.ViseHttp;
-import com.vise.xsnow.http.callback.ACallback;
 import com.vise.xsnow.http.core.ApiTransformer;
 import com.vise.xsnow.http.subscriber.ApiCallbackSubscriber;
 
@@ -57,6 +58,9 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
     public FrameLayout flContainer;
     @BindView(R2.id.id_smart_table1)
     SmartTable idSmartTable1;
+    @BindView(R2.id.id_smart_refresh_layout)
+    SmartRefreshLayout idSmartRefreshLayout;
+    private int chartType = 1; //1表示直通率   2表示达成率  3表示稼动率  4表示出勤率
     private ChartInterface mChartInterface;
     private String lineId;  //线体id
     private String sid; //服务器id
@@ -92,7 +96,27 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
             lineId = bundle.getString(ARG_LineId);
             deptCode = bundle.getString(ARG_DeptCode);
         }
+        idSmartRefreshLayout.autoRefresh();
+        idSmartRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                switch (chartType) {
+                    case 1:
+                        getZhiTongLvData();
+                        break;
+                    case 2:
+                        getDaChengLvData();
+                        break;
+                    case 3:
+                        getJiaDongLvData();
+                        break;
+                    case 4:
+                        getChuQinLvData();
+                        break;
+                }
 
+            }
+        });
     }
 
 
@@ -106,36 +130,35 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         mAgentWeb.getJsAccessEntrace().quickCallJs("clearChart");
         mAgentWeb.getJsAccessEntrace().quickCallJs("showDiv");
         mAgentWeb.getWebCreator().getWebView().loadUrl("javascript:Android.resize(document.body.getBoundingClientRect().height)");
-        getZhiTongLvData();
+        chartType = 1;
+        if (mGetFpyRateResponse != null) {
+            dealGetFpyRateResponse(mGetFpyRateResponse);
+        } else {
+            idSmartRefreshLayout.autoLoadMore();
+        }
     }
 
     public void getZhiTongLvData() {
-        if (mGetFpyRateResponse == null) {
-            DialogLoaderManager.showLoading(_mActivity);
-            ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new dealTokenExpire<GetFpyRateResponse>(_mActivity) {
-                @Override
-                public void onSuccess(GetFpyRateResponse data) {
-                    super.onSuccess(data);
-                    mGetFpyRateResponse = data;
-                    dealGetFpyRateResponse(data);
-                    DialogLoaderManager.stopLoading();
-                }
-                @Override
-                public void onFail(int errCode, String errMsg) {
-                    DialogLoaderManager.stopLoading();
-                }
-            });
-            ViseHttp.RETROFIT()
-                    .create(WebApiServices.class)
-                    .GetFpyRate(sid, lineId, accid)
-                    .compose(ApiTransformer.<GetFpyRateResponse>norTransformer())
-                    .subscribe(disposable);
-            ViseHttp.addDisposable("GetFpyRate", disposable);
-        } else {
-            dealGetFpyRateResponse(mGetFpyRateResponse);
-        }
+        ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new dealTokenExpire<GetFpyRateResponse>(_mActivity) {
+            @Override
+            public void onSuccess(GetFpyRateResponse data) {
+                super.onSuccess(data);
+                mGetFpyRateResponse = data;
+                dealGetFpyRateResponse(data);
+                idSmartRefreshLayout.finishRefresh();
+            }
 
-
+            @Override
+            public void onFail(int errCode, String errMsg) {
+                idSmartRefreshLayout.finishRefresh();
+            }
+        });
+        ViseHttp.RETROFIT()
+                .create(WebApiServices.class)
+                .GetFpyRate(sid, lineId, accid)
+                .compose(ApiTransformer.<GetFpyRateResponse>norTransformer())
+                .subscribe(disposable);
+        ViseHttp.addDisposable("GetFpyRate", disposable);
     }
 
     private void dealGetFpyRateResponse(GetFpyRateResponse getFpyRateResponse) {
@@ -172,36 +195,34 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
          */
         mAgentWeb.getWebCreator().getWebView().loadUrl("javascript:Android.resize(document.body.getBoundingClientRect().height)");
         idSmartTable1.setVisibility(View.VISIBLE);
-        getDaChengLvData(mGetTcrRateResponse);
-
+        chartType = 2;
+        if (mGetTcrRateResponse == null) {
+            idSmartRefreshLayout.autoLoadMore();
+        } else {
+            dealGetTcrRateResponse(mGetTcrRateResponse);
+        }
     }
 
-    public void getDaChengLvData(GetTcrRateResponse getTcrRateResponse) {
+    public void getDaChengLvData( ) {
+        ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new dealTokenExpire<GetTcrRateResponse>(_mActivity) {
+            @Override
+            public void onSuccess(GetTcrRateResponse data) {
+                super.onSuccess(data);
+                dealGetTcrRateResponse(data);
+                idSmartRefreshLayout.finishRefresh();
+            }
 
-        if (getTcrRateResponse == null) {
-            DialogLoaderManager.showLoading(_mActivity);
-            ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new dealTokenExpire<GetTcrRateResponse>(_mActivity) {
-                @Override
-                public void onSuccess(GetTcrRateResponse data) {
-                    super.onSuccess(data);
-                    dealGetTcrRateResponse(data);
-                    DialogLoaderManager.stopLoading();
-                }
-
-                @Override
-                public void onFail(int errCode, String errMsg) {
-                    DialogLoaderManager.stopLoading();
-                }
-            });
-            ViseHttp.RETROFIT()
-                    .create(WebApiServices.class)
-                    .GetTcrRate(sid, lineId, accid)
-                    .compose(ApiTransformer.<GetTcrRateResponse>norTransformer())
-                    .subscribe(disposable);
-            ViseHttp.addDisposable("GetTcrRate", disposable);
-        } else {
-            dealGetTcrRateResponse(getTcrRateResponse);
-        }
+            @Override
+            public void onFail(int errCode, String errMsg) {
+                idSmartRefreshLayout.finishRefresh();
+            }
+        });
+        ViseHttp.RETROFIT()
+                .create(WebApiServices.class)
+                .GetTcrRate(sid, lineId, accid)
+                .compose(ApiTransformer.<GetTcrRateResponse>norTransformer())
+                .subscribe(disposable);
+        ViseHttp.addDisposable("GetTcrRate", disposable);
 
     }
 
@@ -285,35 +306,35 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         mAgentWeb.getJsAccessEntrace().quickCallJs("clearChart");
         mAgentWeb.getJsAccessEntrace().quickCallJs("showDiv");
         mAgentWeb.getWebCreator().getWebView().loadUrl("javascript:Android.resize(document.body.getBoundingClientRect().height)");
-        getJiaDongLvData(getJdRateResponse);
-
-    }
-
-    public void getJiaDongLvData(GetJdRateResponse getJdRateResponse) {
+        chartType = 3;
         if (getJdRateResponse == null) {
-            DialogLoaderManager.showLoading(_mActivity);
-            ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new dealTokenExpire<GetJdRateResponse>(_mActivity) {
-                @Override
-                public void onSuccess(GetJdRateResponse data) {
-                    super.onSuccess(data);
-                    dealGetJdRateResponse(data);
-                    DialogLoaderManager.stopLoading();
-                }
-
-                @Override
-                public void onFail(int errCode, String errMsg) {
-                    DialogLoaderManager.stopLoading();
-                }
-            });
-            ViseHttp.RETROFIT()
-                    .create(WebApiServices.class)
-                    .GetJdRate(sid, lineId, accid)
-                    .compose(ApiTransformer.<GetJdRateResponse>norTransformer())
-                    .subscribe(disposable);
-            ViseHttp.addDisposable("GetJdRate", disposable);
+            idSmartRefreshLayout.autoRefresh();
         } else {
             dealGetJdRateResponse(getJdRateResponse);
         }
+    }
+
+    public void getJiaDongLvData( ) {
+        ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new dealTokenExpire<GetJdRateResponse>(_mActivity) {
+            @Override
+            public void onSuccess(GetJdRateResponse data) {
+                super.onSuccess(data);
+                dealGetJdRateResponse(data);
+                idSmartRefreshLayout.finishRefresh();
+            }
+
+            @Override
+            public void onFail(int errCode, String errMsg) {
+                idSmartRefreshLayout.finishRefresh();
+            }
+        });
+        ViseHttp.RETROFIT()
+                .create(WebApiServices.class)
+                .GetJdRate(sid, lineId, accid)
+                .compose(ApiTransformer.<GetJdRateResponse>norTransformer())
+                .subscribe(disposable);
+        ViseHttp.addDisposable("GetJdRate", disposable);
+
 
     }
 
@@ -339,39 +360,35 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
         mAgentWeb.getJsAccessEntrace().quickCallJs("clearChart");
         mAgentWeb.getJsAccessEntrace().quickCallJs("showDiv");
         mAgentWeb.getWebCreator().getWebView().loadUrl("javascript:Android.resize(document.body.getBoundingClientRect().height)");
-        getChuQinLvData(getEmpRateResponse);
-
-    }
-
-    public void getChuQinLvData(GetEmpRateResponse getEmpRateResponse) {
-
+        chartType = 4;
         if (getEmpRateResponse == null) {
-            DialogLoaderManager.showLoading(_mActivity);
-            String deptCodes = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_DEPTCODE_NAME);
-            ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new dealTokenExpire<GetEmpRateResponse>(_mActivity) {
-                @Override
-                public void onSuccess(GetEmpRateResponse data) {
-                    super.onSuccess(data);
-                    dealGetEmpRateResponse(data);
-                    DialogLoaderManager.stopLoading();
-                }
-
-                @Override
-                public void onFail(int errCode, String errMsg) {
-                    DialogLoaderManager.stopLoading();
-                }
-            });
-            ViseHttp.RETROFIT()
-                    .create(WebApiServices.class)
-                    .GetEmpRate(deptCode, deptCodes)
-                    .compose(ApiTransformer.<GetEmpRateResponse>norTransformer())
-                    .subscribe(disposable);
-            ViseHttp.addDisposable("GetEmpRate", disposable);
+            idSmartRefreshLayout.autoRefresh();
         } else {
             dealGetEmpRateResponse(getEmpRateResponse);
         }
+    }
 
+    public void getChuQinLvData( ) {
+        String deptCodes = SPUtils.getInstance(Consts.SP_INSTANT_NAME).getString(Consts.SP_ITEM_DEPTCODE_NAME);
+        ApiCallbackSubscriber disposable = new ApiCallbackSubscriber<>(new dealTokenExpire<GetEmpRateResponse>(_mActivity) {
+            @Override
+            public void onSuccess(GetEmpRateResponse data) {
+                super.onSuccess(data);
+                dealGetEmpRateResponse(data);
+                idSmartRefreshLayout.finishRefresh();
+            }
 
+            @Override
+            public void onFail(int errCode, String errMsg) {
+                idSmartRefreshLayout.finishRefresh();
+            }
+        });
+        ViseHttp.RETROFIT()
+                .create(WebApiServices.class)
+                .GetEmpRate(deptCode, deptCodes)
+                .compose(ApiTransformer.<GetEmpRateResponse>norTransformer())
+                .subscribe(disposable);
+        ViseHttp.addDisposable("GetEmpRate", disposable);
     }
 
     private void dealGetEmpRateResponse(GetEmpRateResponse data) {
@@ -418,7 +435,6 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
 
     @Override
     public void onPageLoadFinished() {
-        loadZhiTongLvChart();
     }
 
     /**

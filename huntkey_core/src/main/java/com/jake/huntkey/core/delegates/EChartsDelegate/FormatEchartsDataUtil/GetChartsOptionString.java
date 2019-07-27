@@ -37,7 +37,9 @@ public class GetChartsOptionString {
         GsonOption option = new GsonOption();
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         Gauge gauge = new Gauge();
-        gauge.axisLine().lineStyle().color(new Object[]{new Object[]{(Float) hashMap.get("fpy_red"), "#ff4500"}, new Object[]{(Float) hashMap.get("fpy_yellow_end"), "#E6B600"}, new Object[]{1, "lime"}});
+        if (hashMap != null) {
+            gauge.axisLine().lineStyle().color(new Object[]{new Object[]{(Float) hashMap.get("fpy_red"), "#ff4500"}, new Object[]{(Float) hashMap.get("fpy_yellow_end"), "#E6B600"}, new Object[]{1, "lime"}});
+        }
         gauge.axisLine().lineStyle().width(2).shadowBlur(10).setShadowColor("#fff");
         gauge.name("直通率");
         gauge.detail(new Detail().formatter("{value}%"));
@@ -103,7 +105,9 @@ public class GetChartsOptionString {
         GsonOption option = new GsonOption();
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         Gauge gauge = new Gauge();
-        gauge.axisLine().lineStyle().color(new Object[]{new Object[]{hashMap.get("tcr_yellow_begin"), "#ff4500"}, new Object[]{hashMap.get("tcr_yellow_end"), "lime"}, new Object[]{1, "lime"}});
+        if (hashMap != null) {
+            gauge.axisLine().lineStyle().color(new Object[]{new Object[]{hashMap.get("tcr_yellow_begin"), "#ff4500"}, new Object[]{hashMap.get("tcr_yellow_end"), "lime"}, new Object[]{1, "lime"}});
+        }
         gauge.axisLine().lineStyle().shadowBlur(10).width(2).shadowColor("#fff");
         gauge.name("达成率");
         gauge.detail(new Detail().formatter("{value}%"));
@@ -227,7 +231,7 @@ public class GetChartsOptionString {
 
 
     @JavascriptInterface
-    public static String getJiaDOngLvGaugeOptions1(String rate) {
+    public static String getJiaDongLvGaugeOptions1(String rate) {
         GsonOption option = new GsonOption();
         option.setTooltip(new Tooltip().formatter("{a} <br/>{b} : {c}%"));
         Gauge gauge = new Gauge();

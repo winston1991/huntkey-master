@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,7 @@ import com.bin.david.form.data.format.draw.TextDrawFormat;
 import com.bin.david.form.data.style.FontStyle;
 import com.bin.david.form.data.table.ArrayTableData;
 import com.blankj.utilcode.util.ConvertUtils;
+import com.blankj.utilcode.util.ScreenUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.jake.huntkey.core.R;
 import com.jake.huntkey.core.R2;
@@ -39,6 +41,8 @@ import com.jake.huntkey.core.net.WebApiServices;
 import com.jake.huntkey.core.net.callback.dealTokenExpire;
 import com.jake.huntkey.core.netbean.Get20BdJianKongInfoResponse;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.core.ApiTransformer;
 import com.vise.xsnow.http.subscriber.ApiCallbackSubscriber;
@@ -63,14 +67,12 @@ public class WorkStationMonitorDelegate extends BaseBackDelegate {
     StatefulLayout idStateLayout;
     @BindView(R2.id.id_smart_refresh_layout)
     SmartRefreshLayout idSmartRefreshLayout;
-    @BindView(R2.id.id_scrollview)
-    NestedScrollView idScrollview;
     private String lineId;
     private String sid;
     private String accid;
-    private String colortcrred;
-    private String colorfpyred;
-    private String colorfpyyellow;
+    private float colortcrred;
+    private float colorfpyred;
+    private float colorfpyyellow;
 
     public static WorkStationMonitorDelegate newInstance(String lineId) {
         Bundle args = new Bundle();
@@ -93,9 +95,9 @@ public class WorkStationMonitorDelegate extends BaseBackDelegate {
     protected void initView(View view) {
         HashMap<String, Float> colorRange = (HashMap<String, Float>) HkEngine.getConfiguration(ConfigKeys.GAUGE_COLOR_RANGE);
         if (colorRange != null) {
-            colortcrred = Float.toString(colorRange.get("tcr_yellow_end") * 100);
-            colorfpyred = Float.toString(colorRange.get("fpy_red") * 100);
-            colorfpyyellow = Float.toString(colorRange.get("fpy_yellow_end") * 100);
+            colortcrred = colorRange.get("tcr_yellow_begin") * 100;
+            colorfpyred = colorRange.get("fpy_red") * 100;
+            colorfpyyellow = colorRange.get("fpy_yellow_end") * 100;
         }
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -103,9 +105,12 @@ public class WorkStationMonitorDelegate extends BaseBackDelegate {
         }
         initTableFormat();
         load20BdJianKongInfoData();
-
-
-
+        idSmartRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                load20BdJianKongInfoData();
+            }
+        });
 
     }
 
@@ -117,6 +122,7 @@ public class WorkStationMonitorDelegate extends BaseBackDelegate {
                 if (data != null && data.getContent() != null && data.getContent().size() > 0) {
                     showJianKongData(data);
                 }
+                idSmartRefreshLayout.finishRefresh();
             }
 
             private void showJianKongData(Get20BdJianKongInfoResponse data) {
@@ -176,31 +182,32 @@ public class WorkStationMonitorDelegate extends BaseBackDelegate {
                                     paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_cell_red));
                                 }
                                 c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
+                            } else if ((cellInfo.row % itemSize) == 7 && cellInfo.col != 0) //目标达成率
+                            {
+                                if (!cellInfo.value.isEmpty()) {
+                                    Float tmp = Float.parseFloat(cellInfo.value);
+                                    if (tmp < colortcrred) {
+                                        paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_cell_red));
+                                        c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
+                                    }
+                                }
+                            } else if ((cellInfo.row % itemSize) == 6 && cellInfo.col != 0) //一次良率
+                            {
+                                if (!cellInfo.value.isEmpty()) {
+                                    Float tmp = Float.parseFloat(cellInfo.value);
+                                    if (tmp < colorfpyred) {
+                                        paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_cell_red));
+                                        c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
+                                    } else if (tmp < colorfpyyellow) {
+                                        paint.setColor(ContextCompat.getColor(_mActivity, R.color.yellow));
+                                        c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
+                                    }
+                                }
                             }
-//                            else if ((cellInfo.row % itemSize) == 7 && cellInfo.col != 0) //目标达成率
-//                            {
-//                                if (cellInfo.value.compareTo(colortcrred) < 0) {
-//                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_cell_red));
-//                                    c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
-//                                }
-//                            } else if ((cellInfo.row % itemSize) == 6 && cellInfo.col != 0) //一次良率
-//                            {
-//                                if (cellInfo.value.compareTo(colorfpyred) < 0) {
-//                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.table_cell_red));
-//                                    c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
-//                                } else if (cellInfo.value.compareTo(colorfpyyellow) < 0) {
-//                                    paint.setColor(ContextCompat.getColor(_mActivity, R.color.yellow));
-//                                    c.drawRect(rect.left, rect.top, rect.right, rect.bottom, paint);
-//                                }
-//                            }
                         }
                         super.draw(c, rect, cellInfo, config);
                     }
 
-                    @Override
-                    public int measureHeight(Column<String> column, int position, TableConfig config) {
-                        return super.measureHeight(column, position, config);
-                    }
                 };
                 ArrayTableData<String> arrayTableData = ArrayTableData.create("", titles, ArrayTableData.transformColumnArray(td), textDrawFormat);
                 idSmartTable.setTableData(arrayTableData);
@@ -208,12 +215,14 @@ public class WorkStationMonitorDelegate extends BaseBackDelegate {
                 idSmartTable.getTableData().setUserCellRange(cellRanges);
                 //如果没有设置  idSmartTable.getConfig().setHorizontalPadding()默认是用ColumnTitleHorizontalPadding
                 idSmartTable.getConfig().setColumnTitleHorizontalPadding(ConvertUtils.dp2px(8));
-
+                idSmartTable.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ScreenUtils.getScreenHeight()));
             }
 
             @Override
             public void onFail(int errCode, String errMsg) {
                 ToastUtils.showShort(errMsg);
+                idSmartRefreshLayout.finishRefresh();
+
             }
         });
         ViseHttp.RETROFIT()
