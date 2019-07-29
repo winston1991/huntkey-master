@@ -34,10 +34,11 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp" />
 
-            <androidx.appcompat.widget.AppCompatEditText
+            <com.jake.huntkey.core.view.ClearContentEditView
                 android:id="@+id/id_edt_username"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:drawableRight="@drawable/xui_ic_default_clear_btn"
                 android:layout_marginLeft="10dp"
                 android:background="@null"
                 android:gravity="left|center_vertical"
@@ -60,11 +61,12 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp" />
 
-            <androidx.appcompat.widget.AppCompatEditText
+            <com.jake.huntkey.core.view.TogglePasswordVisibilityEditText
                 android:id="@+id/id_edt_passwd"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
+                android:drawableRight="@drawable/pet_icon_visibility_off_24dp"
                 android:background="@null"
                 android:gravity="left|center_vertical"
                 android:hint="密码"

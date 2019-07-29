@@ -31,6 +31,8 @@ import com.jake.huntkey.core.netbean.GetUserInfoResponse;
 import com.jake.huntkey.core.netbean.LoginResponse;
 import com.jake.huntkey.core.ui.icon.HKIcons;
 import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
+import com.jake.huntkey.core.view.ClearContentEditView;
+import com.jake.huntkey.core.view.TogglePasswordVisibilityEditText;
 import com.joanzapata.iconify.IconDrawable;
 import com.vise.xsnow.http.ViseHttp;
 import com.vise.xsnow.http.callback.ACallback;
@@ -66,9 +68,9 @@ public class LoginActivity extends BaseActivity {
     @BindView(R2.id.id_tv_forget_passwd)
     TextView idTvForgetPasswd;
     @BindView(R2.id.id_edt_username)
-    AppCompatEditText idEdtUsername;
+    ClearContentEditView idEdtUsername;
     @BindView(R2.id.id_edt_passwd)
-    AppCompatEditText idEdtPasswd;
+    TogglePasswordVisibilityEditText idEdtPasswd;
     @BindView(R2.id.id_checkbox_rememberpwd)
     AppCompatCheckBox idCheckboxRememberpwd;
 
@@ -122,6 +124,7 @@ public class LoginActivity extends BaseActivity {
                 login();
             }
         });
+
 
 
     }

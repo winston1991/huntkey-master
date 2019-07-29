@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +30,6 @@ import com.jake.huntkey.core.netbean.GetEmpRateResponse;
 import com.jake.huntkey.core.netbean.GetFpyRateResponse;
 import com.jake.huntkey.core.netbean.GetJdRateResponse;
 import com.jake.huntkey.core.netbean.GetTcrRateResponse;
-import com.jake.huntkey.core.ui.icon.Loading.DialogLoaderManager;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -114,7 +112,6 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
                         getChuQinLvData();
                         break;
                 }
-
             }
         });
     }
@@ -238,7 +235,6 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
             List<String> legend4 = data.getContent().get(0).getTcr7DayRate().getOqty1(); //B班完成数
             List<String> legend5 = data.getContent().get(0).getTcr7DayRate().getReachrate1(); //B班达成率
             mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart2", mChartInterface.getDaChengLvOptions2(axisX, legend1, legend2, legend3, legend4, legend5));
-
             axisX = data.getContent().get(0).getOQty().getOtpt_start_time();
             legend1 = data.getContent().get(0).getOQty().getTargetqty();//计划产能
             legend2 = data.getContent().get(0).getOQty().getOqty();//实际产能
@@ -322,7 +318,6 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
                 dealGetJdRateResponse(data);
                 idSmartRefreshLayout.finishRefresh();
             }
-
             @Override
             public void onFail(int errCode, String errMsg) {
                 idSmartRefreshLayout.finishRefresh();
@@ -377,7 +372,6 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
                 dealGetEmpRateResponse(data);
                 idSmartRefreshLayout.finishRefresh();
             }
-
             @Override
             public void onFail(int errCode, String errMsg) {
                 idSmartRefreshLayout.finishRefresh();
@@ -418,7 +412,6 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
             a_real_emp_num = data.getContent().get(0).getLineEmpRate().getEmp_num_real();//实际出勤人数
             a_rate = data.getContent().get(0).getLineEmpRate().getRate(); //出勤率
             mAgentWeb.getJsAccessEntrace().quickCallJs("loadChartView", "chart4", mChartInterface.getChuQinLvOptions4(axisX, emp_num, a_real_emp_num, a_rate));
-
         }
     }
 
@@ -426,7 +419,6 @@ public class EChartContainerDelegate extends BaseWebViewDelegate implements WebV
     public Object setLayout() {
         return R.layout.echarts_container_delegate_layout;
     }
-
 
     @Override
     protected void onBindView(Bundle savedInstanceState, View rootView) {

@@ -1,11 +1,14 @@
 package com.jake.huntkey.core.delegates;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.jake.huntkey.core.R;
@@ -32,6 +35,41 @@ public class DebugPagerFragment extends BaseBackDelegate {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTitle = getArguments().getString(ARG_TYPE);
+        Log.d("DebugPagerFragment", "Title:"+ mTitle+"      onCreate    class: "+ this);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d("DebugPagerFragment", "Title:"+ mTitle+"      onCreateView    class: "+ this);
+        return super.onCreateView(inflater, container, savedInstanceState);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("DebugPagerFragment", "Title:"+ mTitle+"      onResume    class: "+ this);
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        Log.d("DebugPagerFragment", "Title:"+ mTitle+"      onAttach    class: "+ this);
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("DebugPagerFragment", "Title:"+ mTitle+"      onDestroyView    class: "+ this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("DebugPagerFragment", "Title:"+ mTitle+"      onDestroy    class: "+ this);
 
     }
 

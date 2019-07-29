@@ -27,9 +27,9 @@ public class FactoryViewPagerFragmentAdapter extends FragmentPagerAdapter {
     public SupportFragment getItem(int position) {
         if (position == 0) {
             return ProductionLineListViewDelegate.newInstance(factoryName);
-        } else if(position == 2) {
+        } else if (position == 2) {
             return MineFragment.newInstance("");
-        }else {
+        } else {
             return DebugPagerFragment.newInstance(items[position]);
         }
 
